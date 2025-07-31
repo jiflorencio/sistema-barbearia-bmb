@@ -1021,18 +1021,27 @@ app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (
             console.log(`⚠️ Linha ${numeroLinha}: Nome diferente - Banco: "${clienteExistente.nome}" vs Planilha: "${clienteLimpo}"`);
           }
           
+          // Checar se já existe serviço igual na mesma data
+          const jaTemServico = clienteExistente.historicoServicos && clienteExistente.historicoServicos.some(s =>
+            s.servico.toLowerCase() === servicoLimpo.toLowerCase() &&
+            new Date(s.dataServico).toISOString().split('T')[0] === dataServicoConvertida.toISOString().split('T')[0]
+          );
+          if (jaTemServico) {
+            erros.push(`Linha ${numeroLinha}: Serviço "${servicoLimpo}" já existe para o cliente "${clienteExistente.nome}" na data ${dataServicoConvertida.toISOString().split('T')[0]}`);
+            continue;
+          }
+
           // Adicionar serviço ao histórico
           if (!clienteExistente.historicoServicos) {
             clienteExistente.historicoServicos = [];
           }
-          
           clienteExistente.historicoServicos.push(novoServico);
-          
+
           // Garantir que tem unidade JSP
           if (!clienteExistente.unidade) {
             clienteExistente.unidade = 'JSP';
           }
-          
+
           await clienteExistente.save();
           clientesAtualizados++;
           servicosAdicionados++;
