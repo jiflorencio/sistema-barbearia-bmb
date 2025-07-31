@@ -209,6 +209,14 @@ app.get('/consultar-dados', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'consultar-dados.html'));
 });
 
+// ✅ NOVA: Página de Detalhes do Cliente
+app.get('/cliente-detalhes', (req, res) => {
+  if (!req.session.adminId) {
+    return res.redirect('/');
+  }
+  res.sendFile(path.join(__dirname, 'public', 'cliente-detalhes.html'));
+});
+
 // ===================================
 // ROTAS DA API - AUTENTICAÇÃO
 // ===================================

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Cliente - Sistema Barbearia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-info h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            opacity: 0.9;
+            font-size: 1em;
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .client-card {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .client-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .client-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: white;
+            margin: 0 auto 25px;
+        }
+
+        .client-name {
+            font-size: 2.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .client-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .detail-item {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+            text-align: left;
+        }
+
+        .detail-icon {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .detail-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2c3e50;
+            word-break: break-all;
+        }
+
+        .actions-section {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #218838, #1abc9c);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #c82333, #a71e2a);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-back-list {
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+        }
+
+        .btn-back-list:hover {
+            background: linear-gradient(135deg, #5a6268, #343a40);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #6c757d;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #dc3545;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Modal de Edição */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.3em;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: opacity 0.3s;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .modal-form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .modal-form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-modal-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-modal-primary:hover {
+            background: linear-gradient(135deg, #5a67d8, #667eea);
+        }
+
+        .btn-modal-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-modal-secondary:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .client-card {
+                padding: 25px;
+            }
+            
+            .client-name {
+                font-size: 1.8em;
+            }
+            
+            .client-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-info">
+                <h1>👤 Detalhes do Cliente</h1>
+                <p>Informações completas do cliente</p>
+            </div>
+            <a href="/consultar-dados" class="btn-back">
+                ← Voltar à Lista
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div id="alerts"></div>
+
+            <div id="clienteInfo">
+                <div class="loading">
+                    🔄 Carregando informações do cliente...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Editar Cliente</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="modal-form-group">
+                        <label for="editNome">Nome Completo:</label>
+                        <input type="text" id="editNome" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editDdi">DDI (Código do País):</label>
+                        <input type="text" id="editDdi" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editTelefone">Telefone:</label>
+                        <input type="tel" id="editTelefone" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editDataNascimento">Data de Nascimento:</label>
+                        <input type="date" id="editDataNascimento" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal btn-modal-secondary" onclick="fecharModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn-modal btn-modal-primary" onclick="salvarEdicao()">
+                    💾 Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clienteAtual = null;
+        let clienteId = null;
+
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            obterClienteId();
+            carregarDadosCliente();
+        });
+
+        // Obter ID do cliente da URL
+        function obterClienteId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            clienteId = urlParams.get('id');
+            
+            if (!clienteId) {
+                mostrarErro('ID do cliente não fornecido');
+                return;
+            }
+        }
+
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Função para mostrar alertas
+        function mostrarAlert(mensagem, tipo = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.textContent = mensagem;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Carregar dados do cliente
+        async function carregarDadosCliente() {
+            if (!clienteId) return;
+
+            try {
+                const response = await fetch(`/api/clientes/${clienteId}`);
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.status === 404) {
+                    mostrarErro('Cliente não encontrado');
+                    return;
+                }
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar cliente');
+                }
+                
+                clienteAtual = await response.json();
+                renderizarCliente();
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarErro('Erro ao carregar dados do cliente');
+            }
+        }
+
+        // Renderizar informações do cliente
+        function renderizarCliente() {
+            if (!clienteAtual) return;
+
+            const container = document.getElementById('clienteInfo');
+            
+            // Calcular idade
+            const nascimento = new Date(clienteAtual.dataNascimento);
+            const hoje = new Date();
+            let idade = hoje.getFullYear() - nascimento.getFullYear();
+            const mesAtual = hoje.getMonth();
+            const mesNascimento = nascimento.getMonth();
+            if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
+                idade--;
+            }
+
+            // Obter inicial do nome para avatar
+            const inicial = clienteAtual.nome.charAt(0).toUpperCase();
+
+            container.innerHTML = `
+                <div class="client-card">
+                    <div class="client-avatar">${inicial}</div>
+                    <div class="client-name">${clienteAtual.nome}</div>
+                    
+                    <div class="client-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">🌍</span>
+                            <div class="detail-label">Código do País</div>
+                            <div class="detail-value">${clienteAtual.ddi || '+55'}</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <span class="detail-icon">📱</span>
+                            <div class="detail-label">Telefone</div>
+                            <div class="detail-value">${clienteAtual.telefone}</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <span class="detail-icon">🎂</span>
+                            <div class="detail-label">Data de Nascimento</div>
+                            <div class="detail-value">${new Date(clienteAtual.dataNascimento).toLocaleDateString('pt-BR')} (${idade} anos)</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <span class="detail-icon">📅</span>
+                            <div class="detail-label">Data de Cadastro</div>
+                            <div class="detail-value">${new Date(clienteAtual.criadoEm).toLocaleDateString('pt-BR')}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="actions-section">
+                        <button class="btn btn-edit" onclick="editarCliente()">
+                            ✏️ Editar
+                        </button>
+                        <button class="btn btn-delete" onclick="deletarCliente()">
+                            🗑️ Excluir
+                        </button>
+                        <a href="/consultar-dados" class="btn btn-back-list">
+                            📋 Voltar à Lista
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Mostrar erro
+        function mostrarErro(mensagem) {
+            const container = document.getElementById('clienteInfo');
+            container.innerHTML = `
+                <div class="error">
+                    <h2>❌ ${mensagem}</h2>
+                    <p>Verifique se o cliente existe ou tente novamente.</p>
+                    <a href="/consultar-dados" class="btn btn-back-list" style="margin-top: 20px;">
+                        📋 Voltar à Lista
+                    </a>
+                </div>
+            `;
+        }
+
+        // Editar cliente (abrir modal)
+        function editarCliente() {
+            if (!clienteAtual) return;
+            
+            // Preencher campos do modal
+            document.getElementById('editNome').value = clienteAtual.nome;
+            document.getElementById('editDdi').value = clienteAtual.ddi || '+55';
+            document.getElementById('editTelefone').value = clienteAtual.telefone;
+            document.getElementById('editDataNascimento').value = clienteAtual.dataNascimento.split('T')[0];
+            
+            // Abrir modal
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Salvar edição
+        async function salvarEdicao() {
+            if (!clienteAtual) return;
+            
+            const nome = document.getElementById('editNome').value.trim();
+            const ddi = document.getElementById('editDdi').value.trim();
+            const telefone = document.getElementById('editTelefone').value.trim();
+            const dataNascimento = document.getElementById('editDataNascimento').value;
+            
+            if (!nome || !ddi || !telefone || !dataNascimento) {
+                mostrarAlert('Por favor, preencha todos os campos.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/clientes/${clienteId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome, ddi, telefone, dataNascimento })
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.ok) {
+                    mostrarAlert(`✅ Cliente "${nome}" atualizado com sucesso!`);
+                    fecharModal();
+                    carregarDadosCliente(); // Recarregar dados
+                } else {
+                    const erro = await response.json();
+                    mostrarAlert(erro.erro || 'Erro ao atualizar cliente', 'error');
+                }
+            } catch (error) {
+                mostrarAlert('Erro de conexão', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Deletar cliente
+        async function deletarCliente() {
+            if (!clienteAtual) return;
+            
+            if (!confirm(`Tem certeza que deseja excluir o cliente "${clienteAtual.nome}"?\n\nEsta ação não pode ser desfeita.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/clientes/${clienteId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.ok) {
+                    mostrarAlert(`✅ Cliente "${clienteAtual.nome}" excluído com sucesso!`);
+                    
+                    // Redirecionar para lista após 2 segundos
+                    setTimeout(() => {
+                        window.location.href = '/consultar-dados';
+                    }, 2000);
+                } else {
+                    const erro = await response.json();
+                    mostrarAlert(erro.erro || 'Erro ao excluir cliente', 'error');
+                }
+            } catch (error) {
+                mostrarAlert('Erro de conexão', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                fecharModal();
+            }
+        }
+    </script>
+</body>
+</html>
