@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Dados - Sistema Barbearia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-info h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            opacity: 0.9;
+            font-size: 1em;
+        }
+
+        .btn-back {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .search-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #28a745;
+        }
+
+        .search-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .clients-section {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .clients-section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .client-card {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .client-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .client-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .client-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .client-info {
+            color: #6c757d;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .client-info-icon {
+            width: 16px;
+            text-align: center;
+        }
+
+        .client-actions {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #218838, #1abc9c);
+            transform: translateY(-1px);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #c82333, #a71e2a);
+            transform: translateY(-1px);
+        }
+
+        .no-clients {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .no-clients-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Modal de Edição */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.3em;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: opacity 0.3s;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .modal-form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .modal-form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-modal-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-modal-primary:hover {
+            background: linear-gradient(135deg, #5a67d8, #667eea);
+        }
+
+        .btn-modal-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-modal-secondary:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .clients-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .client-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-info">
+                <h1>🔍 Consultar Banco de Dados</h1>
+                <p>Visualize e gerencie todos os clientes</p>
+            </div>
+            <a href="/dashboard" class="btn-back">
+                ← Voltar ao Dashboard
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div id="alerts"></div>
+
+            <!-- Estatísticas -->
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalClientes">-</div>
+                    <div class="stat-label">Total de Clientes Cadastrados</div>
+                </div>
+            </div>
+
+            <!-- Busca -->
+            <div class="search-section">
+                <h2>🔎 Buscar Clientes</h2>
+                <input type="text" class="search-box" id="searchBox" 
+                       placeholder="Digite o nome ou telefone do cliente...">
+            </div>
+
+            <!-- Lista de Clientes -->
+            <div class="clients-section">
+                <h2>👥 Clientes Cadastrados</h2>
+                <div id="clientesGrid" class="clients-grid">
+                    <div class="loading">
+                        🔄 Carregando clientes...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Editar Cliente</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="modal-form-group">
+                        <label for="editNome">Nome Completo:</label>
+                        <input type="text" id="editNome" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editDdi">DDI (Código do País):</label>
+                        <input type="text" id="editDdi" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editTelefone">Telefone:</label>
+                        <input type="tel" id="editTelefone" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editDataNascimento">Data de Nascimento:</label>
+                        <input type="date" id="editDataNascimento" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal btn-modal-secondary" onclick="fecharModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn-modal btn-modal-primary" onclick="salvarEdicao()">
+                    💾 Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clientes = [];
+        let clienteEditando = null;
+
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            carregarClientes();
+            
+            // Event listener para pesquisa
+            document.getElementById('searchBox').addEventListener('input', function() {
+                const termo = this.value.toLowerCase();
+                filtrarClientes(termo);
+            });
+        });
+
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Função para mostrar alertas
+        function mostrarAlert(mensagem, tipo = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.textContent = mensagem;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Carregar todos os clientes
+        async function carregarClientes() {
+            try {
+                const response = await fetch('/api/clientes');
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                clientes = await response.json();
+                renderizarClientes(clientes);
+                atualizarEstatisticas();
+            } catch (error) {
+                mostrarAlert('Erro ao carregar clientes', 'error');
+                console.error('Erro:', error);
+                document.getElementById('clientesGrid').innerHTML = 
+                    '<div class="no-clients"><div class="no-clients-icon">❌</div><h3>Erro ao carregar dados</h3><p>Tente recarregar a página</p></div>';
+            }
+        }
+
+        // Renderizar clientes na tela
+        function renderizarClientes(clientesParaRenderizar) {
+            const grid = document.getElementById('clientesGrid');
+            
+            if (clientesParaRenderizar.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-clients">
+                        <div class="no-clients-icon">👥</div>
+                        <h3>Nenhum cliente encontrado</h3>
+                        <p>Adicione clientes através da página "Atualizar Banco de Dados"</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = clientesParaRenderizar.map(cliente => `
+                <div class="client-card">
+                    <div class="client-name">${cliente.nome}</div>
+                    <div class="client-info">
+                        <span class="client-info-icon">🌍</span>
+                        ${cliente.ddi || '+55'}
+                    </div>
+                    <div class="client-info">
+                        <span class="client-info-icon">📱</span>
+                        ${cliente.telefone}
+                    </div>
+                    <div class="client-info">
+                        <span class="client-info-icon">🎂</span>
+                        ${new Date(cliente.dataNascimento).toLocaleDateString('pt-BR')}
+                    </div>
+                    <div class="client-info">
+                        <span class="client-info-icon">📅</span>
+                        Cadastrado: ${new Date(cliente.criadoEm).toLocaleDateString('pt-BR')}
+                    </div>
+                    <div class="client-actions">
+                        <button class="btn btn-edit" onclick="editarCliente('${cliente._id}')">
+                            ✏️ Editar
+                        </button>
+                        <button class="btn btn-delete" onclick="deletarCliente('${cliente._id}', '${cliente.nome}')">
+                            🗑️ Excluir
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filtrar clientes
+        function filtrarClientes(termo) {
+            const clientesFiltrados = clientes.filter(cliente => 
+                cliente.nome.toLowerCase().includes(termo) ||
+                cliente.telefone.includes(termo)
+            );
+            renderizarClientes(clientesFiltrados);
+        }
+
+        // Atualizar estatísticas
+        function atualizarEstatisticas() {
+            // Atualizar apenas o total de clientes
+            document.getElementById('totalClientes').textContent = clientes.length;
+        }
+
+        // Editar cliente (abrir modal)
+        function editarCliente(id) {
+            const cliente = clientes.find(c => c._id === id);
+            if (!cliente) return;
+            
+            // Definir cliente sendo editado
+            clienteEditando = id;
+            
+            // Preencher campos do modal
+            document.getElementById('editNome').value = cliente.nome;
+            document.getElementById('editDdi').value = cliente.ddi || '+55';
+            document.getElementById('editTelefone').value = cliente.telefone;
+            document.getElementById('editDataNascimento').value = cliente.dataNascimento.split('T')[0];
+            
+            // Abrir modal
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('editModal').style.display = 'none';
+            clienteEditando = null;
+        }
+
+        // Salvar edição
+        async function salvarEdicao() {
+            if (!clienteEditando) return;
+            
+            const nome = document.getElementById('editNome').value.trim();
+            const ddi = document.getElementById('editDdi').value.trim();
+            const telefone = document.getElementById('editTelefone').value.trim();
+            const dataNascimento = document.getElementById('editDataNascimento').value;
+            
+            if (!nome || !ddi || !telefone || !dataNascimento) {
+                mostrarAlert('Por favor, preencha todos os campos.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/clientes/${clienteEditando}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome, ddi, telefone, dataNascimento })
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.ok) {
+                    mostrarAlert(`✅ Cliente "${nome}" atualizado com sucesso!`);
+                    fecharModal();
+                    carregarClientes(); // Recarregar lista
+                } else {
+                    const erro = await response.json();
+                    mostrarAlert(erro.erro || 'Erro ao atualizar cliente', 'error');
+                }
+            } catch (error) {
+                mostrarAlert('Erro de conexão', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                fecharModal();
+            }
+        }
+
+        // Deletar cliente
+        async function deletarCliente(id, nome) {
+            if (!confirm(`Tem certeza que deseja excluir o cliente "${nome}"?\n\nEsta ação não pode ser desfeita.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/clientes/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.ok) {
+                    mostrarAlert(`✅ Cliente "${nome}" excluído com sucesso!`);
+                    carregarClientes(); // Recarregar lista
+                } else {
+                    const erro = await response.json();
+                    mostrarAlert(erro.erro || 'Erro ao excluir cliente', 'error');
+                }
+            } catch (error) {
+                mostrarAlert('Erro de conexão', 'error');
+                console.error('Erro:', error);
+            }
+        }
+    </script>
+</body>
+</html>

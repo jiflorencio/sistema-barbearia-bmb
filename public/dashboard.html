@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Barbearia - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-info h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header-info p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .header-user {
+            text-align: right;
+        }
+
+        .user-name {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 15px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .welcome-section h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .welcome-section p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .menu-card {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .menu-card:hover::before {
+            left: 100%;
+        }
+
+        .menu-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .menu-card h3 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .menu-card p {
+            color: #6c757d;
+            font-size: 1em;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .btn-menu {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-menu:hover {
+            background: linear-gradient(135deg, #5a67d8, #667eea);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .stats-overview {
+            background: linear-gradient(135deg, #e8f4fd, #ffffff);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid #bee5eb;
+        }
+
+        .stats-overview h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.3em;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .menu-card {
+                padding: 30px 20px;
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-info">
+                <h1>💈Sistema de Gestão - BMB Jardim São Paulo</h1>
+            </div>
+            <div class="header-user">
+                <div class="user-name">👋 <span id="nomeAdmin">Admin</span> | <span id="tipoAdmin">admin</span></div>
+                <button class="btn-logout" onclick="logout()">🚪 Sair</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="welcome-section">
+                <h2>Bem-vindo ao seu Sistema de Gestão</h2>
+                <p>Gerencie seus clientes, atualize informações e consulte dados de forma simples e eficiente.</p>
+            </div>
+
+            <!-- Estatísticas Rápidas -->
+            <div class="stats-overview">
+                <h3>📊 Visão Geral</h3>
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalClientes">-</div>
+                        <div class="stat-label">Total de Clientes Cadastrados</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Principal -->
+            <div class="menu-grid">
+                <div class="menu-card" onclick="window.location.href='/atualizar-dados'">
+                    <span class="menu-icon">📝</span>
+                    <h3>Atualizar Banco de Dados</h3>
+                    <p>Adicione novos clientes manualmente ou importe dados através de planilhas Excel.</p>
+                    <button class="btn-menu">Acessar</button>
+                </div>
+
+                <div class="menu-card" onclick="window.location.href='/consultar-dados'">
+                    <span class="menu-icon">🔍</span>
+                    <h3>Consultar Banco de Dados</h3>
+                    <p>Pesquise, visualize e gerencie todos os clientes cadastrados no sistema.</p>
+                    <button class="btn-menu">Acessar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            carregarEstatisticasRapidas();
+        });
+
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                // Mostrar informações do admin
+                document.getElementById('nomeAdmin').textContent = data.admin.nome;
+                document.getElementById('tipoAdmin').textContent = data.admin.tipo;
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Carregar estatísticas rápidas
+        async function carregarEstatisticasRapidas() {
+            try {
+                const response = await fetch('/api/clientes');
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                const clientes = await response.json();
+                
+                // Atualizar apenas o total de clientes
+                document.getElementById('totalClientes').textContent = clientes.length;
+                
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+                // Manter o valor como "-" em caso de erro
+            }
+        }
+
+        // Função de logout
+        async function logout() {
+            if (!confirm('Tem certeza que deseja sair?')) return;
+            
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Erro no logout:', error);
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+</html>
