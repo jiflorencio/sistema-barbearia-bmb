@@ -84,8 +84,36 @@ const clienteSchema = new mongoose.Schema({
   },
   dataNascimento: {
     type: Date,
-    required: true
+    required: false,  // ✅ AGORA OPCIONAL para clientes vindos do histórico
+    default: null
   },
+  unidade: {
+    type: String,
+    required: false,  // ✅ OPCIONAL - nem todos os clientes têm unidade definida
+    trim: true,
+    default: null     // ✅ SEM UNIDADE POR PADRÃO
+  },
+  // ✅ NOVO: Histórico de serviços
+  historicoServicos: [{
+    servico: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    profissional: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    dataServico: {
+      type: Date,
+      required: true
+    },
+    adicionadoEm: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   criadoEm: {
     type: Date,
     default: Date.now
@@ -806,6 +834,7 @@ app.post('/api/upload-excel', verificarLogin, upload.single('excel'), async (req
           ddi: ddiLimpo,
           telefone: telefoneLimpo,
           dataNascimento: dataConvertida,
+          unidade: null,  // ✅ SEM UNIDADE - será definida depois manualmente
           criadoEm: dataCadastroConvertida  // ✅ USAR DATA DA PLANILHA AO INVÉS DA ATUAL
         });
         
@@ -847,6 +876,225 @@ ${erros.length} erros encontrados.`;
     console.error('❌ Erro geral no upload:', error);
     res.status(500).json({ 
       erro: 'Erro ao processar arquivo Excel.',
+      detalhes: error.message 
+    });
+  }
+});
+
+// ===================================
+// NOVA ROTA: UPLOAD DE HISTÓRICO DE SERVIÇOS
+// ===================================
+app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ erro: 'Nenhum arquivo enviado.' });
+    }
+    
+    // Ler arquivo Excel
+    const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    
+    // Converter para JSON
+    const dados = XLSX.utils.sheet_to_json(worksheet);
+    
+    if (dados.length === 0) {
+      return res.status(400).json({ erro: 'Arquivo Excel está vazio ou não possui dados válidos.' });
+    }
+    
+    let servicosAdicionados = 0;
+    let clientesNovos = 0;
+    let clientesAtualizados = 0;
+    let erros = [];
+    let sucessos = [];
+    
+    console.log(`📊 Processando ${dados.length} linhas do histórico de serviços...`);
+    
+    // DEBUG: Mostrar estrutura da primeira linha
+    console.log('📋 Estrutura da primeira linha:', dados[0]);
+    console.log('📋 Chaves disponíveis:', Object.keys(dados[0]));
+    
+    for (let i = 0; i < dados.length; i++) {
+      const linha = dados[i];
+      const numeroLinha = i + 2; // +2 porque linha 1 é cabeçalho
+      
+      try {
+        // 🔧 MAPEAMENTO DAS COLUNAS DO HISTÓRICO
+        const servico = linha.Serviço || linha.servico || linha.SERVIÇO || 
+                       linha.Servico || linha.SERVICE || linha.service || null;
+        
+        const cliente = linha.Cliente || linha.cliente || linha.CLIENTE || 
+                       linha.Nome || linha.nome || linha.NOME || null;
+        
+        const telefone = linha.Telefone || linha.telefone || linha.TELEFONE || 
+                        linha.phone || linha.celular || linha.Celular || null;
+        
+        const profissional = linha.Profissional || linha.profissional || linha.PROFISSIONAL ||
+                            linha.Barbeiro || linha.barbeiro || linha.BARBEIRO ||
+                            linha.Funcionario || linha.funcionario || null;
+        
+        const dataServico = linha.Data || linha.data || linha.DATA ||
+                           linha['Data Serviço'] || linha['Data do Serviço'] ||
+                           linha.date || linha.Date || null;
+        
+        // 🔧 VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
+        const telefoneValido = telefone && telefone.toString().trim() !== '' && telefone.toString().toLowerCase() !== 'vazio';
+        const servicoValido = servico && servico.toString().trim() !== '' && servico.toString().toLowerCase() !== 'vazio';
+        const profissionalValido = profissional && profissional.toString().trim() !== '' && profissional.toString().toLowerCase() !== 'vazio';
+        const dataValida = dataServico && dataServico.toString().trim() !== '' && dataServico.toString().toLowerCase() !== 'vazio';
+        
+        if (!telefoneValido) {
+          erros.push(`Linha ${numeroLinha}: Telefone obrigatório está vazio - Telefone: "${telefone || 'VAZIO'}"`);
+          continue;
+        }
+        
+        if (!servicoValido || !profissionalValido || !dataValida) {
+          erros.push(`Linha ${numeroLinha}: Dados incompletos - Serviço: "${servico || 'VAZIO'}", Profissional: "${profissional || 'VAZIO'}", Data: "${dataServico || 'VAZIO'}"`);
+          continue;
+        }
+        
+        // 🔧 LIMPEZA DOS DADOS
+        const telefoneLimpo = telefone.toString().trim();
+        const servicoLimpo = servico.toString().trim();
+        const profissionalLimpo = profissional.toString().trim();
+        const clienteLimpo = cliente ? cliente.toString().trim() : 'Cliente';
+        
+        // 🔧 VALIDAÇÃO DE DATA DO SERVIÇO
+        let dataServicoConvertida;
+        try {
+          const dataString = dataServico.toString().trim();
+          
+          if (dataString.includes('/')) {
+            // Formato brasileiro DD/MM/YYYY
+            const partes = dataString.split(' ')[0].split('/');
+            if (partes.length === 3) {
+              const [dia, mes, ano] = partes;
+              dataServicoConvertida = new Date(`${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}T12:00:00.000Z`);
+            }
+          } else if (dataString.includes('-')) {
+            // Formato YYYY-MM-DD ou DD-MM-YYYY
+            const partes = dataString.split(' ')[0].split('-');
+            if (partes.length === 3) {
+              if (partes[0].length === 4) {
+                dataServicoConvertida = new Date(`${partes[0]}-${partes[1].padStart(2, '0')}-${partes[2].padStart(2, '0')}T12:00:00.000Z`);
+              } else {
+                const [dia, mes, ano] = partes;
+                dataServicoConvertida = new Date(`${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}T12:00:00.000Z`);
+              }
+            }
+          } else {
+            dataServicoConvertida = new Date(dataString);
+          }
+          
+          if (isNaN(dataServicoConvertida.getTime())) {
+            erros.push(`Linha ${numeroLinha}: Data do serviço "${dataString}" está em formato inválido`);
+            continue;
+          }
+          
+        } catch (error) {
+          erros.push(`Linha ${numeroLinha}: Erro ao processar data "${dataServico}"`);
+          continue;
+        }
+        
+        // 🔍 BUSCAR CLIENTE EXISTENTE POR TELEFONE
+        const telefoneApenasNumeros = telefoneLimpo.replace(/\D/g, '');
+        let clienteExistente = await Cliente.findOne({
+          $or: [
+            { telefone: telefoneLimpo },
+            { telefone: { $regex: telefoneApenasNumeros, $options: 'i' } }
+          ]
+        });
+        
+        // Objeto do novo serviço
+        const novoServico = {
+          servico: servicoLimpo,
+          profissional: profissionalLimpo,
+          dataServico: dataServicoConvertida
+        };
+        
+        if (clienteExistente) {
+          // ✅ CLIENTE EXISTE - VERIFICAR NOME E ADICIONAR SERVIÇO
+          console.log(`🔍 Cliente encontrado: ${clienteExistente.nome} | Telefone: ${clienteExistente.telefone}`);
+          
+          // Verificar se o nome confere (opcional, mas registra diferenças)
+          if (clienteExistente.nome.toLowerCase() !== clienteLimpo.toLowerCase()) {
+            console.log(`⚠️ Linha ${numeroLinha}: Nome diferente - Banco: "${clienteExistente.nome}" vs Planilha: "${clienteLimpo}"`);
+          }
+          
+          // Adicionar serviço ao histórico
+          if (!clienteExistente.historicoServicos) {
+            clienteExistente.historicoServicos = [];
+          }
+          
+          clienteExistente.historicoServicos.push(novoServico);
+          
+          // Garantir que tem unidade JSP
+          if (!clienteExistente.unidade) {
+            clienteExistente.unidade = 'JSP';
+          }
+          
+          await clienteExistente.save();
+          clientesAtualizados++;
+          servicosAdicionados++;
+          
+          sucessos.push(`✅ ${clienteExistente.nome}: ${servicoLimpo} (${profissionalLimpo})`);
+          console.log(`✅ Serviço adicionado ao cliente existente: ${clienteExistente.nome}`);
+          
+        } else {
+          // ❌ CLIENTE NÃO EXISTE - CRIAR NOVO
+          console.log(`➕ Criando novo cliente: ${clienteLimpo} | Telefone: ${telefoneLimpo}`);
+          
+          const novoCliente = new Cliente({
+            nome: clienteLimpo,
+            ddi: '+55',  // DDI padrão
+            telefone: telefoneLimpo,
+            dataNascimento: null,  // Será preenchido manualmente depois
+            unidade: 'JSP',
+            historicoServicos: [novoServico],
+            criadoEm: new Date()
+          });
+          
+          await novoCliente.save();
+          clientesNovos++;
+          servicosAdicionados++;
+          
+          sucessos.push(`➕ NOVO: ${clienteLimpo}: ${servicoLimpo} (${profissionalLimpo})`);
+          console.log(`✅ Novo cliente criado: ${clienteLimpo}`);
+        }
+        
+      } catch (error) {
+        erros.push(`Linha ${numeroLinha}: Erro ao processar - ${error.message}`);
+        console.error(`❌ Erro na linha ${numeroLinha}:`, error);
+      }
+    }
+    
+    // 🔧 RESPOSTA DETALHADA
+    const mensagem = `📊 Histórico processado! 
+${servicosAdicionados} serviços adicionados, 
+${clientesAtualizados} clientes atualizados, 
+${clientesNovos} clientes novos criados, 
+${erros.length} erros encontrados.`;
+    
+    const resultado = {
+      mensagem,
+      totalLinhas: dados.length,
+      servicosAdicionados,
+      clientesAtualizados,
+      clientesNovos,
+      totalErros: erros.length,
+      erros: erros.length > 0 ? erros : null,
+      sucessos: sucessos.length > 0 ? sucessos.slice(0, 10) : null,
+      primeiraLinhaExemplo: dados[0] ? Object.keys(dados[0]) : null
+    };
+    
+    console.log('📋 Resultado final do histórico:', resultado);
+    
+    res.json(resultado);
+    
+  } catch (error) {
+    console.error('❌ Erro geral no upload do histórico:', error);
+    res.status(500).json({ 
+      erro: 'Erro ao processar arquivo de histórico.',
       detalhes: error.message 
     });
   }

@@ -119,6 +119,86 @@
             margin-bottom: 40px;
         }
 
+        /* ✅ NOVO: Seção de Histórico de Serviços */
+        .historico-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #28a745;
+            margin-bottom: 30px;
+        }
+
+        .historico-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .historico-lista {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .servico-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 3px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .servico-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .servico-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .servico-nome {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .servico-data {
+            color: #6c757d;
+            font-size: 0.9em;
+            background: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        .servico-profissional {
+            color: #667eea;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .no-historico {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+
+        .historico-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
         .detail-item {
             background: white;
             padding: 25px;
@@ -595,7 +675,15 @@
                             <div class="detail-label">Data de Cadastro</div>
                             <div class="detail-value">${new Date(clienteAtual.criadoEm).toLocaleDateString('pt-BR')}</div>
                         </div>
+                        
+                        <div class="detail-item">
+                            <span class="detail-icon">🏢</span>
+                            <div class="detail-label">Unidade</div>
+                            <div class="detail-value">${clienteAtual.unidade || 'N/A'}</div>
+                        </div>
                     </div>
+                    
+                    ${renderizarHistoricoServicos()}
                     
                     <div class="actions-section">
                         <button class="btn btn-edit" onclick="editarCliente()">
@@ -611,6 +699,46 @@
                 </div>
             `;
         }
+
+        // ✅ NOVA FUNÇÃO: Renderizar histórico de serviços
+        function renderizarHistoricoServicos() {
+            if (!clienteAtual.historicoServicos || clienteAtual.historicoServicos.length === 0) {
+                return `
+                    <div class="historico-section">
+                        <h3>🏆 Histórico de Serviços <span class="historico-count">0</span></h3>
+                        <div class="no-historico">
+                            <p>📝 Nenhum serviço registrado ainda</p>
+                            <small>Importe o histórico através da página "Atualizar Dados"</small>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Ordenar serviços por data (mais recente primeiro)
+            const servicosOrdenados = [...clienteAtual.historicoServicos].sort((a, b) => 
+                new Date(b.dataServico) - new Date(a.dataServico)
+            );
+
+            const servicosHtml = servicosOrdenados.map(servico => `
+                <div class="servico-item">
+                    <div class="servico-header">
+                        <div class="servico-nome">${servico.servico}</div>
+                        <div class="servico-data">${new Date(servico.dataServico).toLocaleDateString('pt-BR')}</div>
+                    </div>
+                    <div class="servico-profissional">👨‍💼 ${servico.profissional}</div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="historico-section">
+                    <h3>🏆 Histórico de Serviços <span class="historico-count">${servicosOrdenados.length}</span></h3>
+                    <div class="historico-lista">
+                        ${servicosHtml}
+                    </div>
+                </div>
+            `;
+        }
+        
 
         // Mostrar erro
         function mostrarErro(mensagem) {

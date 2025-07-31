@@ -241,7 +241,41 @@
                 <button class="btn" onclick="uploadExcel()">
                     📤 Importar Dados
                 </button>
-               
+                <button class="btn-secondary btn" onclick="baixarModelo()">
+                    📥 Baixar Modelo
+                </button>
+            </div>
+
+            <!-- ✅ NOVA SEÇÃO: Upload de Histórico de Serviços -->
+            <div class="section">
+                <h2>🏆 Importar Histórico de Serviços</h2>
+                <div class="alert-info">
+                    <strong>💼 Histórico de Atendimentos:</strong> Use esta opção para importar o histórico de serviços dos clientes.
+                    <br><strong>📝 O que faz:</strong>
+                    <br>• Se o telefone existe na base → adiciona serviços ao cliente
+                    <br>• Se o telefone não existe → cria novo cliente com os serviços
+                </div>
+                
+                <div class="form-group">
+                    <label for="servicosFile">Selecione o arquivo Excel de serviços (.xlsx ou .xls):</label>
+                    <input type="file" id="servicosFile" accept=".xlsx,.xls">
+                    <div class="file-info">
+                        <strong>📋 Formato da planilha de serviços:</strong><br>
+                        • <strong>Coluna A:</strong> Serviço (ex: Corte, Barba, Escova)<br>
+                        • <strong>Coluna B:</strong> Cliente (ex: João Silva)<br>
+                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999)<br>
+                        • <strong>Coluna D:</strong> Profissional (ex: Carlos, Pedro)<br>
+                        • <strong>Coluna E:</strong> Data (ex: 15/01/2025)<br><br>
+                        <strong>⚠️ Importante:</strong> A primeira linha deve conter os cabeçalhos: Serviço, Cliente, Telefone, Profissional, Data
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="uploadServicos()">
+                    🏆 Importar Histórico
+                </button>
+                <button class="btn-secondary btn" onclick="baixarModeloServicos()">
+                    📥 Baixar Modelo Serviços
+                </button>
             </div>
 
             <!-- Seção de Cadastro Manual -->
@@ -353,7 +387,7 @@
             
             setTimeout(() => {
                 alert.remove();
-            }, 20000);
+            }, 5000);
         }
 
         // Adicionar novo cliente
@@ -525,10 +559,105 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             mostrarAlert('📥 Modelo Excel baixado com sucesso! Inclui coluna DDI', 'success', false); // Temporário
         }
 
+        // ✅ NOVA FUNÇÃO: Baixar modelo de serviços
+        function baixarModeloServicos() {
+            // Criar modelo de histórico de serviços
+            const dados = [
+                ['Serviço', 'Cliente', 'Telefone', 'Profissional', 'Data'],
+                ['Corte', 'João Silva', '(11) 99999-9999', 'Carlos', '15/01/2025'],
+                ['Barba', 'Maria Santos', '(11) 88888-8888', 'Pedro', '16/01/2025'],
+                ['Escova', 'Pedro Oliveira', '(11) 77777-7777', 'Ana', '17/01/2025'],
+                ['Corte + Barba', 'José Costa', '(11) 66666-6666', 'Carlos', '18/01/2025'],
+                ['Sobrancelha', 'Roberto Lima', '(11) 55555-5555', 'Maria', '19/01/2025']
+            ];
+            
+            // Criar planilha Excel (formato TSV)
+            const excelContent = dados.map(row => row.join('\t')).join('\n');
+            const blob = new Blob([excelContent], { 
+                type: 'application/vnd.ms-excel;charset=utf-8;' 
+            });
+            
+            // Download
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'modelo_historico_servicos.xls');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            mostrarAlert('📥 Modelo de histórico de serviços baixado com sucesso!', 'success', false);
+        }
+
         // Limpar formulário
         function limparFormulario() {
             document.getElementById('clienteForm').reset();
             document.getElementById('ddi').value = '+55'; // Recolocar valor padrão
+        }
+
+        // Upload de histórico de serviços (corrigido para enviar como 'excel')
+        async function uploadServicos() {
+            const fileInput = document.getElementById('servicosFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                mostrarAlert('Por favor, selecione um arquivo de serviços.', 'error');
+                return;
+            }
+            const tipoArquivo = file.name.toLowerCase();
+            if (!tipoArquivo.endsWith('.xlsx') && !tipoArquivo.endsWith('.xls')) {
+                mostrarAlert('Por favor, selecione apenas arquivos Excel (.xlsx ou .xls)', 'error');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('excel', file); // Corrigido para 'excel' igual ao backend
+            try {
+                mostrarAlert('📤 Processando arquivo de serviços, aguarde...', 'info');
+                const response = await fetch('/api/upload-servicos', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                const resultado = await response.json();
+                if (response.ok) {
+                    let mensagemCompleta = `🎉 ${resultado.mensagem || 'Histórico importado com sucesso!'}`;
+                    if (resultado.sucessos && resultado.sucessos.length > 0) {
+                        console.log('✅ Serviços adicionados com sucesso:', resultado.sucessos);
+                    }
+                    if (resultado.erros && resultado.erros.length > 0) {
+                        console.log('⚠️ Detalhes dos erros/avisos:', resultado.erros);
+                        if (resultado.totalErros > 0) {
+                            mensagemCompleta += `\n\n⚠️ ${resultado.totalErros} erros encontrados. Verifique o console (F12) para detalhes.`;
+                        }
+                        if (resultado.erros.length > 0) {
+                            const primeirosErros = resultado.erros.slice(0, 5);
+                            mensagemCompleta += `\n\n🔍 Principais problemas encontrados:\n${primeirosErros.join('\n')}`;
+                            if (resultado.erros.length > 5) {
+                                mensagemCompleta += `\n... e mais ${resultado.erros.length - 5} erros (veja console F12)`;
+                            }
+                        }
+                    }
+                    mostrarAlert(mensagemCompleta, 'success', true);
+                    fileInput.value = '';
+                    if (resultado.totalLinhas > 0) {
+                        setTimeout(() => {
+                            const estatisticas = `📊 RESUMO DA IMPORTAÇÃO:\n• Total de linhas: ${resultado.totalLinhas}\n• Serviços adicionados: ${resultado.servicosAdicionados || 0}\n• Clientes atualizados: ${resultado.clientesAtualizados || 0}\n• Clientes novos criados: ${resultado.clientesNovos || 0}\n• Linhas com erro: ${resultado.totalErros || 0}`;
+                            mostrarAlert(estatisticas, 'info', true);
+                        }, 1000);
+                    }
+                } else {
+                    mostrarAlert(resultado.erro || 'Erro ao processar arquivo de serviços', 'error', true);
+                    if (resultado.detalhes) {
+                        console.error('Detalhes do erro:', resultado.detalhes);
+                    }
+                }
+            } catch (error) {
+                mostrarAlert('Erro ao fazer upload do arquivo de serviços', 'error', true);
+                console.error('Erro:', error);
+            }
         }
     </script>
 </body>
