@@ -115,8 +115,16 @@
             gap: 10px;
         }
 
+        .search-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         .search-box {
-            width: 100%;
+            flex: 1;
+            min-width: 250px;
             padding: 15px 20px;
             border: 2px solid #e1e5e9;
             border-radius: 25px;
@@ -129,6 +137,34 @@
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-unidade {
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .filter-unidade:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-unidade:hover {
+            border-color: #667eea;
+        }
+
+        .filter-label {
+            color: #6c757d;
+            font-size: 14px;
+            margin-right: 8px;
+            font-weight: 500;
         }
 
         .clients-section {
@@ -268,6 +304,17 @@
             font-size: 14px;
         }
 
+        .client-unidade {
+            color: #495057;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .client-unidade.vazio {
+            color: #adb5bd;
+            font-style: italic;
+        }
+
         .checkbox-cell {
             text-align: center;
             width: 50px;
@@ -342,6 +389,16 @@
                 align-items: stretch;
             }
 
+            .search-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box,
+            .filter-unidade {
+                width: 100%;
+            }
+
             .clients-table {
                 font-size: 14px;
             }
@@ -379,8 +436,19 @@
             <!-- Busca -->
             <div class="search-section">
                 <h2>🔎 Buscar Clientes</h2>
-                <input type="text" class="search-box" id="searchBox" 
-                       placeholder="Digite o nome ou telefone do cliente...">
+                <div class="search-controls">
+                    <input type="text" class="search-box" id="searchBox" 
+                           placeholder="Digite o nome ou telefone do cliente...">
+                    
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="filter-label">Filtrar por:</span>
+                        <select class="filter-unidade" id="unidadeFilter">
+                            <option value="">Todas as Unidades</option>
+                            <option value="JSP">JSP - Jardim São Paulo</option>
+                            <option value="sem-unidade">Sem Unidade</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <!-- Lista de Clientes -->
@@ -411,11 +479,12 @@
                                 <th>Telefone</th>
                                 <th>Data de Nascimento</th>
                                 <th>Data de Cadastro</th>
+                                <th>Unidade</th>
                             </tr>
                         </thead>
                         <tbody id="clientesTableBody">
                             <tr>
-                                <td colspan="5" class="loading">
+                                <td colspan="6" class="loading">
                                     🔄 Carregando clientes...
                                 </td>
                             </tr>
@@ -428,6 +497,7 @@
 
     <script>
         let clientes = [];
+        let clientesFiltrados = [];
         let clientesSelecionados = new Set();
 
         // Carregar dados ao iniciar
@@ -441,8 +511,12 @@
         function configurarEventListeners() {
             // Busca
             document.getElementById('searchBox').addEventListener('input', function() {
-                const termo = this.value.toLowerCase();
-                filtrarClientes(termo);
+                aplicarFiltros();
+            });
+
+            // Filtro de unidade
+            document.getElementById('unidadeFilter').addEventListener('change', function() {
+                aplicarFiltros();
             });
 
             // Selecionar todos
@@ -502,14 +576,64 @@
                 }
                 
                 clientes = await response.json();
-                renderizarClientes(clientes);
+                clientesFiltrados = [...clientes];
+                renderizarClientes(clientesFiltrados);
                 atualizarEstatisticas();
+                carregarUnidadesUnicas();
             } catch (error) {
                 mostrarAlert('Erro ao carregar clientes', 'error');
                 console.error('Erro:', error);
                 document.getElementById('clientesTableBody').innerHTML = 
-                    '<tr><td colspan="5" class="no-clients"><div class="no-clients-icon">❌</div><h3>Erro ao carregar dados</h3><p>Tente recarregar a página</p></td></tr>';
+                    '<tr><td colspan="6" class="no-clients"><div class="no-clients-icon">❌</div><h3>Erro ao carregar dados</h3><p>Tente recarregar a página</p></td></tr>';
             }
+        }
+
+        // Carregar unidades únicas para o filtro
+        function carregarUnidadesUnicas() {
+            const unidadesSet = new Set();
+            clientes.forEach(cliente => {
+                if (cliente.unidade) {
+                    unidadesSet.add(cliente.unidade);
+                }
+            });
+            
+            // Se houver outras unidades além de JSP, adicionar ao select
+            const unidadeFilter = document.getElementById('unidadeFilter');
+            unidadesSet.forEach(unidade => {
+                if (unidade !== 'JSP') {
+                    const option = document.createElement('option');
+                    option.value = unidade;
+                    option.textContent = unidade;
+                    unidadeFilter.appendChild(option);
+                }
+            });
+        }
+
+        // Aplicar filtros
+        function aplicarFiltros() {
+            const termo = document.getElementById('searchBox').value.toLowerCase();
+            const unidadeFiltro = document.getElementById('unidadeFilter').value;
+            
+            clientesFiltrados = clientes.filter(cliente => {
+                // Filtro de busca
+                const matchBusca = termo === '' || 
+                    cliente.nome.toLowerCase().includes(termo) ||
+                    cliente.telefone.includes(termo);
+                
+                // Filtro de unidade
+                let matchUnidade = true;
+                if (unidadeFiltro !== '') {
+                    if (unidadeFiltro === 'sem-unidade') {
+                        matchUnidade = !cliente.unidade || cliente.unidade === '';
+                    } else {
+                        matchUnidade = cliente.unidade === unidadeFiltro;
+                    }
+                }
+                
+                return matchBusca && matchUnidade;
+            });
+            
+            renderizarClientes(clientesFiltrados);
         }
 
         // Renderizar clientes na tabela
@@ -519,10 +643,10 @@
             if (clientesParaRenderizar.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="no-clients">
+                        <td colspan="6" class="no-clients">
                             <div class="no-clients-icon">👥</div>
                             <h3>Nenhum cliente encontrado</h3>
-                            <p>Adicione clientes através da página "Atualizar Banco de Dados"</p>
+                            <p>Tente ajustar os filtros ou adicione clientes através da página "Atualizar Banco de Dados"</p>
                         </td>
                     </tr>
                 `;
@@ -556,17 +680,13 @@
                             ${new Date(cliente.criadoEm).toLocaleDateString('pt-BR')}
                         </div>
                     </td>
+                    <td>
+                        <div class="client-unidade ${!cliente.unidade ? 'vazio' : ''}">
+                            ${cliente.unidade || '-'}
+                        </div>
+                    </td>
                 </tr>
             `).join('');
-        }
-
-        // Filtrar clientes
-        function filtrarClientes(termo) {
-            const clientesFiltrados = clientes.filter(cliente => 
-                cliente.nome.toLowerCase().includes(termo) ||
-                cliente.telefone.includes(termo)
-            );
-            renderizarClientes(clientesFiltrados);
         }
 
         // Atualizar estatísticas
