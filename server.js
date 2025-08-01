@@ -168,9 +168,59 @@ adminSchema.methods.verificarSenha = async function(senhaCandidata) {
   return await bcrypt.compare(senhaCandidata, this.senha);
 };
 
+// Modelo para COMUNICAÇÕES (histórico de mensagens enviadas via WhatsApp)
+const comunicacaoSchema = new mongoose.Schema({
+  titulo: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  totalClientes: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  clientesEncontrados: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  clientesNaoEncontrados: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  clientes: [{
+    numeroOriginal: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    encontrado: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
+    clienteId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Cliente',
+      required: false
+    },
+    cliente: {
+      type: Object,
+      required: false
+    }
+  }],
+  criadoEm: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 // Criar os modelos
 const Cliente = mongoose.model('Cliente', clienteSchema);
 const Admin = mongoose.model('Admin', adminSchema);
+const Comunicacao = mongoose.model('Comunicacao', comunicacaoSchema);
 
 // ===================================
 // MIDDLEWARE DE AUTENTICAÇÃO
@@ -243,6 +293,22 @@ app.get('/cliente-detalhes', (req, res) => {
     return res.redirect('/');
   }
   res.sendFile(path.join(__dirname, 'public', 'cliente-detalhes.html'));
+});
+
+// ✅ NOVA: Página de Comunicação Clientes
+app.get('/comunicacao-clientes', (req, res) => {
+  if (!req.session.adminId) {
+    return res.redirect('/');
+  }
+  res.sendFile(path.join(__dirname, 'public', 'comunicacao-clientes.html'));
+});
+
+// ✅ NOVA: Página de Detalhes da Comunicação
+app.get('/comunicacao-detalhes', (req, res) => {
+  if (!req.session.adminId) {
+    return res.redirect('/');
+  }
+  res.sendFile(path.join(__dirname, 'public', 'comunicacao-detalhes.html'));
 });
 
 // ===================================
@@ -1140,6 +1206,206 @@ ${erros.length} erros encontrados.`;
       erro: 'Erro ao processar arquivo de histórico.',
       detalhes: error.message 
     });
+  }
+});
+
+// ===================================
+// ROTAS DA API - COMUNICAÇÕES (PROTEGIDAS)
+// ===================================
+
+// Listar todas as comunicações
+app.get('/api/comunicacoes', verificarLogin, async (req, res) => {
+  try {
+    const comunicacoes = await Comunicacao.find()
+      .sort({ criadoEm: -1 })
+      .select('-clientes'); // Não incluir dados dos clientes na listagem
+    res.json(comunicacoes);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao buscar comunicações.' });
+  }
+});
+
+// Buscar comunicação por ID (com clientes)
+app.get('/api/comunicacoes/:id', verificarLogin, async (req, res) => {
+  try {
+    const comunicacao = await Comunicacao.findById(req.params.id);
+    if (!comunicacao) {
+      return res.status(404).json({ erro: 'Comunicação não encontrada.' });
+    }
+    res.json(comunicacao);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao buscar comunicação.' });
+  }
+});
+
+// Criar nova comunicação (processar arquivo do Wasender)
+app.post('/api/comunicacoes', verificarLogin, upload.single('excel'), async (req, res) => {
+  try {
+    const { titulo } = req.body;
+    
+    if (!req.file) {
+      return res.status(400).json({ erro: 'Arquivo Excel é obrigatório.' });
+    }
+    
+    if (!titulo || titulo.trim() === '') {
+      return res.status(400).json({ erro: 'Título da comunicação é obrigatório.' });
+    }
+    
+    // Ler arquivo Excel
+    const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    
+    // Converter para JSON - pegar dados a partir da linha 2
+    const dados = XLSX.utils.sheet_to_json(worksheet); // Processa todas as linhas
+    
+    if (dados.length === 0) {
+      return res.status(400).json({ erro: 'Arquivo Excel está vazio ou não possui dados válidos.' });
+    }
+    
+    console.log(`📊 Processando comunicação "${titulo}" com ${dados.length} números...`);
+    
+    // Buscar todos os clientes para comparação
+    const todosClientes = await Cliente.find({}, 'nome telefone ddi unidade').lean();
+    console.log(`📱 Total de clientes no banco: ${todosClientes.length}`);
+    
+    let clientesEncontrados = 0;
+    let clientesNaoEncontrados = 0;
+    const clientesResultado = [];
+    
+    for (let i = 0; i < dados.length; i++) {
+      const linha = dados[i];
+      
+      // Pegar número da primeira coluna (coluna A)
+      const numeroOriginal = linha[Object.keys(linha)[0]]; // Primeira coluna
+      
+      if (!numeroOriginal || numeroOriginal.toString().trim() === '') {
+        console.log(`⚠️ Linha ${i + 2}: Número vazio, pulando`);
+        continue;
+      }
+      
+      const numeroLimpo = numeroOriginal.toString().trim();
+      console.log(`🔍 Processando número: ${numeroLimpo}`);
+      
+      // Extrair DDI e telefone do número completo
+      let ddiExtraido = '';
+      let telefoneExtraido = '';
+      
+      if (numeroLimpo.startsWith('55') && numeroLimpo.length >= 12) {
+        // Número brasileiro: 5511994338072
+        ddiExtraido = '55';
+        telefoneExtraido = numeroLimpo.slice(2); // Remove DDI 55
+      } else if (numeroLimpo.startsWith('1') && numeroLimpo.length >= 11) {
+        // Número americano: 15126354104
+        ddiExtraido = '1';
+        telefoneExtraido = numeroLimpo.slice(1); // Remove DDI 1
+      } else {
+        // Outros países - tentar detectar automaticamente
+        // Verificar DDIs comuns de 2-3 dígitos
+        const ddisComuns = ['55', '1', '44', '33', '49', '39', '34', '351', '52', '54'];
+        let encontrouDDI = false;
+        
+        for (const ddi of ddisComuns) {
+          if (numeroLimpo.startsWith(ddi)) {
+            ddiExtraido = ddi;
+            telefoneExtraido = numeroLimpo.slice(ddi.length);
+            encontrouDDI = true;
+            break;
+          }
+        }
+        
+        if (!encontrouDDI) {
+          // Assumir que é número brasileiro sem DDI ou formato desconhecido
+          ddiExtraido = '55';
+          telefoneExtraido = numeroLimpo;
+        }
+      }
+      
+      // Formatar telefone extraído
+      const telefoneFormatado = formatarTelefone(telefoneExtraido);
+      console.log(`📞 Extraído - DDI: ${ddiExtraido}, Telefone: ${telefoneFormatado}`);
+      
+      // Buscar cliente no banco de dados
+      const telefoneApenasNumeros = telefoneExtraido.replace(/\D/g, '');
+      
+      const clienteEncontrado = todosClientes.find(cliente => {
+        const clienteDDI = cliente.ddi || '55';
+        const clienteTelefoneNumeros = cliente.telefone.replace(/\D/g, '');
+        
+        // Comparar DDI + telefone (apenas números)
+        return clienteDDI === ddiExtraido && clienteTelefoneNumeros === telefoneApenasNumeros;
+      });
+      
+      if (clienteEncontrado) {
+        clientesEncontrados++;
+        clientesResultado.push({
+          numeroOriginal: numeroLimpo,
+          encontrado: true,
+          clienteId: clienteEncontrado._id,
+          cliente: clienteEncontrado
+        });
+        console.log(`✅ Cliente encontrado: ${clienteEncontrado.nome}`);
+      } else {
+        clientesNaoEncontrados++;
+        clientesResultado.push({
+          numeroOriginal: numeroLimpo,
+          encontrado: false,
+          clienteId: null,
+          cliente: null
+        });
+        console.log(`❌ Cliente não encontrado para: ${ddiExtraido} ${telefoneFormatado}`);
+      }
+    }
+    
+    // Criar comunicação no banco
+    const novaComunicacao = new Comunicacao({
+      titulo: titulo.trim(),
+      totalClientes: dados.length,
+      clientesEncontrados,
+      clientesNaoEncontrados,
+      clientes: clientesResultado
+    });
+    
+    await novaComunicacao.save();
+    
+    const taxaSucesso = Math.round((clientesEncontrados / dados.length) * 100);
+    
+    const mensagem = `✅ Comunicação "${titulo}" processada com sucesso! 
+${clientesEncontrados} clientes encontrados (${taxaSucesso}%), 
+${clientesNaoEncontrados} não encontrados.`;
+    
+    console.log(`📊 Comunicação salva - ID: ${novaComunicacao._id}`);
+    
+    res.json({
+      mensagem,
+      comunicacaoId: novaComunicacao._id,
+      totalProcessados: dados.length,
+      clientesEncontrados,
+      clientesNaoEncontrados,
+      taxaSucesso: `${taxaSucesso}%`
+    });
+    
+  } catch (error) {
+    console.error('❌ Erro ao processar comunicação:', error);
+    res.status(500).json({ 
+      erro: 'Erro ao processar comunicação.',
+      detalhes: error.message 
+    });
+  }
+});
+
+// Deletar comunicação
+app.delete('/api/comunicacoes/:id', verificarLogin, async (req, res) => {
+  try {
+    const comunicacaoDeletada = await Comunicacao.findByIdAndDelete(req.params.id);
+    
+    if (!comunicacaoDeletada) {
+      return res.status(404).json({ erro: 'Comunicação não encontrada.' });
+    }
+    
+    res.json({ mensagem: 'Comunicação deletada com sucesso.' });
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao deletar comunicação.' });
   }
 });
 
