@@ -522,6 +522,25 @@
             transform: translateY(-1px);
         }
 
+        .modal-form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .modal-form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
         .modal-footer {
             padding: 24px 32px;
             border-top: 1px solid #e2e8f0;
@@ -723,6 +742,13 @@
                     <div class="modal-form-group">
                         <label for="editDataNascimento">Data de Nascimento (Opcional):</label>
                         <input type="date" id="editDataNascimento">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editUnidade">Unidade:</label>
+                        <select id="editUnidade">
+                            <option value="">N/A (Sem Unidade)</option>
+                            <option value="JSP">JSP</option>
+                        </select>
                     </div>
                 </form>
             </div>
@@ -987,6 +1013,9 @@
                 document.getElementById('editDataNascimento').value = '';
             }
             
+            // ✅ NOVO: Preencher campo de unidade
+            document.getElementById('editUnidade').value = clienteAtual.unidade || '';
+            
             // Abrir modal
             document.getElementById('editModal').style.display = 'block';
         }
@@ -1004,10 +1033,11 @@
             const ddi = document.getElementById('editDdi').value.trim();
             const telefone = document.getElementById('editTelefone').value.trim();
             const dataNascimento = document.getElementById('editDataNascimento').value;
+            const unidade = document.getElementById('editUnidade').value;
             
             // ✅ CORREÇÃO: Data de nascimento agora é opcional na edição
             if (!nome || !ddi || !telefone) {
-                mostrarAlert('Por favor, preencha Nome, DDI e Telefone. Data de nascimento é opcional.', 'error');
+                mostrarAlert('Por favor, preencha Nome, DDI e Telefone. Data de nascimento e unidade são opcionais.', 'error');
                 return;
             }
             
@@ -1017,7 +1047,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ nome, ddi, telefone, dataNascimento })
+                    body: JSON.stringify({ nome, ddi, telefone, dataNascimento, unidade })
                 });
                 
                 if (response.status === 401) {

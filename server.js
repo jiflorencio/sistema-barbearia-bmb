@@ -500,16 +500,17 @@ app.post('/api/clientes', verificarLogin, async (req, res) => {
 // Atualizar cliente
 app.put('/api/clientes/:id', verificarLogin, async (req, res) => {
   try {
-    const { nome, ddi, telefone, dataNascimento } = req.body;
+    const { nome, ddi, telefone, dataNascimento, unidade } = req.body;
     
     // ✅ CORREÇÃO: Data de nascimento agora é opcional
     if (!nome || !ddi || !telefone) {
-      return res.status(400).json({ erro: 'Nome, DDI e telefone são obrigatórios. Data de nascimento é opcional.' });
+      return res.status(400).json({ erro: 'Nome, DDI e telefone são obrigatórios. Data de nascimento e unidade são opcionais.' });
     }
     
     // Limpar campos
     const ddiLimpo = ddi.toString().trim();
     const telefoneLimpo = telefone.toString().trim();
+    const unidadeLimpa = unidade && unidade.toString().trim() !== '' ? unidade.toString().trim() : null;
     
     // ✅ PROCESSAR DATA DE NASCIMENTO (PODE SER NULL)
     let dataConvertida = null;
@@ -560,7 +561,8 @@ app.put('/api/clientes/:id', verificarLogin, async (req, res) => {
         nome: nome.trim(),
         ddi: ddiLimpo,
         telefone: telefoneLimpo,
-        dataNascimento: dataConvertida // ✅ PODE SER NULL
+        dataNascimento: dataConvertida, // ✅ PODE SER NULL
+        unidade: unidadeLimpa // ✅ NOVO: Incluir unidade na atualização
       },
       { new: true }
     );
@@ -569,7 +571,7 @@ app.put('/api/clientes/:id', verificarLogin, async (req, res) => {
       return res.status(404).json({ erro: 'Cliente não encontrado.' });
     }
     
-    console.log(`✅ Cliente "${nome}" atualizado com sucesso`);
+    console.log(`✅ Cliente "${nome}" atualizado com sucesso (unidade: ${unidadeLimpa || 'N/A'})`);
     res.json(clienteAtualizado);
   } catch (error) {
     console.error('❌ Erro ao atualizar cliente:', error);
