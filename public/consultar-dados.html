@@ -86,6 +86,14 @@
             border-left: 4px solid #667eea;
         }
 
+        .stat-card.total-card {
+            border-left-color: #28a745;
+        }
+
+        .stat-card.unidade-card {
+            border-left-color: #667eea;
+        }
+
         .stat-number {
             font-size: 2.5em;
             font-weight: bold;
@@ -93,9 +101,166 @@
             margin-bottom: 10px;
         }
 
+        .stat-number.total-number {
+            color: #28a745;
+        }
+
         .stat-label {
             color: #6c757d;
             font-size: 0.9em;
+        }
+
+        .unidades-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .unidade-stat {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .unidade-stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .unidade-stat-label {
+            color: #6c757d;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .unidade-stat.jsp {
+            border-left: 3px solid #28a745;
+        }
+
+        .unidade-stat.sem-unidade {
+            border-left: 3px solid #ffc107;
+        }
+
+        /* ===== BARRA DE PROGRESSO ===== */
+        .progress-container {
+            display: none;
+            background: #f8f9fa;
+            border: 2px solid #dc3545;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .progress-subtitle {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 25px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #dc3545, #c82333, #721c24);
+            background-size: 200% 100%;
+            border-radius: 25px;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progressGradient 2s ease-in-out infinite;
+        }
+
+        @keyframes progressGradient {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .progress-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .progress-stat {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .progress-stat-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+
+        .progress-stat-label {
+            font-size: 0.8em;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-percentage {
+            font-size: 2em !important;
+            color: #dc3545 !important;
+        }
+
+        .progress-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #dc3545;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .search-section {
@@ -425,11 +590,53 @@
         <div class="main-content">
             <div id="alerts"></div>
 
+            <!-- ===== BARRA DE PROGRESSO ===== -->
+            <div id="progressContainer" class="progress-container">
+                <div class="progress-header">
+                    <div class="progress-title">
+                        <span class="progress-spinner"></span>
+                        <span id="progressTitle">Excluindo clientes selecionados...</span>
+                    </div>
+                    <div class="progress-subtitle" id="progressSubtitle">Aguarde enquanto processamos a exclusão</div>
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="progress-info">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value progress-percentage" id="progressPercentage">0%</div>
+                        <div class="progress-stat-label">Progresso</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressCurrent">0</div>
+                        <div class="progress-stat-label">Excluídos</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressTotal">0</div>
+                        <div class="progress-stat-label">Total</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Estatísticas -->
             <div class="stats-section">
-                <div class="stat-card">
-                    <div class="stat-number" id="totalClientes">-</div>
+                <div class="stat-card total-card">
+                    <div class="stat-number total-number" id="totalClientes">-</div>
                     <div class="stat-label">Total de Clientes Cadastrados</div>
+                    
+                    <!-- ✅ NOVO: Estatísticas por Unidade -->
+                    <div class="unidades-stats" id="unidadesStats" style="display: none;">
+                        <div class="unidade-stat jsp">
+                            <div class="unidade-stat-number" id="clientesJSP">0</div>
+                            <div class="unidade-stat-label">JSP</div>
+                        </div>
+                        <div class="unidade-stat sem-unidade">
+                            <div class="unidade-stat-number" id="clientesSemUnidade">0</div>
+                            <div class="unidade-stat-label">Sem Unidade</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -444,7 +651,7 @@
                         <span class="filter-label">Filtrar por:</span>
                         <select class="filter-unidade" id="unidadeFilter">
                             <option value="">Todas as Unidades</option>
-                            <option value="JSP">JSP - Jardim São Paulo</option>
+                            <option value="JSP">JSP</option>
                             <option value="sem-unidade">Sem Unidade</option>
                         </select>
                     </div>
@@ -691,7 +898,34 @@
 
         // Atualizar estatísticas
         function atualizarEstatisticas() {
-            document.getElementById('totalClientes').textContent = clientes.length;
+            const total = clientes.length;
+            document.getElementById('totalClientes').textContent = total;
+            
+            // ✅ NOVO: Calcular estatísticas por unidade
+            const estatisticasUnidade = {
+                JSP: 0,
+                semUnidade: 0
+            };
+            
+            clientes.forEach(cliente => {
+                if (cliente.unidade === 'JSP') {
+                    estatisticasUnidade.JSP++;
+                } else {
+                    estatisticasUnidade.semUnidade++;
+                }
+            });
+            
+            // Atualizar elementos das estatísticas
+            document.getElementById('clientesJSP').textContent = estatisticasUnidade.JSP;
+            document.getElementById('clientesSemUnidade').textContent = estatisticasUnidade.semUnidade;
+            
+            // Mostrar/ocultar seção de estatísticas por unidade
+            const unidadesStats = document.getElementById('unidadesStats');
+            if (total > 0) {
+                unidadesStats.style.display = 'grid';
+            } else {
+                unidadesStats.style.display = 'none';
+            }
         }
 
         // Toggle seleção de cliente
@@ -725,6 +959,43 @@
             selectAllCheckbox.checked = count === totalCheckboxes && count > 0;
         }
 
+        // ===== FUNÇÕES DA BARRA DE PROGRESSO =====
+        function mostrarProgresso(titulo, subtitulo = 'Aguarde enquanto processamos a exclusão') {
+            const container = document.getElementById('progressContainer');
+            const titleElement = document.getElementById('progressTitle');
+            const subtitleElement = document.getElementById('progressSubtitle');
+            
+            titleElement.textContent = titulo;
+            subtitleElement.textContent = subtitulo;
+            
+            // Reset dos valores
+            atualizarProgresso(0, 0, 0);
+            
+            container.classList.add('active');
+            
+            // Scroll suave para a barra de progresso
+            container.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+
+        function ocultarProgresso() {
+            const container = document.getElementById('progressContainer');
+            container.classList.remove('active');
+        }
+
+        function atualizarProgresso(atual, total, percentual = null) {
+            if (percentual === null && total > 0) {
+                percentual = Math.round((atual / total) * 100);
+            }
+            
+            document.getElementById('progressCurrent').textContent = atual;
+            document.getElementById('progressTotal').textContent = total;
+            document.getElementById('progressPercentage').textContent = `${percentual || 0}%`;
+            document.getElementById('progressBar').style.width = `${percentual || 0}%`;
+        }
+
         // Ver detalhes do cliente
         function verDetalhes(clienteId) {
             window.location.href = `/cliente-detalhes?id=${clienteId}`;
@@ -740,10 +1011,19 @@
             }
             
             try {
+                // ✅ NOVO: Mostrar barra de progresso
+                mostrarProgresso('🗑️ Excluindo Clientes Selecionados', 'Processando exclusões...');
+                
                 let sucessos = 0;
                 let erros = 0;
+                const clientesArray = Array.from(clientesSelecionados);
                 
-                for (const clienteId of clientesSelecionados) {
+                // Atualizar progresso inicial
+                atualizarProgresso(0, count, 0);
+                
+                for (let i = 0; i < clientesArray.length; i++) {
+                    const clienteId = clientesArray[i];
+                    
                     try {
                         const response = await fetch(`/api/clientes/${clienteId}`, {
                             method: 'DELETE'
@@ -757,7 +1037,34 @@
                     } catch (error) {
                         erros++;
                     }
+                    
+                    // ✅ NOVO: Atualizar progresso a cada exclusão
+                    const processados = i + 1;
+                    const percentual = Math.round((processados / count) * 100);
+                    atualizarProgresso(processados, count, percentual);
+                    
+                    // ✅ NOVO: Atualizar subtítulo baseado no progresso
+                    const subtitle = document.getElementById('progressSubtitle');
+                    if (percentual < 50) {
+                        subtitle.textContent = `Excluindo cliente ${processados} de ${count}...`;
+                    } else if (percentual < 90) {
+                        subtitle.textContent = `Processando exclusões... ${sucessos} concluídos`;
+                    } else {
+                        subtitle.textContent = `Finalizando exclusões...`;
+                    }
+                    
+                    // Pequena pausa para visualizar o progresso
+                    await new Promise(resolve => setTimeout(resolve, 100));
                 }
+                
+                // ✅ NOVO: Finalizar progresso
+                atualizarProgresso(count, count, 100);
+                document.getElementById('progressSubtitle').textContent = '✅ Exclusão concluída!';
+                
+                // Aguardar um pouco antes de ocultar
+                setTimeout(() => {
+                    ocultarProgresso();
+                }, 2000);
                 
                 if (sucessos > 0) {
                     mostrarAlert(`✅ ${sucessos} cliente${sucessos !== 1 ? 's' : ''} excluído${sucessos !== 1 ? 's' : ''} com sucesso!`);
@@ -772,6 +1079,7 @@
                 carregarClientes();
                 
             } catch (error) {
+                ocultarProgresso();
                 mostrarAlert('Erro de conexão', 'error');
                 console.error('Erro:', error);
             }
