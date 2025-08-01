@@ -529,8 +529,8 @@
                         <input type="tel" id="editTelefone" required>
                     </div>
                     <div class="modal-form-group">
-                        <label for="editDataNascimento">Data de Nascimento:</label>
-                        <input type="date" id="editDataNascimento" required>
+                        <label for="editDataNascimento">Data de Nascimento (Opcional):</label>
+                        <input type="date" id="editDataNascimento">
                     </div>
                 </form>
             </div>
@@ -633,14 +633,24 @@
 
             const container = document.getElementById('clienteInfo');
             
-            // Calcular idade
-            const nascimento = new Date(clienteAtual.dataNascimento);
-            const hoje = new Date();
-            let idade = hoje.getFullYear() - nascimento.getFullYear();
-            const mesAtual = hoje.getMonth();
-            const mesNascimento = nascimento.getMonth();
-            if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
-                idade--;
+            // Calcular idade (se data de nascimento for válida)
+            let idadeTexto = 'Não Informado';
+            if (clienteAtual.dataNascimento) {
+                try {
+                    const nascimento = new Date(clienteAtual.dataNascimento);
+                    if (!isNaN(nascimento.getTime())) {
+                        const hoje = new Date();
+                        let idade = hoje.getFullYear() - nascimento.getFullYear();
+                        const mesAtual = hoje.getMonth();
+                        const mesNascimento = nascimento.getMonth();
+                        if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
+                            idade--;
+                        }
+                        idadeTexto = `${nascimento.toLocaleDateString('pt-BR')} (${idade} anos)`;
+                    }
+                } catch (error) {
+                    console.warn('Erro ao processar data de nascimento:', error);
+                }
             }
 
             // Obter inicial do nome para avatar
@@ -667,7 +677,7 @@
                         <div class="detail-item">
                             <span class="detail-icon">🎂</span>
                             <div class="detail-label">Data de Nascimento</div>
-                            <div class="detail-value">${new Date(clienteAtual.dataNascimento).toLocaleDateString('pt-BR')} (${idade} anos)</div>
+                            <div class="detail-value">${idadeTexto}</div>
                         </div>
                         
                         <div class="detail-item">
@@ -762,7 +772,22 @@
             document.getElementById('editNome').value = clienteAtual.nome;
             document.getElementById('editDdi').value = clienteAtual.ddi || '+55';
             document.getElementById('editTelefone').value = clienteAtual.telefone;
-            document.getElementById('editDataNascimento').value = clienteAtual.dataNascimento.split('T')[0];
+            
+            // ✅ CORREÇÃO: Tratar data de nascimento null
+            if (clienteAtual.dataNascimento) {
+                try {
+                    const data = new Date(clienteAtual.dataNascimento);
+                    if (!isNaN(data.getTime())) {
+                        document.getElementById('editDataNascimento').value = clienteAtual.dataNascimento.split('T')[0];
+                    } else {
+                        document.getElementById('editDataNascimento').value = '';
+                    }
+                } catch (error) {
+                    document.getElementById('editDataNascimento').value = '';
+                }
+            } else {
+                document.getElementById('editDataNascimento').value = '';
+            }
             
             // Abrir modal
             document.getElementById('editModal').style.display = 'block';
@@ -782,8 +807,9 @@
             const telefone = document.getElementById('editTelefone').value.trim();
             const dataNascimento = document.getElementById('editDataNascimento').value;
             
-            if (!nome || !ddi || !telefone || !dataNascimento) {
-                mostrarAlert('Por favor, preencha todos os campos.', 'error');
+            // ✅ CORREÇÃO: Data de nascimento agora é opcional na edição
+            if (!nome || !ddi || !telefone) {
+                mostrarAlert('Por favor, preencha Nome, DDI e Telefone. Data de nascimento é opcional.', 'error');
                 return;
             }
             

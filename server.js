@@ -502,14 +502,28 @@ app.put('/api/clientes/:id', verificarLogin, async (req, res) => {
   try {
     const { nome, ddi, telefone, dataNascimento } = req.body;
     
-    // Validar dados obrigatórios
-    if (!nome || !ddi || !telefone || !dataNascimento) {
-      return res.status(400).json({ erro: 'Nome, DDI, telefone e data de nascimento são obrigatórios.' });
+    // ✅ CORREÇÃO: Data de nascimento agora é opcional
+    if (!nome || !ddi || !telefone) {
+      return res.status(400).json({ erro: 'Nome, DDI e telefone são obrigatórios. Data de nascimento é opcional.' });
     }
     
     // Limpar campos
     const ddiLimpo = ddi.toString().trim();
     const telefoneLimpo = telefone.toString().trim();
+    
+    // ✅ PROCESSAR DATA DE NASCIMENTO (PODE SER NULL)
+    let dataConvertida = null;
+    if (dataNascimento && dataNascimento.toString().trim() !== '') {
+      try {
+        dataConvertida = new Date(dataNascimento);
+        // Validar se a data é válida
+        if (isNaN(dataConvertida.getTime())) {
+          dataConvertida = null;
+        }
+      } catch (error) {
+        dataConvertida = null;
+      }
+    }
     
     // VERIFICAR SE TELEFONE JÁ EXISTE (exceto para o próprio cliente)
     const telefoneCompleto = `${ddiLimpo} ${telefoneLimpo}`;
@@ -546,7 +560,7 @@ app.put('/api/clientes/:id', verificarLogin, async (req, res) => {
         nome: nome.trim(),
         ddi: ddiLimpo,
         telefone: telefoneLimpo,
-        dataNascimento: new Date(dataNascimento)
+        dataNascimento: dataConvertida // ✅ PODE SER NULL
       },
       { new: true }
     );
@@ -706,8 +720,8 @@ app.post('/api/upload-excel', verificarLogin, upload.single('excel'), async (req
         
         console.log(`✅ Telefone "${ddiLimpo} ${telefoneLimpo}" é novo, pode adicionar`);
         
-        // 🔧 VALIDAÇÃO DE DATA MELHORADA - OPCIONAL
-        let dataConvertida = new Date('1900-01-01'); // Data padrão se não informada
+        // 🔧 VALIDAÇÃO DE DATA MELHORADA - OPCIONAL (PODE SER NULL)
+        let dataConvertida = null; // ✅ AGORA SERÁ NULL SE NÃO INFORMADA
         
         if (dataNascimento && dataNascimento.toString().trim() !== '' && dataNascimento.toString().toLowerCase() !== 'vazio') {
           try {
@@ -741,24 +755,24 @@ app.post('/api/upload-excel', verificarLogin, upload.single('excel'), async (req
             
             // Validar se a data é válida
             if (isNaN(dataConvertida.getTime())) {
-              console.log(`⚠️ Linha ${numeroLinha}: Data "${dataString}" inválida, usando data padrão`);
-              dataConvertida = new Date('1900-01-01');
+              console.log(`⚠️ Linha ${numeroLinha}: Data "${dataString}" inválida, deixando sem data de nascimento`);
+              dataConvertida = null; // ✅ NULL EM VEZ DE DATA PADRÃO
             } else {
               // Verificar se a data faz sentido
               const anoNascimento = dataConvertida.getFullYear();
               const anoAtual = new Date().getFullYear();
               if (anoNascimento < 1900 || anoNascimento > anoAtual) {
-                console.log(`⚠️ Linha ${numeroLinha}: Ano ${anoNascimento} suspeito, usando data padrão`);
-                dataConvertida = new Date('1900-01-01');
+                console.log(`⚠️ Linha ${numeroLinha}: Ano ${anoNascimento} suspeito, deixando sem data de nascimento`);
+                dataConvertida = null; // ✅ NULL EM VEZ DE DATA PADRÃO
               }
             }
             
           } catch (error) {
-            console.log(`⚠️ Linha ${numeroLinha}: Erro ao processar data "${dataNascimento}", usando data padrão`);
-            dataConvertida = new Date('1900-01-01');
+            console.log(`⚠️ Linha ${numeroLinha}: Erro ao processar data "${dataNascimento}", deixando sem data de nascimento`);
+            dataConvertida = null; // ✅ NULL EM VEZ DE DATA PADRÃO
           }
         } else {
-          console.log(`ℹ️ Linha ${numeroLinha}: Data de nascimento não informada, usando data padrão`);
+          console.log(`ℹ️ Linha ${numeroLinha}: Data de nascimento não informada, deixando como "Não Informado"`);
         }
         
         // ✅ NOVO: PROCESSAR DATA DE CADASTRO DA PLANILHA
@@ -1021,7 +1035,7 @@ app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (
             console.log(`⚠️ Linha ${numeroLinha}: Nome diferente - Banco: "${clienteExistente.nome}" vs Planilha: "${clienteLimpo}"`);
           }
           
-          // Checar se já existe serviço igual na mesma data
+          // ✅ CHECAR SE JÁ EXISTE SERVIÇO IGUAL NA MESMA DATA
           const jaTemServico = clienteExistente.historicoServicos && clienteExistente.historicoServicos.some(s =>
             s.servico.toLowerCase() === servicoLimpo.toLowerCase() &&
             new Date(s.dataServico).toISOString().split('T')[0] === dataServicoConvertida.toISOString().split('T')[0]
@@ -1030,18 +1044,19 @@ app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (
             erros.push(`Linha ${numeroLinha}: Serviço "${servicoLimpo}" já existe para o cliente "${clienteExistente.nome}" na data ${dataServicoConvertida.toISOString().split('T')[0]}`);
             continue;
           }
-
+          
           // Adicionar serviço ao histórico
           if (!clienteExistente.historicoServicos) {
             clienteExistente.historicoServicos = [];
           }
+          
           clienteExistente.historicoServicos.push(novoServico);
-
+          
           // Garantir que tem unidade JSP
           if (!clienteExistente.unidade) {
             clienteExistente.unidade = 'JSP';
           }
-
+          
           await clienteExistente.save();
           clientesAtualizados++;
           servicosAdicionados++;

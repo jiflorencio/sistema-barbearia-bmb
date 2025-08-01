@@ -672,7 +672,7 @@
                     </td>
                     <td>
                         <div class="client-date">
-                            ${new Date(cliente.dataNascimento).toLocaleDateString('pt-BR')}
+                            ${cliente.dataNascimento ? new Date(cliente.dataNascimento).toLocaleDateString('pt-BR') : 'Não Informado'}
                         </div>
                     </td>
                     <td>

@@ -181,6 +181,123 @@
             gap: 20px;
         }
 
+        /* ===== BARRA DE PROGRESSO ===== */
+        .progress-container {
+            display: none;
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .progress-subtitle {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 25px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2, #28a745);
+            background-size: 200% 100%;
+            border-radius: 25px;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progressGradient 2s ease-in-out infinite;
+        }
+
+        @keyframes progressGradient {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .progress-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .progress-stat {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .progress-stat-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+
+        .progress-stat-label {
+            font-size: 0.8em;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-percentage {
+            font-size: 2em !important;
+            color: #667eea !important;
+        }
+
+        .progress-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -217,6 +334,36 @@
 
         <div class="main-content">
             <div id="alerts"></div>
+
+            <!-- ===== BARRA DE PROGRESSO ===== -->
+            <div id="progressContainer" class="progress-container">
+                <div class="progress-header">
+                    <div class="progress-title">
+                        <span class="progress-spinner"></span>
+                        <span id="progressTitle">Processando arquivo...</span>
+                    </div>
+                    <div class="progress-subtitle" id="progressSubtitle">Aguarde enquanto processamos os dados</div>
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="progress-info">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value progress-percentage" id="progressPercentage">0%</div>
+                        <div class="progress-stat-label">Progresso</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressCurrent">0</div>
+                        <div class="progress-stat-label">Processados</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressTotal">0</div>
+                        <div class="progress-stat-label">Total</div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Seção de Upload Excel -->
             <div class="section">
@@ -317,6 +464,93 @@
 
     <script>
         let clienteEditando = null;
+        let progressInterval = null;
+
+        // ===== FUNÇÕES DA BARRA DE PROGRESSO =====
+        function mostrarProgresso(titulo, subtitulo = 'Aguarde enquanto processamos os dados') {
+            const container = document.getElementById('progressContainer');
+            const titleElement = document.getElementById('progressTitle');
+            const subtitleElement = document.getElementById('progressSubtitle');
+            
+            titleElement.textContent = titulo;
+            subtitleElement.textContent = subtitulo;
+            
+            // Reset dos valores
+            atualizarProgresso(0, 0, 0);
+            
+            container.classList.add('active');
+            
+            // Scroll suave para a barra de progresso
+            container.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+
+        function ocultarProgresso() {
+            const container = document.getElementById('progressContainer');
+            container.classList.remove('active');
+            
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        function atualizarProgresso(atual, total, percentual = null) {
+            if (percentual === null && total > 0) {
+                percentual = Math.round((atual / total) * 100);
+            }
+            
+            document.getElementById('progressCurrent').textContent = atual;
+            document.getElementById('progressTotal').textContent = total;
+            document.getElementById('progressPercentage').textContent = `${percentual || 0}%`;
+            document.getElementById('progressBar').style.width = `${percentual || 0}%`;
+        }
+
+        function simularProgressoImportacao(totalLinhas, tipoImportacao = 'clientes') {
+            let currentProgress = 0;
+            const incremento = Math.max(1, Math.ceil(totalLinhas / 50)); // Incrementa de forma suave
+            
+            progressInterval = setInterval(() => {
+                currentProgress += incremento;
+                
+                if (currentProgress >= totalLinhas) {
+                    currentProgress = totalLinhas;
+                    clearInterval(progressInterval);
+                    progressInterval = null;
+                }
+                
+                atualizarProgresso(currentProgress, totalLinhas);
+                
+                // Atualizar subtítulo com base no progresso e tipo
+                const subtitle = document.getElementById('progressSubtitle');
+                const progPercent = currentProgress / totalLinhas;
+                
+                if (tipoImportacao === 'servicos') {
+                    if (progPercent < 0.3) {
+                        subtitle.textContent = `Validando dados dos serviços...`;
+                    } else if (progPercent < 0.6) {
+                        subtitle.textContent = `Buscando clientes existentes...`;
+                    } else if (progPercent < 0.9) {
+                        subtitle.textContent = `Adicionando serviços ao histórico...`;
+                    } else {
+                        subtitle.textContent = `Finalizando importação de serviços...`;
+                    }
+                } else {
+                    if (progPercent < 0.3) {
+                        subtitle.textContent = `Lendo e validando dados...`;
+                    } else if (progPercent < 0.7) {
+                        subtitle.textContent = `Verificando duplicatas...`;
+                    } else if (progPercent < 1.0) {
+                        subtitle.textContent = `Salvando no banco de dados...`;
+                    } else {
+                        subtitle.textContent = `Processamento concluído!`;
+                    }
+                }
+                
+            }, 100); // Atualiza a cada 100ms
+        }
 
         // Verificar autenticação ao carregar
         document.addEventListener('DOMContentLoaded', function() {
@@ -425,7 +659,7 @@
             }
         }
 
-        // Upload de Excel - VERSÃO MELHORADA
+        // Upload de Excel - VERSÃO MELHORADA COM PROGRESSO
         async function uploadExcel() {
             const fileInput = document.getElementById('excelFile');
             const file = fileInput.files[0];
@@ -446,7 +680,14 @@
             formData.append('excel', file);
             
             try {
-                mostrarAlert('📤 Processando arquivo Excel, aguarde...', 'info');
+                // Mostrar barra de progresso
+                mostrarProgresso('📤 Importando Cadastro de Clientes', 'Enviando arquivo para o servidor...');
+                
+                // Simular progresso inicial (leitura do arquivo)
+                setTimeout(() => {
+                    atualizarProgresso(1, 100, 5);
+                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo Excel...';
+                }, 200);
                 
                 const response = await fetch('/api/upload-excel', {
                     method: 'POST',
@@ -454,6 +695,7 @@
                 });
                 
                 if (response.status === 401) {
+                    ocultarProgresso();
                     window.location.href = '/';
                     return;
                 }
@@ -461,6 +703,34 @@
                 const resultado = await response.json();
                 
                 if (response.ok) {
+                    // Simular progresso do processamento baseado no total de linhas
+                    if (resultado.totalLinhas > 0) {
+                        atualizarProgresso(5, 100, 10);
+                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros...`;
+                        
+                        // Simular o processamento linha por linha
+                        simularProgressoImportacao(resultado.totalLinhas, 'clientes');
+                        
+                        // Aguardar conclusão da simulação
+                        await new Promise(resolve => {
+                            const checkComplete = setInterval(() => {
+                                if (!progressInterval) {
+                                    clearInterval(checkComplete);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
+                    
+                    // Finalizar progresso
+                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
+                    document.getElementById('progressSubtitle').textContent = '✅ Importação concluída com sucesso!';
+                    
+                    // Aguardar um pouco antes de ocultar
+                    setTimeout(() => {
+                        ocultarProgresso();
+                    }, 2000);
+                    
                     // Mostrar resultado detalhado FIXO
                     let mensagemCompleta = `🎉 ${resultado.mensagem}`;
                     
@@ -513,12 +783,14 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
                         }, 1000);
                     }
                 } else {
+                    ocultarProgresso();
                     mostrarAlert(resultado.erro || 'Erro ao processar arquivo Excel', 'error', true); // FIXO
                     if (resultado.detalhes) {
                         console.error('Detalhes do erro:', resultado.detalhes);
                     }
                 }
             } catch (error) {
+                ocultarProgresso();
                 mostrarAlert('Erro ao fazer upload do arquivo', 'error', true); // FIXO
                 console.error('Erro:', error);
             }
@@ -592,7 +864,7 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             document.getElementById('ddi').value = '+55'; // Recolocar valor padrão
         }
 
-        // Upload de histórico de serviços (corrigido para enviar como 'excel')
+        // Upload de histórico de serviços - COM PROGRESSO
         async function uploadServicos() {
             const fileInput = document.getElementById('servicosFile');
             const file = fileInput.files[0];
@@ -607,18 +879,56 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             }
             const formData = new FormData();
             formData.append('excel', file); // Corrigido para 'excel' igual ao backend
+            
             try {
-                mostrarAlert('📤 Processando arquivo de serviços, aguarde...', 'info');
+                // Mostrar barra de progresso para serviços
+                mostrarProgresso('🏆 Importando Histórico de Serviços', 'Enviando arquivo para o servidor...');
+                
+                // Simular progresso inicial
+                setTimeout(() => {
+                    atualizarProgresso(1, 100, 5);
+                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo de serviços...';
+                }, 200);
+                
                 const response = await fetch('/api/upload-servicos', {
                     method: 'POST',
                     body: formData
                 });
                 if (response.status === 401) {
+                    ocultarProgresso();
                     window.location.href = '/';
                     return;
                 }
                 const resultado = await response.json();
                 if (response.ok) {
+                    // Simular progresso do processamento
+                    if (resultado.totalLinhas > 0) {
+                        atualizarProgresso(5, 100, 10);
+                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros de serviços...`;
+                        
+                        // Simular o processamento específico para serviços
+                        simularProgressoImportacao(resultado.totalLinhas, 'servicos');
+                        
+                        // Aguardar conclusão da simulação
+                        await new Promise(resolve => {
+                            const checkComplete = setInterval(() => {
+                                if (!progressInterval) {
+                                    clearInterval(checkComplete);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
+                    
+                    // Finalizar progresso
+                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
+                    document.getElementById('progressSubtitle').textContent = '✅ Importação de serviços concluída!';
+                    
+                    // Aguardar um pouco antes de ocultar
+                    setTimeout(() => {
+                        ocultarProgresso();
+                    }, 2000);
+                    
                     let mensagemCompleta = `🎉 ${resultado.mensagem || 'Histórico importado com sucesso!'}`;
                     if (resultado.sucessos && resultado.sucessos.length > 0) {
                         console.log('✅ Serviços adicionados com sucesso:', resultado.sucessos);
@@ -640,17 +950,26 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
                     fileInput.value = '';
                     if (resultado.totalLinhas > 0) {
                         setTimeout(() => {
-                            const estatisticas = `📊 RESUMO DA IMPORTAÇÃO:\n• Total de linhas: ${resultado.totalLinhas}\n• Serviços adicionados: ${resultado.servicosAdicionados || 0}\n• Clientes atualizados: ${resultado.clientesAtualizados || 0}\n• Clientes novos criados: ${resultado.clientesNovos || 0}\n• Linhas com erro: ${resultado.totalErros || 0}`;
+                            const estatisticas = `📊 RESUMO DA IMPORTAÇÃO DE SERVIÇOS:
+• Total de linhas: ${resultado.totalLinhas}
+• Serviços adicionados: ${resultado.servicosAdicionados || 0}
+• Clientes atualizados: ${resultado.clientesAtualizados || 0}
+• Clientes novos criados: ${resultado.clientesNovos || 0}
+• Linhas com erro: ${resultado.totalErros || 0}
+
+✅ IMPORTAÇÃO DE SERVIÇOS CONCLUÍDA!`;
                             mostrarAlert(estatisticas, 'info', true);
                         }, 1000);
                     }
                 } else {
+                    ocultarProgresso();
                     mostrarAlert(resultado.erro || 'Erro ao processar arquivo de serviços', 'error', true);
                     if (resultado.detalhes) {
                         console.error('Detalhes do erro:', resultado.detalhes);
                     }
                 }
             } catch (error) {
+                ocultarProgresso();
                 mostrarAlert('Erro ao fazer upload do arquivo de serviços', 'error', true);
                 console.error('Erro:', error);
             }
