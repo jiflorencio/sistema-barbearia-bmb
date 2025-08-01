@@ -1394,6 +1394,26 @@ ${clientesNaoEncontrados} não encontrados.`;
   }
 });
 
+// Buscar comunicações de um cliente específico
+app.get('/api/clientes/:id/comunicacoes', verificarLogin, async (req, res) => {
+  try {
+    const clienteId = req.params.id;
+    
+    // Buscar comunicações onde este cliente foi encontrado
+    const comunicacoes = await Comunicacao.find({
+      'clientes.clienteId': clienteId,
+      'clientes.encontrado': true
+    })
+    .sort({ criadoEm: -1 })
+    .select('titulo criadoEm totalClientes clientesEncontrados _id')
+    .limit(10); // Limitar às 10 mais recentes
+    
+    res.json(comunicacoes);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao buscar comunicações do cliente.' });
+  }
+});
+
 // Deletar comunicação
 app.delete('/api/comunicacoes/:id', verificarLogin, async (req, res) => {
   try {

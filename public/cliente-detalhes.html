@@ -86,6 +86,13 @@
             align-items: start;
         }
 
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            width: 100%;
+        }
+
         .client-info-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -234,24 +241,26 @@
 
         /* ===== SEÇÃO DE SERVIÇOS ===== */
         .services-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
         }
 
         .services-header {
-            padding: 32px 32px 24px;
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f1f5f9;
         }
 
         .services-title {
-            font-size: 1.25rem;
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #1a202c;
+            color: #1e293b;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -260,22 +269,20 @@
         .services-count {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 6px 16px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .services-content {
-            padding: 0;
-            max-height: 600px;
-            overflow-y: auto;
+            width: 100%;
         }
 
         .no-services {
-            padding: 80px 32px;
             text-align: center;
+            padding: 60px 20px;
             color: #64748b;
         }
 
@@ -297,55 +304,45 @@
         }
 
         .services-list {
-            padding: 16px 0;
+            width: 100%;
         }
 
         .service-item {
-            padding: 24px 32px;
-            border-bottom: 1px solid #f1f5f9;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
             transition: all 0.3s ease;
-            display: grid;
-            grid-template-columns: 1fr auto auto;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 20px;
-            position: relative;
-        }
-
-        .service-item:last-child {
-            border-bottom: none;
+            gap: 16px;
         }
 
         .service-item:hover {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            transform: translateX(4px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            border-color: #667eea;
         }
 
-        .service-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .service-item:hover::before {
-            opacity: 1;
+        .service-item:last-child {
+            margin-bottom: 0;
         }
 
         .service-info {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            align-items: center;
+            gap: 24px;
+            flex: 1;
         }
 
         .service-name {
             font-size: 1.1rem;
-            font-weight: 700;
+            font-weight: 600;
             color: #1e293b;
+            min-width: 150px;
         }
 
         .service-professional {
@@ -355,29 +352,17 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            min-width: 120px;
         }
 
         .service-date {
             background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
             color: #475569;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 16px;
             font-size: 0.85rem;
             font-weight: 600;
             white-space: nowrap;
-            border: 1px solid #e2e8f0;
-        }
-
-        .service-badge {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
         }
 
         .alert {
@@ -434,6 +419,120 @@
             padding: 80px 20px;
             color: #ef4444;
             font-size: 1.1rem;
+        }
+
+        /* Communications Section Styles */
+        .communications-section {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .communications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .communications-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .communications-count {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .communication-item {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .communication-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            border-color: #8b5cf6;
+        }
+
+        .communication-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .communication-header-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .communication-title-item {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .communication-date-item {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+            color: #475569;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .communication-stats-item {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .communication-stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .communication-stat-number {
+            font-weight: 600;
+            color: #8b5cf6;
+        }
+
+        .no-communications {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .no-communications-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
         }
 
         /* Modal Styles - Mais moderno */
@@ -635,6 +734,10 @@
                 gap: 20px;
             }
             
+            .right-column {
+                gap: 20px;
+            }
+            
             .client-info-card {
                 position: static;
                 padding: 24px;
@@ -652,15 +755,21 @@
             
             .service-item {
                 padding: 20px;
-                grid-template-columns: 1fr;
-                gap: 16px;
-                text-align: left;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
             }
             
-            .service-date,
-            .service-badge {
-                justify-self: start;
-                width: fit-content;
+            .service-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .service-name,
+            .service-professional {
+                min-width: unset;
             }
             
             .actions-section {
@@ -690,6 +799,12 @@
 
             .service-item {
                 padding: 16px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .service-info {
+                gap: 6px;
             }
 
             .services-header {
@@ -733,16 +848,33 @@
                 </div>
             </div>
 
-            <div class="services-section">
-                <div class="services-header">
-                    <div class="services-title" id="servicesTitle">
-                        🏆 Histórico de Serviços <span class="services-count" id="servicesCount">0</span>
+            <div class="right-column">
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-title" id="servicesTitle">
+                            🏆 Histórico de Serviços <span class="services-count" id="servicesCount">0</span>
+                        </div>
+                    </div>
+                    <div class="services-content" id="servicesContent">
+                        <div class="no-services">
+                            <div class="no-services-icon">📝</div>
+                            <p>Carregando histórico de serviços...</p>
+                        </div>
                     </div>
                 </div>
-                <div class="services-content" id="servicesContent">
-                    <div class="no-services">
-                        <div class="no-services-icon">📝</div>
-                        <p>Carregando histórico de serviços...</p>
+
+                <!-- Seção de Comunicações Recebidas -->
+                <div class="communications-section">
+                    <div class="communications-header">
+                        <div class="communications-title" id="communicationsTitle">
+                            📢 Comunicações Recebidas <span class="communications-count" id="communicationsCount">0</span>
+                        </div>
+                    </div>
+                    <div class="communications-content" id="communicationsContent">
+                        <div class="no-communications">
+                            <div class="no-communications-icon">📱</div>
+                            <p>Carregando comunicações...</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -904,6 +1036,7 @@
             verificarAutenticacao();
             obterClienteId();
             carregarDadosCliente();
+            carregarComunicacoesCliente(); // ✅ NOVA: Carregar comunicações do cliente
             
             // ✅ NOVO: Event listener para formatação automática do telefone no modal
             const telefoneInput = document.getElementById('editTelefone');
@@ -1099,7 +1232,6 @@
                         <div class="service-professional">👨‍💼 ${servico.profissional}</div>
                     </div>
                     <div class="service-date">${new Date(servico.dataServico).toLocaleDateString('pt-BR')}</div>
-                    <div class="service-badge">Concluído</div>
                 </div>
             `).join('');
 
@@ -1255,6 +1387,98 @@
                 mostrarAlert('Erro de conexão', 'error');
                 console.error('Erro:', error);
             }
+        }
+
+        // ===================================
+        // FUNÇÕES PARA COMUNICAÇÕES RECEBIDAS
+        // ===================================
+
+        // Carregar comunicações do cliente
+        async function carregarComunicacoesCliente() {
+            if (!clienteId) return;
+
+            try {
+                const response = await fetch(`/api/clientes/${clienteId}/comunicacoes`);
+                
+                if (response.ok) {
+                    const comunicacoes = await response.json();
+                    renderizarComunicacoes(comunicacoes);
+                } else {
+                    document.getElementById('communicationsContent').innerHTML = `
+                        <div class="no-communications">
+                            <div class="no-communications-icon">❌</div>
+                            <p>Erro ao carregar comunicações</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar comunicações:', error);
+                document.getElementById('communicationsContent').innerHTML = `
+                    <div class="no-communications">
+                        <div class="no-communications-icon">❌</div>
+                        <p>Erro de conexão ao carregar comunicações</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Renderizar comunicações
+        function renderizarComunicacoes(comunicacoes) {
+            const container = document.getElementById('communicationsContent');
+            const countElement = document.getElementById('communicationsCount');
+            
+            countElement.textContent = comunicacoes.length;
+
+            if (comunicacoes.length === 0) {
+                container.innerHTML = `
+                    <div class="no-communications">
+                        <div class="no-communications-icon">📭</div>
+                        <p>Este cliente ainda não recebeu nenhuma comunicação via WhatsApp</p>
+                        <small style="color: #94a3b8; margin-top: 8px; display: block;">
+                            As comunicações aparecerão aqui quando enviadas através do sistema
+                        </small>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = comunicacoes.map(comunicacao => `
+                <div class="communication-item" onclick="verDetalhesComunicacao('${comunicacao._id}')">
+                    <div class="communication-header-item">
+                        <div>
+                            <div class="communication-title-item">${comunicacao.titulo}</div>
+                        </div>
+                        <div class="communication-date-item">
+                            ${new Date(comunicacao.criadoEm).toLocaleDateString('pt-BR', { 
+                                day: '2-digit', 
+                                month: '2-digit', 
+                                year: 'numeric' 
+                            })}
+                        </div>
+                    </div>
+                    <div class="communication-stats-item">
+                        <div class="communication-stat-item">
+                            <span>👥</span>
+                            <span class="communication-stat-number">${comunicacao.totalClientes}</span>
+                            <span>total</span>
+                        </div>
+                        <div class="communication-stat-item">
+                            <span>✅</span>
+                            <span class="communication-stat-number">${comunicacao.clientesEncontrados}</span>
+                            <span>encontrados</span>
+                        </div>
+                        <div class="communication-stat-item">
+                            <span>📱</span>
+                            <span style="color: #8b5cf6; font-weight: 600;">Recebida</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Ir para detalhes da comunicação
+        function verDetalhesComunicacao(comunicacaoId) {
+            window.location.href = `/comunicacao-detalhes?id=${comunicacaoId}`;
         }
 
         // Fechar modal ao clicar fora dele
