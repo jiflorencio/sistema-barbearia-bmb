@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalhes do Cliente - Sistema Barbearia</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,56 +14,119 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
             background-attachment: fixed;
             min-height: 100vh;
-            color: #1a202c;
+            color: #ffffff;
             line-height: 1.6;
             font-size: 14px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .container {
             max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            padding: 0;
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            color: #1a202c;
-            padding: 24px 32px;
-            border-radius: 20px;
-            margin-bottom: 24px;
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.9) 0%, 
+                rgba(20, 20, 20, 0.9) 50%, 
+                rgba(0, 0, 0, 0.9) 100%);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            color: white;
+            padding: 30px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(212, 175, 55, 0.1) 0%, 
+                rgba(255, 215, 0, 0.05) 50%, 
+                rgba(212, 175, 55, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+        }
+
+        .header-info {
+            position: relative;
+            z-index: 1;
         }
 
         .header-info h1 {
             font-size: 1.75rem;
             font-weight: 700;
             margin-bottom: 4px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #d4af37, #ffd700, #d4af37);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.02em;
         }
 
         .header-info p {
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.8);
             font-size: 0.95rem;
             font-weight: 500;
         }
 
         .btn-back {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             color: white;
             padding: 12px 24px;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             cursor: pointer;
             font-size: 0.9rem;
@@ -71,12 +136,15 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+            z-index: 1;
         }
 
         .btn-back:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
         }
 
         .main-content {
@@ -84,6 +152,9 @@
             grid-template-columns: 400px 1fr;
             gap: 32px;
             align-items: start;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
         }
 
         .right-column {
@@ -94,37 +165,49 @@
         }
 
         .client-info-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 32px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             position: sticky;
             top: 20px;
+            overflow: hidden;
+        }
+
+        .client-info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
         }
 
         .client-avatar {
             width: 100px;
             height: 100px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #d4af37, #ffd700);
             border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5rem;
             font-weight: 700;
-            color: white;
+            color: #000;
             margin: 0 auto 24px;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
         }
 
         .client-name {
             text-align: center;
             font-size: 1.5rem;
             font-weight: 700;
-            color: #1a202c;
+            color: white;
             margin-bottom: 32px;
+            letter-spacing: -0.02em;
         }
 
         .client-details {
@@ -135,21 +218,24 @@
 
         .detail-item {
             padding: 16px 20px;
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border-radius: 12px;
-            border-left: 4px solid #667eea;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #d4af37;
             transition: all 0.3s ease;
         }
 
         .detail-item:hover {
-            background: #f1f5f9;
+            background: rgba(255, 255, 255, 0.08);
             transform: translateX(4px);
+            border-left-color: #ffd700;
         }
 
         .detail-label {
             font-size: 0.75rem;
             font-weight: 600;
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.7);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 6px;
@@ -158,7 +244,7 @@
         .detail-value {
             font-size: 1rem;
             font-weight: 600;
-            color: #1e293b;
+            color: white;
         }
 
         .actions-section {
@@ -181,18 +267,19 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            font-family: inherit;
+            font-family: 'Inter', sans-serif;
+            backdrop-filter: blur(10px);
         }
 
         .btn-edit {
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: linear-gradient(135deg, #22c55e, #16a34a);
             color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
         }
 
         .btn-edit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
         }
 
         .btn-delete {
@@ -207,14 +294,17 @@
         }
 
         .btn-back-list {
-            background: linear-gradient(135deg, #64748b, #475569);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
         }
 
         .btn-back-list:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(100, 116, 139, 0.4);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
         }
 
         /* ===== ESTILOS PARA BANDEIRAS =====  */
@@ -235,17 +325,30 @@
             border-radius: 3px;
             vertical-align: middle;
             margin-right: 6px;
-            border: 1px solid rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             display: inline-block;
         }
 
         /* ===== SEÇÃO DE SERVIÇOS ===== */
         .services-section {
-            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             padding: 32px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .services-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
         }
 
         .services-header {
@@ -254,26 +357,27 @@
             align-items: center;
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 2px solid #f1f5f9;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .services-title {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #1e293b;
+            color: white;
             display: flex;
             align-items: center;
             gap: 12px;
+            letter-spacing: -0.02em;
         }
 
         .services-count {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
         }
 
         .services-content {
@@ -283,7 +387,7 @@
         .no-services {
             text-align: center;
             padding: 60px 20px;
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .no-services-icon {
@@ -293,13 +397,14 @@
         }
 
         .no-services p {
+            color: white;
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 8px;
         }
 
         .no-services small {
-            color: #94a3b8;
+            color: rgba(255, 255, 255, 0.5);
             font-size: 0.9rem;
         }
 
@@ -308,12 +413,12 @@
         }
 
         .service-item {
-            background: white;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            border: 1px solid #f1f5f9;
             transition: all 0.3s ease;
             display: flex;
             justify-content: space-between;
@@ -323,8 +428,9 @@
 
         .service-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-            border-color: #667eea;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .service-item:last-child {
@@ -341,13 +447,16 @@
         .service-name {
             font-size: 1.1rem;
             font-weight: 600;
-            color: #1e293b;
+            color: white;
             min-width: 150px;
         }
 
         .service-professional {
             font-size: 0.9rem;
-            color: #667eea;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -356,13 +465,14 @@
         }
 
         .service-date {
-            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-            color: #475569;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
             padding: 6px 12px;
             border-radius: 16px;
             font-size: 0.85rem;
             font-weight: 600;
             white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .alert {
@@ -378,21 +488,21 @@
         }
 
         .alert-success {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
-            border-color: rgba(16, 185, 129, 0.3);
-            color: #065f46;
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
         }
 
         .alert-error {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            background: rgba(239, 68, 68, 0.1);
             border-color: rgba(239, 68, 68, 0.3);
-            color: #991b1b;
+            color: #ef4444;
         }
 
         .loading {
             text-align: center;
             padding: 80px 20px;
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 1.1rem;
         }
 
@@ -401,8 +511,8 @@
             display: inline-block;
             width: 40px;
             height: 40px;
-            border: 4px solid #e2e8f0;
-            border-left-color: #667eea;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: #d4af37;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 16px;
@@ -423,11 +533,24 @@
 
         /* Communications Section Styles */
         .communications-section {
-            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             padding: 32px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .communications-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #7c3aed, #8b5cf6);
         }
 
         .communications-header {
@@ -436,16 +559,17 @@
             align-items: center;
             margin-bottom: 24px;
             padding-bottom: 16px;
-            border-bottom: 2px solid #f1f5f9;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .communications-title {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #1e293b;
+            color: white;
             display: flex;
             align-items: center;
             gap: 12px;
+            letter-spacing: -0.02em;
         }
 
         .communications-count {
@@ -459,20 +583,21 @@
         }
 
         .communication-item {
-            background: white;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 16px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            border: 1px solid #f1f5f9;
             transition: all 0.3s ease;
             cursor: pointer;
         }
 
         .communication-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-            border-color: #8b5cf6;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .communication-item:last-child {
@@ -489,19 +614,20 @@
         .communication-title-item {
             font-size: 1.1rem;
             font-weight: 600;
-            color: #1e293b;
+            color: white;
             margin-bottom: 6px;
             line-height: 1.4;
         }
 
         .communication-date-item {
-            background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
-            color: #475569;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
             padding: 6px 12px;
             border-radius: 16px;
             font-size: 0.85rem;
             font-weight: 600;
             white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .communication-stats-item {
@@ -515,18 +641,21 @@
             align-items: center;
             gap: 6px;
             font-size: 0.9rem;
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .communication-stat-number {
             font-weight: 600;
-            color: #8b5cf6;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .no-communications {
             text-align: center;
             padding: 60px 20px;
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .no-communications-icon {
@@ -544,18 +673,20 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.7);
+            background-color: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(12px);
         }
 
         .modal-content {
-            background-color: white;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             margin: 5% auto;
             padding: 0;
             border-radius: 20px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
             animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             overflow: hidden;
         }
@@ -572,8 +703,8 @@
         }
 
         .modal-header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
             padding: 28px 32px;
             display: flex;
             justify-content: space-between;
@@ -588,7 +719,7 @@
         }
 
         .close {
-            color: white;
+            color: #000;
             font-size: 24px;
             font-weight: bold;
             cursor: pointer;
@@ -600,18 +731,18 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.2);
         }
 
         .close:hover {
-            background: rgba(255,255,255,0.25);
+            background: rgba(0, 0, 0, 0.25);
             transform: scale(1.1);
         }
 
         .modal-body {
             padding: 32px;
-            background: #fafbfc;
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .modal-form-group {
@@ -622,54 +753,54 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #1e293b;
+            color: white;
             font-size: 0.9rem;
         }
 
-        .modal-form-group input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: white;
-            font-family: inherit;
-        }
-
-        .modal-form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            transform: translateY(-1px);
-        }
-
+        .modal-form-group input,
         .modal-form-group select {
             width: 100%;
             padding: 14px 18px;
-            border: 2px solid #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             font-size: 1rem;
             transition: all 0.3s ease;
-            background: white;
-            font-family: inherit;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modal-form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .modal-form-group input:focus,
+        .modal-form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .modal-form-group select {
             cursor: pointer;
         }
 
-        .modal-form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            transform: translateY(-1px);
+        .modal-form-group select option {
+            background: #1a1a1a;
+            color: white;
+            padding: 10px;
         }
 
         .modal-footer {
             padding: 24px 32px;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             gap: 12px;
             justify-content: flex-end;
-            background: white;
+            background: rgba(0, 0, 0, 0.3);
         }
 
         .btn-modal {
@@ -680,49 +811,61 @@
             font-size: 0.9rem;
             font-weight: 600;
             transition: all 0.3s ease;
-            font-family: inherit;
+            font-family: 'Inter', sans-serif;
         }
 
         .btn-modal-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
         }
 
         .btn-modal-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
         }
 
         .btn-modal-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 2px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .btn-modal-secondary:hover {
-            background: #e2e8f0;
+            background: rgba(255, 255, 255, 0.15);
             transform: translateY(-1px);
         }
 
         /* Responsividade */
         @media (max-width: 1024px) {
+            .container {
+                margin: 15px;
+                border-radius: 20px;
+            }
+            
             .main-content {
                 grid-template-columns: 350px 1fr;
                 gap: 24px;
+                padding: 30px;
             }
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 16px;
+                margin: 10px;
+                border-radius: 16px;
             }
             
             .header {
-                padding: 20px;
+                padding: 24px;
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-content {
                 flex-direction: column;
                 gap: 16px;
-                text-align: center;
             }
 
             .header-info h1 {
@@ -732,6 +875,7 @@
             .main-content {
                 grid-template-columns: 1fr;
                 gap: 20px;
+                padding: 24px;
             }
             
             .right-column {
@@ -786,9 +930,27 @@
             .modal-footer {
                 padding: 20px;
             }
+
+            .services-section,
+            .communications-section {
+                padding: 24px;
+            }
         }
 
         @media (max-width: 480px) {
+            .container {
+                margin: 5px;
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
             .header-info h1 {
                 font-size: 1.25rem;
             }
@@ -828,9 +990,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-info">
-                <h1>👤 Detalhes do Cliente</h1>
-                <p>Informações completas do cliente</p>
+            <div class="header-content">
+                <img src="https://barbeariabmb.com.br/wp-content/uploads/2023/11/logomarca-colorido-fundo-preto-1.webp" 
+                     alt="BMB Barbearia" 
+                     class="logo">
+                <div class="header-info">
+                    <h1>Detalhes do Cliente</h1>
+                    <p>BMB Jd São Paulo</p>
+                </div>
             </div>
             <a href="/consultar-dados" class="btn-back">
                 ← Voltar à Lista
@@ -843,7 +1010,7 @@
             <div class="client-info-card">
                 <div id="clienteInfo">
                     <div class="loading">
-                        🔄 Carregando informações do cliente...
+                        Carregando informações do cliente...
                     </div>
                 </div>
             </div>
@@ -852,7 +1019,7 @@
                 <div class="services-section">
                     <div class="services-header">
                         <div class="services-title" id="servicesTitle">
-                            🏆 Histórico de Serviços <span class="services-count" id="servicesCount">0</span>
+                            Histórico de Serviços <span class="services-count" id="servicesCount">0</span>
                         </div>
                     </div>
                     <div class="services-content" id="servicesContent">
@@ -867,7 +1034,7 @@
                 <div class="communications-section">
                     <div class="communications-header">
                         <div class="communications-title" id="communicationsTitle">
-                            📢 Comunicações Recebidas <span class="communications-count" id="communicationsCount">0</span>
+                            Comunicações Recebidas <span class="communications-count" id="communicationsCount">0</span>
                         </div>
                     </div>
                     <div class="communications-content" id="communicationsContent">
@@ -885,7 +1052,7 @@
     <div id="editModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>✏️ Editar Cliente</h2>
+                <h2>Editar Cliente</h2>
                 <span class="close" onclick="fecharModal()">&times;</span>
             </div>
             <div class="modal-body">
@@ -920,7 +1087,7 @@
                     Cancelar
                 </button>
                 <button type="button" class="btn-modal btn-modal-primary" onclick="salvarEdicao()">
-                    💾 Salvar Alterações
+                    Salvar Alterações
                 </button>
             </div>
         </div>
@@ -1186,13 +1353,13 @@
                 
                 <div class="actions-section">
                     <button class="btn btn-edit" onclick="editarCliente()">
-                        ✏️ Editar
+                        Editar
                     </button>
                     <button class="btn btn-delete" onclick="deletarCliente()">
-                        🗑️ Excluir
+                        Excluir
                     </button>
                     <a href="/consultar-dados" class="btn btn-back-list">
-                        📋 Voltar à Lista
+                        Voltar à Lista
                     </a>
                 </div>
             `;
@@ -1229,7 +1396,7 @@
                 <div class="service-item">
                     <div class="service-info">
                         <div class="service-name">${servico.servico}</div>
-                        <div class="service-professional">👨‍💼 ${servico.profissional}</div>
+                        <div class="service-professional">Profissional: ${servico.profissional}</div>
                     </div>
                     <div class="service-date">${new Date(servico.dataServico).toLocaleDateString('pt-BR')}</div>
                 </div>
@@ -1253,7 +1420,7 @@
                     <h2>❌ ${mensagem}</h2>
                     <p>Verifique se o cliente existe ou tente novamente.</p>
                     <a href="/consultar-dados" class="btn btn-back-list" style="margin-top: 20px;">
-                        📋 Voltar à Lista
+                        Voltar à Lista
                     </a>
                 </div>
             `;
@@ -1341,7 +1508,7 @@
                 }
                 
                 if (response.ok) {
-                    mostrarAlert(`✅ Cliente "${nome}" atualizado com sucesso!`);
+                    mostrarAlert(`Cliente "${nome}" atualizado com sucesso!`);
                     fecharModal();
                     carregarDadosCliente(); // Recarregar dados
                 } else {
@@ -1373,7 +1540,7 @@
                 }
                 
                 if (response.ok) {
-                    mostrarAlert(`✅ Cliente "${clienteAtual.nome}" excluído com sucesso!`);
+                    mostrarAlert(`Cliente "${clienteAtual.nome}" excluído com sucesso!`);
                     
                     // Redirecionar para lista após 2 segundos
                     setTimeout(() => {

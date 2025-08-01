@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Barbearia - Dashboard</title>
+    <title>BMB Barbearia - Sistema Administrativo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,108 +13,200 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             padding: 20px;
+            color: #ffffff;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 215, 0, 0.1);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
             color: white;
-            padding: 30px;
+            padding: 32px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 2px solid #FFD700;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .header-info div {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .bmb-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            border: 2px solid #FFD700;
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.3);
+            display: block;
+            flex-shrink: 0;
         }
 
         .header-info h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .header-info p {
-            opacity: 0.9;
-            font-size: 1.1em;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 500;
         }
 
         .header-user {
             text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
         }
 
         .user-name {
-            font-size: 1.1em;
-            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #FFD700;
         }
 
         .btn-logout {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 8px 15px;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 5px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 14px;
-            transition: background 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
         }
 
         .btn-logout:hover {
-            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, #FFA500, #FFD700);
         }
 
         .main-content {
-            padding: 40px;
+            padding: 48px 40px;
+            background: rgba(0, 0, 0, 0.3);
         }
 
-        .welcome-section {
+        .stats-overview {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 48px;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-overview h3 {
+            color: #FFD700;
+            margin-bottom: 24px;
             text-align: center;
-            margin-bottom: 50px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
-        .welcome-section h2 {
-            color: #2c3e50;
-            font-size: 2em;
-            margin-bottom: 15px;
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
         }
 
-        .welcome-section p {
-            color: #7f8c8d;
-            font-size: 1.2em;
-            line-height: 1.6;
+        .stat-item {
+            text-align: center;
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(255, 215, 0, 0.2);
+            border-color: #FFD700;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
+            margin-top: 48px;
         }
 
         .menu-card {
-            background: linear-gradient(135deg, #f8f9fa, #ffffff);
-            border: 2px solid #e9ecef;
-            border-radius: 20px;
-            padding: 40px 30px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 165, 0, 0.02));
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 24px;
+            padding: 48px 32px;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             cursor: pointer;
             position: relative;
             overflow: hidden;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            border-color: #667eea;
+            text-decoration: none;
+            color: inherit;
         }
 
         .menu-card::before {
@@ -123,121 +216,140 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
-            transition: left 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transition: left 0.6s ease;
         }
 
         .menu-card:hover::before {
             left: 100%;
         }
 
+        .menu-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 32px 64px rgba(255, 215, 0, 0.2);
+            border-color: #FFD700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+        }
+
         .menu-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
+            font-size: 4rem;
+            margin-bottom: 24px;
             display: block;
+            filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.3));
+            transition: all 0.3s ease;
+        }
+
+        .menu-card:hover .menu-icon {
+            transform: scale(1.1);
+            filter: drop-shadow(0 8px 16px rgba(255, 215, 0, 0.5));
         }
 
         .menu-card h3 {
-            color: #2c3e50;
-            font-size: 1.5em;
-            margin-bottom: 15px;
+            color: #FFD700;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .menu-card p {
-            color: #6c757d;
-            font-size: 1em;
-            line-height: 1.5;
-            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-weight: 400;
         }
 
         .btn-menu {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 12px 25px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            padding: 14px 32px;
             border: none;
-            border-radius: 25px;
+            border-radius: 16px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
+            font-weight: 700;
+            transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn-menu:hover {
-            background: linear-gradient(135deg, #5a67d8, #667eea);
+            background: linear-gradient(135deg, #FFA500, #FFD700);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .stats-overview {
-            background: linear-gradient(135deg, #e8f4fd, #ffffff);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 40px;
-            border: 1px solid #bee5eb;
-        }
-
-        .stats-overview h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.3em;
-        }
-
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .stat-number {
-            font-size: 2.2em;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9em;
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.5);
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            
             .container {
-                margin: 10px;
-                border-radius: 10px;
+                margin: 0;
+                border-radius: 16px;
             }
             
             .header {
                 flex-direction: column;
                 text-align: center;
-                gap: 15px;
+                gap: 20px;
+                padding: 24px 20px;
+            }
+
+            .header-info {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .header-info div {
+                align-items: center;
+            }
+
+            .bmb-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .header-info h1 {
+                font-size: 1.8rem;
             }
             
             .main-content {
-                padding: 20px;
+                padding: 32px 20px;
             }
             
             .menu-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 24px;
             }
             
             .menu-card {
-                padding: 30px 20px;
+                padding: 32px 24px;
+            }
+
+            .menu-icon {
+                font-size: 3rem;
+            }
+
+            .menu-card h3 {
+                font-size: 1.4rem;
             }
             
             .quick-stats {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 16px;
+            }
+
+            .stat-item {
+                padding: 20px 16px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
             }
         }
     </style>
@@ -246,7 +358,11 @@
     <div class="container">
         <div class="header">
             <div class="header-info">
-                <h1>💈Sistema de Gestão - BMB Jardim São Paulo</h1>
+                <img src="https://barbeariabmb.com.br/wp-content/uploads/2023/11/logomarca-colorido-fundo-preto-1.webp" alt="BMB Barbearia" class="bmb-logo">
+                <div>
+                    <h1>Sistema Gestão de Clientes</h1>
+                    <p>BMB Jd São Paulo</p>
+                </div>
             </div>
             <div class="header-user">
                 <div class="user-name">👋 <span id="nomeAdmin">Admin</span> | <span id="tipoAdmin">admin</span></div>
@@ -255,11 +371,6 @@
         </div>
 
         <div class="main-content">
-            <div class="welcome-section">
-                <h2>Bem-vindo ao seu Sistema de Gestão</h2>
-                <p>Gerencie seus clientes, atualize informações e consulte dados de forma simples e eficiente.</p>
-            </div>
-
             <!-- Estatísticas Rápidas -->
             <div class="stats-overview">
                 <h3>📊 Visão Geral</h3>
