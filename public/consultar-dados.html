@@ -433,6 +433,11 @@
             text-align: center;
         }
 
+        .clients-table th:nth-child(3) {
+            width: 80px;
+            text-align: center;
+        }
+
         .clients-table td {
             padding: 15px 12px;
             border-bottom: 1px solid #e9ecef;
@@ -445,6 +450,31 @@
 
         .clients-table tr:last-child td {
             border-bottom: none;
+        }
+
+        .ddi-coluna {
+            min-width: 70px;
+            max-width: 80px;
+            text-align: center;
+            white-space: nowrap;
+            font-size: 0.9em;
+        }
+
+        .ddi-valor {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .flag-icon {
+            width: 16px;
+            height: 12px;
+            border-radius: 2px;
+            vertical-align: middle;
+            margin-right: 2px;
+            border: 1px solid rgba(0,0,0,0.1);
+            display: inline-block;
         }
 
         .client-name {
@@ -462,6 +492,20 @@
         .client-phone {
             color: #6c757d;
             font-family: 'Courier New', monospace;
+        }
+
+        .client-ddi {
+            color: #495057;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .client-ddi .country-flag {
+            font-size: 1.1em;
+            margin-right: 4px;
+            vertical-align: middle;
         }
 
         .client-date {
@@ -683,6 +727,7 @@
                             <tr>
                                 <th>☐</th>
                                 <th>Nome</th>
+                                <th>DDI</th>
                                 <th>Telefone</th>
                                 <th>Data de Nascimento</th>
                                 <th>Data de Cadastro</th>
@@ -691,7 +736,7 @@
                         </thead>
                         <tbody id="clientesTableBody">
                             <tr>
-                                <td colspan="6" class="loading">
+                                <td colspan="7" class="loading">
                                     🔄 Carregando clientes...
                                 </td>
                             </tr>
@@ -706,6 +751,102 @@
         let clientes = [];
         let clientesFiltrados = [];
         let clientesSelecionados = new Set();
+
+        // ===== FUNÇÕES DE FORMATAÇÃO DE TELEFONE =====
+        function formatarTelefone(telefone) {
+            if (!telefone) return '';
+            
+            // Remove tudo que não é número
+            const apenasNumeros = telefone.toString().replace(/\D/g, '');
+            
+            // Se tem 11 dígitos (celular com DDI)
+            if (apenasNumeros.length === 11) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+            }
+            // Se tem 10 dígitos (fixo com DDI)  
+            else if (apenasNumeros.length === 10) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+            }
+            // Se tem 9 dígitos (celular sem DDI)
+            else if (apenasNumeros.length === 9) {
+                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+            }
+            // Se tem 8 dígitos (fixo sem DDI)
+            else if (apenasNumeros.length === 8) {
+                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+            }
+            // Para outros tamanhos, retorna apenas os números
+            else {
+                return apenasNumeros;
+            }
+        }
+
+        // ===== FUNÇÃO PARA BANDEIRA DO PAÍS =====
+        function obterBandeiraPais(ddi) {
+            const bandeiras = {
+                '55': 'br', // Brasil
+                '1': 'us',   // Estados Unidos
+                '44': 'gb',  // Reino Unido
+                '33': 'fr',  // França
+                '49': 'de',  // Alemanha
+                '39': 'it',  // Itália
+                '34': 'es',  // Espanha
+                '351': 'pt', // Portugal
+                '52': 'mx',  // México
+                '54': 'ar',  // Argentina
+                '56': 'cl',  // Chile
+                '57': 'co',  // Colômbia
+                '58': 've',  // Venezuela
+                '51': 'pe',  // Peru
+                '593': 'ec', // Equador
+                '598': 'uy', // Uruguai
+                '595': 'py', // Paraguai
+                '591': 'bo', // Bolívia
+                '81': 'jp',  // Japão
+                '82': 'kr',  // Coreia do Sul
+                '86': 'cn',  // China
+                '91': 'in',  // Índia
+                '61': 'au',  // Austrália
+                '7': 'ru',   // Rússia
+                '41': 'ch',  // Suíça
+                '31': 'nl',  // Holanda
+                '32': 'be',  // Bélgica
+                '43': 'at',  // Áustria
+                '45': 'dk',  // Dinamarca
+                '46': 'se',  // Suécia
+                '47': 'no',  // Noruega
+                '358': 'fi', // Finlândia
+                '48': 'pl',  // Polônia
+                '420': 'cz', // República Tcheca
+                '421': 'sk', // Eslováquia
+                '36': 'hu',  // Hungria
+                '40': 'ro',  // Romênia
+                '359': 'bg', // Bulgária
+                '385': 'hr', // Croácia
+                '381': 'rs', // Sérvia
+                '30': 'gr',  // Grécia
+                '90': 'tr',  // Turquia
+                '972': 'il', // Israel
+                '20': 'eg',  // Egito
+                '27': 'za',  // África do Sul
+                '234': 'ng', // Nigéria
+                '254': 'ke', // Quênia
+                '65': 'sg',  // Singapura
+                '60': 'my',  // Malásia
+                '66': 'th',  // Tailândia
+                '84': 'vn',  // Vietnã
+                '62': 'id',  // Indonésia
+                '63': 'ph',  // Filipinas
+                '64': 'nz',  // Nova Zelândia
+            };
+            
+            // Remove o + se houver e converte para string
+            const ddiLimpo = ddi.toString().replace(/^\+/, '');
+            const codigoPais = bandeiras[ddiLimpo] || 'un'; // UN (genérico) se não encontrar
+            
+            // Retorna HTML da imagem da bandeira
+            return `<img src="https://flagcdn.com/w20/${codigoPais}.png" alt="Bandeira" class="flag-icon" onerror="this.style.display='none'">`;
+        }
 
         // Carregar dados ao iniciar
         document.addEventListener('DOMContentLoaded', function() {
@@ -791,7 +932,7 @@
                 mostrarAlert('Erro ao carregar clientes', 'error');
                 console.error('Erro:', error);
                 document.getElementById('clientesTableBody').innerHTML = 
-                    '<tr><td colspan="6" class="no-clients"><div class="no-clients-icon">❌</div><h3>Erro ao carregar dados</h3><p>Tente recarregar a página</p></td></tr>';
+                    '<tr><td colspan="7" class="no-clients"><div class="no-clients-icon">❌</div><h3>Erro ao carregar dados</h3><p>Tente recarregar a página</p></td></tr>';
             }
         }
 
@@ -822,10 +963,11 @@
             const unidadeFiltro = document.getElementById('unidadeFilter').value;
             
             clientesFiltrados = clientes.filter(cliente => {
-                // Filtro de busca
+                // Filtro de busca - buscar tanto no telefone original quanto formatado
                 const matchBusca = termo === '' || 
                     cliente.nome.toLowerCase().includes(termo) ||
-                    cliente.telefone.includes(termo);
+                    cliente.telefone.includes(termo) ||
+                    formatarTelefone(cliente.telefone).includes(termo);
                 
                 // Filtro de unidade
                 let matchUnidade = true;
@@ -850,7 +992,7 @@
             if (clientesParaRenderizar.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="no-clients">
+                        <td colspan="7" class="no-clients">
                             <div class="no-clients-icon">👥</div>
                             <h3>Nenhum cliente encontrado</h3>
                             <p>Tente ajustar os filtros ou adicione clientes através da página "Atualizar Banco de Dados"</p>
@@ -873,8 +1015,13 @@
                         </div>
                     </td>
                     <td>
+                        <div class="client-ddi">
+                            <div class="ddi-valor">${obterBandeiraPais(cliente.ddi || '55')}+${cliente.ddi || '55'}</div>
+                        </div>
+                    </td>
+                    <td>
                         <div class="client-phone">
-                            ${cliente.ddi || '+55'} ${cliente.telefone}
+                            ${formatarTelefone(cliente.telefone)}
                         </div>
                     </td>
                     <td>

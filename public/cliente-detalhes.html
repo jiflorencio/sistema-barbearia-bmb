@@ -210,6 +210,29 @@
             box-shadow: 0 8px 25px rgba(100, 116, 139, 0.4);
         }
 
+        /* ===== ESTILOS PARA BANDEIRAS =====  */
+        .country-flag {
+            display: inline-block;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        
+        .detail-value .country-flag {
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            border-radius: 3px;
+            vertical-align: middle;
+            margin-right: 6px;
+            border: 1px solid rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+
+        /* ===== SEÇÃO DE SERVIÇOS ===== */
         .services-section {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -677,6 +700,14 @@
                 font-size: 1.1rem;
             }
         }
+
+        .flag-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 4px;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
@@ -767,11 +798,126 @@
         let clienteAtual = null;
         let clienteId = null;
 
+        // ===== FUNÇÃO PARA BANDEIRA DO PAÍS =====
+        function obterBandeiraPais(ddi) {
+            const bandeiras = {
+                '55': 'br', // Brasil
+                '1': 'us',   // Estados Unidos
+                '44': 'gb',  // Reino Unido
+                '33': 'fr',  // França
+                '49': 'de',  // Alemanha
+                '39': 'it',  // Itália
+                '34': 'es',  // Espanha
+                '351': 'pt', // Portugal
+                '52': 'mx',  // México
+                '54': 'ar',  // Argentina
+                '56': 'cl',  // Chile
+                '57': 'co',  // Colômbia
+                '58': 've',  // Venezuela
+                '51': 'pe',  // Peru
+                '593': 'ec', // Equador
+                '598': 'uy', // Uruguai
+                '595': 'py', // Paraguai
+                '591': 'bo', // Bolívia
+                '81': 'jp',  // Japão
+                '82': 'kr',  // Coreia do Sul
+                '86': 'cn',  // China
+                '91': 'in',  // Índia
+                '61': 'au',  // Austrália
+                '7': 'ru',   // Rússia
+                '41': 'ch',  // Suíça
+                '31': 'nl',  // Holanda
+                '32': 'be',  // Bélgica
+                '43': 'at',  // Áustria
+                '45': 'dk',  // Dinamarca
+                '46': 'se',  // Suécia
+                '47': 'no',  // Noruega
+                '358': 'fi', // Finlândia
+                '48': 'pl',  // Polônia
+                '420': 'cz', // República Tcheca
+                '421': 'sk', // Eslováquia
+                '36': 'hu',  // Hungria
+                '40': 'ro',  // Romênia
+                '359': 'bg', // Bulgária
+                '385': 'hr', // Croácia
+                '381': 'rs', // Sérvia
+                '30': 'gr',  // Grécia
+                '90': 'tr',  // Turquia
+                '972': 'il', // Israel
+                '20': 'eg',  // Egito
+                '27': 'za',  // África do Sul
+                '234': 'ng', // Nigéria
+                '254': 'ke', // Quênia
+                '65': 'sg',  // Singapura
+                '60': 'my',  // Malásia
+                '66': 'th',  // Tailândia
+                '84': 'vn',  // Vietnã
+                '62': 'id',  // Indonésia
+                '63': 'ph',  // Filipinas
+                '64': 'nz',  // Nova Zelândia
+            };
+            
+            // Remove o + se houver e converte para string
+            const ddiLimpo = ddi.toString().replace(/^\+/, '');
+            const codigoPais = bandeiras[ddiLimpo] || 'un'; // UN (genérico) se não encontrar
+            
+            // Retorna HTML da imagem da bandeira
+            return `<img src="https://flagcdn.com/w20/${codigoPais}.png" alt="Bandeira" class="flag-icon" onerror="this.style.display='none'">`;
+        }
+
+        // ===== FUNÇÕES DE FORMATAÇÃO DE TELEFONE =====
+        function formatarTelefone(telefone) {
+            if (!telefone) return '';
+            
+            // Remove tudo que não é número
+            const apenasNumeros = telefone.toString().replace(/\D/g, '');
+            
+            // Se tem 11 dígitos (celular com DDD)
+            if (apenasNumeros.length === 11) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+            }
+            // Se tem 10 dígitos (fixo com DDD)  
+            else if (apenasNumeros.length === 10) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+            }
+            // Se tem 9 dígitos (celular sem DDD)
+            else if (apenasNumeros.length === 9) {
+                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+            }
+            // Se tem 8 dígitos (fixo sem DDD)
+            else if (apenasNumeros.length === 8) {
+                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+            }
+            // Para outros tamanhos, retorna apenas os números
+            else {
+                return apenasNumeros;
+            }
+        }
+
+        function aplicarMascaraTelefone(input) {
+            const valorFormatado = formatarTelefone(input.value);
+            input.value = valorFormatado;
+        }
+
         // Carregar dados ao iniciar
         document.addEventListener('DOMContentLoaded', function() {
             verificarAutenticacao();
             obterClienteId();
             carregarDadosCliente();
+            
+            // ✅ NOVO: Event listener para formatação automática do telefone no modal
+            const telefoneInput = document.getElementById('editTelefone');
+            if (telefoneInput) {
+                // Formatar enquanto digita
+                telefoneInput.addEventListener('input', function() {
+                    aplicarMascaraTelefone(this);
+                });
+                
+                // Formatar quando sai do campo
+                telefoneInput.addEventListener('blur', function() {
+                    aplicarMascaraTelefone(this);
+                });
+            }
         });
 
         // Obter ID do cliente da URL
@@ -881,12 +1027,12 @@
                 <div class="client-details">
                     <div class="detail-item">
                         <div class="detail-label">Código do País</div>
-                        <div class="detail-value">${clienteAtual.ddi || '+55'}</div>
+                        <div class="detail-value">${obterBandeiraPais(clienteAtual.ddi || '55')}+${clienteAtual.ddi || '55'}</div>
                     </div>
                     
                     <div class="detail-item">
                         <div class="detail-label">Telefone</div>
-                        <div class="detail-value">${clienteAtual.telefone}</div>
+                        <div class="detail-value">${formatarTelefone(clienteAtual.telefone)}</div>
                     </div>
                     
                     <div class="detail-item">
@@ -994,8 +1140,8 @@
             
             // Preencher campos do modal
             document.getElementById('editNome').value = clienteAtual.nome;
-            document.getElementById('editDdi').value = clienteAtual.ddi || '+55';
-            document.getElementById('editTelefone').value = clienteAtual.telefone;
+            document.getElementById('editDdi').value = clienteAtual.ddi || '55'; // ✅ SEM +
+            document.getElementById('editTelefone').value = formatarTelefone(clienteAtual.telefone); // ✅ FORMATADO
             
             // ✅ CORREÇÃO: Tratar data de nascimento null
             if (clienteAtual.dataNascimento) {
@@ -1030,10 +1176,17 @@
             if (!clienteAtual) return;
             
             const nome = document.getElementById('editNome').value.trim();
-            const ddi = document.getElementById('editDdi').value.trim();
-            const telefone = document.getElementById('editTelefone').value.trim();
+            let ddi = document.getElementById('editDdi').value.trim();
+            let telefone = document.getElementById('editTelefone').value.trim();
             const dataNascimento = document.getElementById('editDataNascimento').value;
             const unidade = document.getElementById('editUnidade').value;
+            
+            // ✅ NOVO: Limpar DDI e garantir formatação do telefone
+            ddi = ddi.replace(/^\+/, ''); // Remove + se houver
+            if (!ddi || ddi === '') {
+                ddi = '55'; // Padrão Brasil
+            }
+            telefone = formatarTelefone(telefone); // Garantir formatação
             
             // ✅ CORREÇÃO: Data de nascimento agora é opcional na edição
             if (!nome || !ddi || !telefone) {

@@ -75,7 +75,7 @@ const clienteSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    default: '+55' // DDI padrão do Brasil
+    default: '55' // DDI padrão do Brasil SEM +
   },
   telefone: {
     type: String,
@@ -446,9 +446,14 @@ app.post('/api/clientes', verificarLogin, async (req, res) => {
       return res.status(400).json({ erro: 'Nome, DDI, telefone e data de nascimento são obrigatórios.' });
     }
     
-    // Limpar campos
-    const ddiLimpo = ddi.toString().trim();
-    const telefoneLimpo = telefone.toString().trim();
+    // 🔧 CORREÇÃO: Limpar DDI removendo + se houver e definir padrão
+    let ddiLimpo = ddi.toString().trim().replace(/^\+/, ''); // Remove + do início
+    if (!ddiLimpo || ddiLimpo === '') {
+      ddiLimpo = '55'; // Padrão Brasil se vazio
+    }
+    
+    // ✅ NOVO: Formatar telefone no padrão (xx) xxxxx-xxxx
+    const telefoneLimpo = formatarTelefone(telefone.toString().trim());
     
     // VERIFICAR SE TELEFONE JÁ EXISTE (DDI + Telefone)
     const telefoneCompleto = `${ddiLimpo} ${telefoneLimpo}`;
@@ -507,9 +512,14 @@ app.put('/api/clientes/:id', verificarLogin, async (req, res) => {
       return res.status(400).json({ erro: 'Nome, DDI e telefone são obrigatórios. Data de nascimento e unidade são opcionais.' });
     }
     
-    // Limpar campos
-    const ddiLimpo = ddi.toString().trim();
-    const telefoneLimpo = telefone.toString().trim();
+    // 🔧 CORREÇÃO: Limpar DDI removendo + se houver e definir padrão
+    let ddiLimpo = ddi.toString().trim().replace(/^\+/, ''); // Remove + do início
+    if (!ddiLimpo || ddiLimpo === '') {
+      ddiLimpo = '55'; // Padrão Brasil se vazio
+    }
+    
+    // ✅ NOVO: Formatar telefone no padrão (xx) xxxxx-xxxx
+    const telefoneLimpo = formatarTelefone(telefone.toString().trim());
     const unidadeLimpa = unidade && unidade.toString().trim() !== '' ? unidade.toString().trim() : null;
     
     // ✅ PROCESSAR DATA DE NASCIMENTO (PODE SER NULL)
@@ -641,9 +651,9 @@ app.post('/api/upload-excel', verificarLogin, upload.single('excel'), async (req
                     linha['Nome Completo'] || linha.name || linha.Name || 
                     linha['NOME COMPLETO'] || linha['Nome completo'] || null;
         
-        // Buscar DDI (com valor padrão)
+        // Buscar DDI (com valor padrão SEM +)
         const ddi = linha.DDI || linha.ddi || linha['Código País'] || 
-                   linha['CODIGO PAIS'] || linha.country_code || '+55';
+                   linha['CODIGO PAIS'] || linha.country_code || '55';
         
         // Buscar telefone
         const telefone = linha.Telefone || linha.telefone || linha.TELEFONE || 
@@ -679,10 +689,17 @@ app.post('/api/upload-excel', verificarLogin, upload.single('excel'), async (req
           continue;
         }
         
-        // 🔧 LIMPEZA E VALIDAÇÃO MELHORADA
+        // 🔧 LIMPEZA E VALIDAÇÃO MELHORADA DO DDI
         const nomeLimpo = nome ? nome.toString().trim() : 'Cliente sem nome'; // ✅ PADRÃO se vazio
-        const ddiLimpo = ddi ? ddi.toString().trim() : '+55'; // ✅ PADRÃO se vazio
-        const telefoneLimpo = telefone.toString().trim();
+        let ddiLimpo = ddi ? ddi.toString().trim() : '55'; // ✅ PADRÃO se vazio
+        // 🔧 REMOVER + DO DDI SE HOUVER
+        ddiLimpo = ddiLimpo.replace(/^\+/, ''); // Remove + do início
+        if (!ddiLimpo || ddiLimpo === '') {
+          ddiLimpo = '55'; // Padrão Brasil se ficar vazio
+        }
+        
+        // ✅ NOVO: Formatar telefone no padrão (xx) xxxxx-xxxx
+        const telefoneLimpo = formatarTelefone(telefone.toString().trim());
         
         // Validar tamanho mínimo do telefone
         const telefoneApenasNumeros = telefoneLimpo.replace(/\D/g, '');
@@ -969,8 +986,8 @@ app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (
           continue;
         }
         
-        // 🔧 LIMPEZA DOS DADOS
-        const telefoneLimpo = telefone.toString().trim();
+        // 🔧 LIMPEZA DOS DADOS COM FORMATAÇÃO DE TELEFONE
+        const telefoneLimpo = formatarTelefone(telefone.toString().trim()); // ✅ FORMATADO
         const servicoLimpo = servico.toString().trim();
         const profissionalLimpo = profissional.toString().trim();
         const clienteLimpo = cliente ? cliente.toString().trim() : 'Cliente';
@@ -1072,8 +1089,8 @@ app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (
           
           const novoCliente = new Cliente({
             nome: clienteLimpo,
-            ddi: '+55',  // DDI padrão
-            telefone: telefoneLimpo,
+            ddi: '55',  // DDI padrão SEM +
+            telefone: telefoneLimpo, // ✅ JÁ FORMATADO
             dataNascimento: null,  // Será preenchido manualmente depois
             unidade: 'JSP',
             historicoServicos: [novoServico],
@@ -1148,6 +1165,37 @@ async function criarAdminInicial() {
     }
   } catch (error) {
     console.log('Erro ao criar admin inicial:', error);
+  }
+}
+
+// ===================================
+// FUNÇÃO AUXILIAR: FORMATAÇÃO DE TELEFONE
+// ===================================
+function formatarTelefone(telefone) {
+  if (!telefone) return '';
+  
+  // Remove tudo que não é número
+  const apenasNumeros = telefone.toString().replace(/\D/g, '');
+  
+  // Se tem 11 dígitos (celular com DDD)
+  if (apenasNumeros.length === 11) {
+    return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+  }
+  // Se tem 10 dígitos (fixo com DDD)  
+  else if (apenasNumeros.length === 10) {
+    return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+  }
+  // Se tem 9 dígitos (celular sem DDD)
+  else if (apenasNumeros.length === 9) {
+    return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+  }
+  // Se tem 8 dígitos (fixo sem DDD)
+  else if (apenasNumeros.length === 8) {
+    return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+  }
+  // Para outros tamanhos, retorna apenas os números
+  else {
+    return apenasNumeros;
   }
 }
 

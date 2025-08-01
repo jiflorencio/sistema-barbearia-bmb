@@ -378,9 +378,10 @@
                     <div class="file-info">
                         <strong>📋 Formato da planilha:</strong><br>
                         • <strong>Coluna A:</strong> Nome (ex: João Silva)<br>
-                        • <strong>Coluna B:</strong> DDI (ex: +55)<br>
-                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999)<br>
+                        • <strong>Coluna B:</strong> DDI (ex: 55)<br>
+                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999 ou 11999999999)<br>
                         • <strong>Coluna D:</strong> Data de Nascimento (ex: 15/05/1990)<br><br>
+                        <strong>📞 Telefone:</strong> Pode vir formatado (11) 99999-9999 ou apenas números 11999999999. Será automaticamente formatado no padrão (xx) xxxxx-xxxx<br>
                         <strong>⚠️ Importante:</strong> A primeira linha deve conter os cabeçalhos: Nome, DDI, Telefone, Data de Nascimento
                     </div>
                 </div>
@@ -408,9 +409,10 @@
                         <strong>📋 Formato da planilha de serviços:</strong><br>
                         • <strong>Coluna A:</strong> Serviço (ex: Corte, Barba, Escova)<br>
                         • <strong>Coluna B:</strong> Cliente (ex: João Silva)<br>
-                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999)<br>
+                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999 ou 11999999999)<br>
                         • <strong>Coluna D:</strong> Profissional (ex: Carlos, Pedro)<br>
                         • <strong>Coluna E:</strong> Data (ex: 15/01/2025)<br><br>
+                        <strong>📞 Telefone:</strong> Pode vir formatado (11) 99999-9999 ou apenas números 11999999999. Será automaticamente formatado no padrão (xx) xxxxx-xxxx<br>
                         <strong>⚠️ Importante:</strong> A primeira linha deve conter os cabeçalhos: Serviço, Cliente, Telefone, Profissional, Data
                     </div>
                 </div>
@@ -437,7 +439,7 @@
                         
                         <div class="form-group">
                             <label for="ddi">DDI (Código do País):</label>
-                            <input type="text" id="ddi" required placeholder="Ex: +55" value="+55">
+                            <input type="text" id="ddi" required placeholder="Ex: 55" value="55">
                         </div>
                         
                         <div class="form-group">
@@ -465,6 +467,40 @@
     <script>
         let clienteEditando = null;
         let progressInterval = null;
+
+        // ===== FUNÇÕES DE FORMATAÇÃO DE TELEFONE =====
+        function formatarTelefone(telefone) {
+            if (!telefone) return '';
+            
+            // Remove tudo que não é número
+            const apenasNumeros = telefone.toString().replace(/\D/g, '');
+            
+            // Se tem 11 dígitos (celular com DDD)
+            if (apenasNumeros.length === 11) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+            }
+            // Se tem 10 dígitos (fixo com DDD)  
+            else if (apenasNumeros.length === 10) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+            }
+            // Se tem 9 dígitos (celular sem DDD)
+            else if (apenasNumeros.length === 9) {
+                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+            }
+            // Se tem 8 dígitos (fixo sem DDD)
+            else if (apenasNumeros.length === 8) {
+                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+            }
+            // Para outros tamanhos, retorna apenas os números
+            else {
+                return apenasNumeros;
+            }
+        }
+
+        function aplicarMascaraTelefone(input) {
+            const valorFormatado = formatarTelefone(input.value);
+            input.value = valorFormatado;
+        }
 
         // ===== FUNÇÕES DA BARRA DE PROGRESSO =====
         function mostrarProgresso(titulo, subtitulo = 'Aguarde enquanto processamos os dados') {
@@ -588,6 +624,20 @@
                 e.preventDefault();
                 adicionarCliente();
             });
+            
+            // ✅ NOVO: Event listener para formatação automática do telefone
+            const telefoneInput = document.getElementById('telefone');
+            if (telefoneInput) {
+                // Formatar enquanto digita
+                telefoneInput.addEventListener('input', function() {
+                    aplicarMascaraTelefone(this);
+                });
+                
+                // Formatar quando sai do campo
+                telefoneInput.addEventListener('blur', function() {
+                    aplicarMascaraTelefone(this);
+                });
+            }
         });
 
         // Verificar autenticação
@@ -623,9 +673,18 @@
         // Adicionar novo cliente
         async function adicionarCliente() {
             const nome = document.getElementById('nome').value.trim();
-            const ddi = document.getElementById('ddi').value.trim();
-            const telefone = document.getElementById('telefone').value.trim();
+            let ddi = document.getElementById('ddi').value.trim();
+            let telefone = document.getElementById('telefone').value.trim();
             const dataNascimento = document.getElementById('dataNascimento').value;
+            
+            // 🔧 CORREÇÃO: Limpar DDI removendo + se houver
+            ddi = ddi.replace(/^\+/, ''); // Remove + do início se existir
+            if (!ddi || ddi === '') {
+                ddi = '55'; // Padrão Brasil se vazio
+            }
+            
+            // ✅ NOVO: Garantir que o telefone está formatado antes de enviar
+            telefone = formatarTelefone(telefone);
             
             if (!nome || !ddi || !telefone || !dataNascimento) {
                 mostrarAlert('Por favor, preencha todos os campos.', 'error', false); // Temporário
@@ -798,14 +857,14 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
 
         // Baixar modelo de Excel (REAL XLSX)
         function baixarModelo() {
-            // Criar uma planilha Excel real
+            // Criar modelo de Excel real
             const dados = [
                 ['Nome', 'DDI', 'Telefone', 'Data de Nascimento'],
-                ['João Silva', '+55', '(11) 99999-9999', '15/05/1990'],
-                ['Maria Santos', '+55', '(11) 88888-8888', '22/08/1985'],
-                ['Pedro Oliveira', '+55', '(11) 77777-7777', '10/12/1992'],
-                ['Ana Costa', '+55', '(11) 66666-6666', '03/03/1988'],
-                ['Carlos Mendes', '+1', '(555) 123-4567', '18/11/1995']
+                ['João Silva', '55', '(11) 99999-9999', '15/05/1990'],
+                ['Maria Santos', '55', '(11) 88888-8888', '22/08/1985'],
+                ['Pedro Oliveira', '55', '(11) 77777-7777', '10/12/1992'],
+                ['Ana Costa', '55', '(11) 66666-6666', '03/03/1988'],
+                ['Carlos Mendes', '1', '(555) 123-4567', '18/11/1995']
             ];
             
             // Criar planilha Excel manualmente (formato TSV para Excel)
@@ -824,7 +883,7 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             link.click();
             document.body.removeChild(link);
             
-            mostrarAlert('📥 Modelo Excel baixado com sucesso! Inclui coluna DDI', 'success', false); // Temporário
+            mostrarAlert('📥 Modelo Excel baixado com sucesso! DDI apenas com números (ex: 55)', 'success', false); // Temporário
         }
 
         // ✅ NOVA FUNÇÃO: Baixar modelo de serviços
@@ -861,7 +920,7 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
         // Limpar formulário
         function limparFormulario() {
             document.getElementById('clienteForm').reset();
-            document.getElementById('ddi').value = '+55'; // Recolocar valor padrão
+            document.getElementById('ddi').value = '55'; // Recolocar valor padrão SEM +
         }
 
         // Upload de histórico de serviços - COM PROGRESSO
