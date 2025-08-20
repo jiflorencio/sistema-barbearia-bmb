@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atualizar Dados - Barbearia BMB</title>
+    <title>BMB Barbearia - Atualizar Dados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,1125 +13,1147 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: #fff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            background-attachment: fixed;
             min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            overflow: hidden;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            color: white;
+            padding: 32px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #FFD700;
+            position: relative;
         }
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
+        .header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bmb-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            border: 2px solid #FFD700;
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.3);
+            display: block;
+            flex-shrink: 0;
+        }
+
+        .header-info h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .main-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
+        .header-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 500;
         }
 
-        .box {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
-        }
-
-        .box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            animation: shine 4s infinite;
-        }
-
-        @keyframes shine {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .box h2 {
-            margin-bottom: 20px;
-            color: #ffd700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.4em;
-            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
-            padding-bottom: 10px;
-        }
-
-        /* Status Cards */
-        .status-card {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .status-card.warning {
-            background: linear-gradient(45deg, #ff6b35, #f7931e);
-        }
-
-        .status-card.info {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-        }
-
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .status-item {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .status-item .label {
-            font-size: 0.8em;
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
-
-        .status-item .value {
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-
-        /* Alerts */
-        .alert {
-            padding: 12px;
-            border-radius: 8px;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9em;
-        }
-
-        .alert.warning {
-            background: linear-gradient(45deg, #ff6b35, #f7931e);
-            animation: pulse 2s infinite;
-        }
-
-        .alert.info {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-        }
-
-        .alert.success {
-            background: linear-gradient(45deg, #27ae60, #2ecc71);
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        /* Buttons */
-        .btn {
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
-            color: #333;
+        .btn-back {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            padding: 12px 24px;
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 600;
             transition: all 0.3s ease;
-            margin: 5px;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.9em;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, #FFA500, #FFD700);
+        }
+
+        .main-content {
+            padding: 48px 40px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .section {
+            margin-bottom: 48px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 165, 0, 0.02));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .section h2 {
+            color: #FFD700;
+            margin-bottom: 24px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #FFD700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"], input[type="tel"], input[type="date"], input[type="file"] {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, input[type="tel"]:focus, input[type="date"]:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        input[type="text"]::placeholder, input[type="tel"]::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        input[type="file"] {
+            padding: 16px;
+            border-style: dashed;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            margin-right: 16px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, #FFA500, #FFD700);
         }
 
-        .btn.secondary {
-            background: linear-gradient(45deg, #6c757d, #495057);
-            color: white;
+        .btn-secondary {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            color: #ffffff;
+            border: 2px solid rgba(255, 215, 0, 0.3);
         }
 
-        .btn.danger {
-            background: linear-gradient(45deg, #dc3545, #c82333);
-            color: white;
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            border-color: #FFD700;
         }
 
-        .btn.success {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
+        .alert {
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            white-space: pre-line;
         }
 
-        /* Forms */
-        .form-group {
-            margin-bottom: 15px;
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #ffd700;
-            font-weight: bold;
+        .alert-error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
         }
 
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-size: 0.9em;
+        .alert-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
         }
 
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        /* Upload Areas */
-        .upload-area {
-            border: 2px dashed #ffd700;
+        .file-info {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
             padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            background: rgba(255, 215, 0, 0.05);
-            transition: all 0.3s ease;
-            cursor: pointer;
+            margin-top: 16px;
+            color: #FFD700;
+            font-size: 14px;
+            font-weight: 500;
         }
 
-        .upload-area:hover {
-            background: rgba(255, 215, 0, 0.1);
-            border-color: #ffed4e;
-        }
-
-        .upload-area.dragover {
-            background: rgba(255, 215, 0, 0.2);
-            transform: scale(1.02);
-        }
-
-        /* Charts */
-        .mini-chart {
-            height: 100px;
-            display: flex;
-            align-items: end;
-            gap: 5px;
-            padding: 10px 0;
-            margin: 10px 0;
-        }
-
-        .chart-bar {
-            flex: 1;
-            background: linear-gradient(to top, #ffd700, #ffed4e);
-            border-radius: 2px 2px 0 0;
-            position: relative;
-            transition: all 0.3s ease;
-            min-height: 10px;
-        }
-
-        .chart-bar:hover {
-            filter: brightness(1.2);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            margin: 3% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 95%;
-            max-width: 900px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .close {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #ffd700;
-        }
-
-        /* Preview Areas */
-        .preview-area {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            display: none;
-        }
-
-        .preview-stats {
+        .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
         }
 
-        .preview-stat {
-            text-align: center;
-            padding: 8px;
-            background: rgba(255, 215, 0, 0.1);
-            border-radius: 6px;
-            font-size: 0.8em;
-        }
-
-        /* Quick Stats */
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .quick-stat {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border-left: 4px solid #ffd700;
-        }
-
-        .quick-stat .number {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #ffd700;
-        }
-
-        .quick-stat .label {
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .status-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .quick-stats {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.6s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .bounce {
-            animation: bounce 1s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-8px); }
-            60% { transform: translateY(-4px); }
-        }
-
-        /* Additional Styles */
-        .success-message {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
+        /* ===== BARRA DE PROGRESSO ===== */
+        .progress-container {
             display: none;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            backdrop-filter: blur(10px);
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            padding: 32px;
+            margin: 32px 0;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .progress-bar-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 25px;
+            height: 24px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 215, 0, 0.2);
         }
 
         .progress-bar {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-            height: 20px;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
             height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+            background-size: 200% 100%;
+            border-radius: 25px;
             width: 0%;
             transition: width 0.3s ease;
+            animation: progressGradient 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        @keyframes progressGradient {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .progress-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .progress-stat {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-percentage {
+            font-size: 2.5rem !important;
+            color: #FFD700 !important;
+        }
+
+        .progress-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            
+            .container {
+                margin: 0;
+                border-radius: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+                padding: 24px 20px;
+            }
+
+            .header-info {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .bmb-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .header-info h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                padding: 32px 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-info {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .btn {
+                width: 100%;
+                margin-right: 0;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header fade-in">
-            <h1>🏆 Sistema de Gestão BMB</h1>
-            <p>Atualização e Controle de Dados Completo</p>
-            <div class="quick-stats">
-                <div class="quick-stat">
-                    <div class="number" id="totalCadastros">1.247</div>
-                    <div class="label">Total Cadastros</div>
-                </div>
-                <div class="quick-stat">
-                    <div class="number" id="totalMovimentos">2.856</div>
-                    <div class="label">Movimentos</div>
-                </div>
-                <div class="quick-stat">
-                    <div class="number" id="cadastrosHoje">12</div>
-                    <div class="label">Hoje</div>
+        <div class="header">
+            <div class="header-info">
+                <img src="https://barbeariabmb.com.br/wp-content/uploads/2023/11/logomarca-colorido-fundo-preto-1.webp" alt="BMB Barbearia" class="bmb-logo">
+                <div>
+                    <h1>Atualizar Banco de Dados</h1>
+                    <p>BMB Jd São Paulo</p>
                 </div>
             </div>
+            <a href="/dashboard" class="btn-back">
+                ← Voltar ao Dashboard
+            </a>
         </div>
 
-        <!-- Main Grid -->
-        <div class="main-grid">
-            
-            <!-- 1. IMPORTAR CADASTRO -->
-            <div class="box fade-in">
+        <div class="main-content">
+            <div id="alerts"></div>
+
+            <!-- ===== BARRA DE PROGRESSO ===== -->
+            <div id="progressContainer" class="progress-container">
+                <div class="progress-header">
+                    <div class="progress-title">
+                        <span class="progress-spinner"></span>
+                        <span id="progressTitle">Processando arquivo...</span>
+                    </div>
+                    <div class="progress-subtitle" id="progressSubtitle">Aguarde enquanto processamos os dados</div>
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="progress-info">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value progress-percentage" id="progressPercentage">0%</div>
+                        <div class="progress-stat-label">Progresso</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressCurrent">0</div>
+                        <div class="progress-stat-label">Processados</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressTotal">0</div>
+                        <div class="progress-stat-label">Total</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Upload Excel -->
+            <div class="section">
                 <h2>📁 Importar Cadastro</h2>
+                <div class="alert-info">
+                    <strong>💡 Dica:</strong> Use esta opção para importar vários clientes de uma vez através de uma planilha Excel.
+                </div>
                 
-                <!-- Status do Cadastro -->
-                <div class="status-card">
-                    <h4>📊 Status do Cadastro Principal</h4>
-                    <div class="status-grid">
-                        <div class="status-item">
-                            <div class="label">📅 Última Importação</div>
-                            <div class="value" id="lastCadastroDate">10/08/2025</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">📊 Total Registros</div>
-                            <div class="value" id="totalRegistros">1.247</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">⏱️ Há quanto tempo</div>
-                            <div class="value" id="cadastroTimeSince">5 dias</div>
-                        </div>
-                    </div>
-                    
-                    <div class="alert warning">
-                        <span>⚠️</span>
-                        <span>Base de cadastro desatualizada! Importe novos dados.</span>
+                <div class="form-group">
+                    <label for="excelFile">Selecione o arquivo Excel (.xlsx ou .xls):</label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls">
+                    <div class="file-info">
+                        <strong>📋 Formato da planilha:</strong><br>
+                        • <strong>Coluna A:</strong> Nome (ex: João Silva)<br>
+                        • <strong>Coluna B:</strong> DDI (ex: 55)<br>
+                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999 ou 11999999999)<br>
+                        • <strong>Coluna D:</strong> Data de Nascimento (ex: 15/05/1990)<br><br>
+                        <strong>📞 Telefone:</strong> Pode vir formatado (11) 99999-9999 ou apenas números 11999999999. Será automaticamente formatado no padrão (xx) xxxxx-xxxx<br>
+                        <strong>⚠️ Importante:</strong> A primeira linha deve conter os cabeçalhos: Nome, DDI, Telefone, Data de Nascimento
                     </div>
                 </div>
-
-                <!-- Upload de Cadastro -->
-                <div class="upload-area" id="cadastroUpload" onclick="document.getElementById('fileCadastro').click()">
-                    <div style="font-size: 2em; margin-bottom: 10px;">📁</div>
-                    <div><strong>Clique ou arraste o arquivo de cadastro</strong></div>
-                    <div style="font-size: 0.8em; opacity: 0.7;">Formatos: .xlsx, .xls, .csv</div>
-                </div>
-                <input type="file" id="fileCadastro" accept=".xlsx,.xls,.csv" style="display: none;" onchange="handleCadastroFile(this)">
-
-                <!-- Preview Cadastro -->
-                <div class="preview-area" id="cadastroPreview">
-                    <h4>🔍 Análise do Arquivo de Cadastro</h4>
-                    <p>Arquivo: <strong id="cadastroFileName">cadastros_agosto.xlsx</strong></p>
-                    <div class="preview-stats">
-                        <div class="preview-stat">
-                            <div>👥 Novos</div>
-                            <div style="color: #28a745;">156</div>
-                        </div>
-                        <div class="preview-stat">
-                            <div>🔄 Atualizações</div>
-                            <div style="color: #ffc107;">23</div>
-                        </div>
-                        <div class="preview-stat">
-                            <div>⚠️ Duplicados</div>
-                            <div style="color: #dc3545;">7</div>
-                        </div>
-                        <div class="preview-stat">
-                            <div>✅ Válidos</div>
-                            <div style="color: #17a2b8;">172</div>
-                        </div>
-                    </div>
-                    <button class="btn success" onclick="processCadastro()">🚀 Importar Cadastro</button>
-                </div>
-
-                <!-- Ações -->
-                <div style="margin-top: 15px;">
-                    <button class="btn" onclick="openCadastroHistory()">📋 Histórico</button>
-                    <button class="btn secondary" onclick="validateCadastro()">✅ Validar</button>
-                    <button class="btn secondary" onclick="exportCadastro()">💾 Exportar</button>
-                </div>
-
-                <!-- Mini Chart -->
-                <div style="margin-top: 15px;">
-                    <h5>📈 Evolução de Cadastros</h5>
-                    <div class="mini-chart">
-                        <div class="chart-bar" style="height: 40%;"></div>
-                        <div class="chart-bar" style="height: 60%;"></div>
-                        <div class="chart-bar" style="height: 80%;"></div>
-                        <div class="chart-bar" style="height: 90%;"></div>
-                        <div class="chart-bar" style="height: 100%;"></div>
-                        <div class="chart-bar" style="height: 75%;"></div>
-                    </div>
-                </div>
+                
+                <button class="btn" onclick="uploadExcel()">
+                    📤 Importar Cadastro
+                </button>
+                
             </div>
 
-            <!-- 2. IMPORTAR/ATUALIZAR MOVIMENTO -->
-            <div class="box fade-in">
+            <!-- ✅ NOVA SEÇÃO: Upload de Histórico de Serviços -->
+            <div class="section">
                 <h2>🏆 Importar/Atualizar Movimento de Clientes</h2>
+                <div class="alert-info">
+                    <strong>💼 Histórico de Atendimentos:</strong> Use esta opção para importar o histórico de serviços dos clientes.
+                    <br><strong>📝 O que faz:</strong>
+                    <br>• Se o telefone existe na base → adiciona serviços ao cliente
+                    <br>• Se o telefone não existe → cria novo cliente com os serviços
+                </div>
                 
-                <!-- Status do Movimento -->
-                <div class="status-card info">
-                    <h4>📊 Status dos Movimentos</h4>
-                    <div class="status-grid">
-                        <div class="status-item">
-                            <div class="label">📅 Última Importação</div>
-                            <div class="value" id="lastMovimentoDate">15/08/2025</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">📊 Movimentos</div>
-                            <div class="value" id="totalMovimentosCount">2.856</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">⏱️ Há quanto tempo</div>
-                            <div class="value" id="movimentoTimeSince">3 dias</div>
-                        </div>
-                    </div>
-                    
-                    <div class="alert success">
-                        <span>✅</span>
-                        <span>Movimentos atualizados recentemente!</span>
+                <div class="form-group">
+                    <label for="servicosFile">Selecione o arquivo Excel de serviços (.xlsx ou .xls):</label>
+                    <input type="file" id="servicosFile" accept=".xlsx,.xls">
+                    <div class="file-info">
+                        <strong>📋 Formato da planilha de serviços:</strong><br>
+                        • <strong>Coluna A:</strong> Serviço (ex: Corte, Barba, Escova)<br>
+                        • <strong>Coluna B:</strong> Cliente (ex: João Silva)<br>
+                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999 ou 11999999999)<br>
+                        • <strong>Coluna D:</strong> Profissional (ex: Carlos, Pedro)<br>
+                        • <strong>Coluna E:</strong> Data (ex: 15/01/2025)<br><br>
+                        <strong>📞 Telefone:</strong> Pode vir formatado (11) 99999-9999 ou apenas números 11999999999. Será automaticamente formatado no padrão (xx) xxxxx-xxxx<br>
+                        <strong>⚠️ Importante:</strong> A primeira linha deve conter os cabeçalhos: Serviço, Cliente, Telefone, Profissional, Data
                     </div>
                 </div>
-
-                <!-- Upload de Movimento -->
-                <div class="upload-area" id="movimentoUpload" onclick="document.getElementById('fileMovimento').click()">
-                    <div style="font-size: 2em; margin-bottom: 10px;">🏆</div>
-                    <div><strong>Clique ou arraste planilha de movimentos</strong></div>
-                    <div style="font-size: 0.8em; opacity: 0.7;">Excel com dados de atendimentos</div>
-                </div>
-                <input type="file" id="fileMovimento" accept=".xlsx,.xls,.csv" style="display: none;" onchange="handleMovimentoFile(this)">
-
-                <!-- Preview Movimento -->
-                <div class="preview-area" id="movimentoPreview">
-                    <h4>🔍 Análise dos Movimentos</h4>
-                    <p>Arquivo: <strong id="movimentoFileName">movimentos_agosto.xlsx</strong></p>
-                    <div class="preview-stats">
-                        <div class="preview-stat">
-                            <div>📈 Novos</div>
-                            <div style="color: #28a745;">89</div>
-                        </div>
-                        <div class="preview-stat">
-                            <div>🔄 Atualizações</div>
-                            <div style="color: #ffc107;">12</div>
-                        </div>
-                        <div class="preview-stat">
-                            <div>💰 Receita</div>
-                            <div style="color: #17a2b8;">R$ 4.5k</div>
-                        </div>
-                        <div class="preview-stat">
-                            <div>✅ Válidos</div>
-                            <div style="color: #20c997;">98</div>
-                        </div>
-                    </div>
-                    <button class="btn success" onclick="processMovimento()">🚀 Importar Movimentos</button>
-                </div>
-
-                <!-- Ações -->
-                <div style="margin-top: 15px;">
-                    <button class="btn" onclick="openMovimentoHistory()">📋 Histórico</button>
-                    <button class="btn secondary" onclick="generateReport()">📊 Relatório</button>
-                    <button class="btn secondary" onclick="exportMovimento()">💾 Backup</button>
-                </div>
-
-                <!-- Mini Chart -->
-                <div style="margin-top: 15px;">
-                    <h5>📈 Movimento Semanal</h5>
-                    <div class="mini-chart">
-                        <div class="chart-bar" style="height: 70%;"></div>
-                        <div class="chart-bar" style="height: 85%;"></div>
-                        <div class="chart-bar" style="height: 95%;"></div>
-                        <div class="chart-bar" style="height: 100%;"></div>
-                        <div class="chart-bar" style="height: 80%;"></div>
-                        <div class="chart-bar" style="height: 60%;"></div>
-                        <div class="chart-bar" style="height: 90%;"></div>
-                    </div>
-                </div>
+                
+                <button class="btn" onclick="uploadServicos()">
+                    🏆 Importar Serviços
+                </button>
+               
             </div>
 
-            <!-- 3. ADICIONAR CLIENTE MANUALMENTE -->
-            <div class="box fade-in">
-                <h2>👤 Adicionar Cliente Manualmente</h2>
-                
-                <!-- Status Manual -->
-                <div class="status-card warning">
-                    <h4>📊 Cadastros Manuais Hoje</h4>
-                    <div class="status-grid">
-                        <div class="status-item">
-                            <div class="label">👥 Hoje</div>
-                            <div class="value" id="cadastrosHojeCount">12</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">📅 Esta Semana</div>
-                            <div class="value" id="cadastrosSemana">47</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">🏆 Este Mês</div>
-                            <div class="value" id="cadastrosMes">156</div>
-                        </div>
-                    </div>
-                    
-                    <div class="alert info">
-                        <span>💡</span>
-                        <span>Meta diária: 15 cadastros (faltam 3)</span>
-                    </div>
+            <!-- Seção de Cadastro Manual -->
+            <div class="section">
+                <h2>➕ Adicionar Cliente Manualmente</h2>
+                <div class="alert-info">
+                    <strong>✍️ Cadastro Individual:</strong> Preencha os dados abaixo para adicionar um cliente por vez.
                 </div>
 
-                <!-- Formulário de Cadastro -->
                 <form id="clienteForm">
-                    <div class="form-row">
+                    <div class="form-grid">
                         <div class="form-group">
-                            <label>👤 Nome Completo</label>
-                            <input type="text" id="nomeCliente" placeholder="Digite o nome completo" required>
+                            <label for="nome">Nome Completo:</label>
+                            <input type="text" id="nome" required placeholder="Ex: João Silva">
                         </div>
+                        
                         <div class="form-group">
-                            <label>📱 Telefone</label>
-                            <input type="tel" id="telefoneCliente" placeholder="(11) 99999-9999" required>
+                            <label for="ddi">DDI (Código do País):</label>
+                            <input type="text" id="ddi" required placeholder="Ex: 55" value="55">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telefone">Telefone:</label>
+                            <input type="tel" id="telefone" required placeholder="Ex: (11) 99999-9999">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dataNascimento">Data de Nascimento:</label>
+                            <input type="date" id="dataNascimento" required>
                         </div>
                     </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>📧 Email</label>
-                            <input type="email" id="emailCliente" placeholder="cliente@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label>🎂 Data de Nascimento</label>
-                            <input type="date" id="nascimentoCliente">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>📍 Endereço</label>
-                        <input type="text" id="enderecoCliente" placeholder="Rua, número, bairro">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>✂️ Serviço Preferido</label>
-                            <select id="servicoPreferido">
-                                <option value="">Selecione...</option>
-                                <option value="corte">Corte de Cabelo</option>
-                                <option value="barba">Barba</option>
-                                <option value="completo">Corte + Barba</option>
-                                <option value="outros">Outros</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>💰 Valor Usual</label>
-                            <input type="number" id="valorUsual" placeholder="0.00" step="0.01">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>📝 Observações</label>
-                        <textarea id="observacoes" rows="3" placeholder="Preferências, alergias, etc."></textarea>
-                    </div>
-
-                    <!-- Ações do Formulário -->
-                    <div style="margin-top: 20px;">
-                        <button type="button" class="btn success" onclick="saveCliente()">💾 Salvar Cliente</button>
-                        <button type="button" class="btn secondary" onclick="clearForm()">🔄 Limpar</button>
-                        <button type="button" class="btn" onclick="fillExample()">📝 Exemplo</button>
-                    </div>
+                    <button type="submit" class="btn">
+                        💾 Salvar Cliente
+                    </button>
+                    <button type="button" class="btn-secondary btn" onclick="limparFormulario()">
+                        🗑️ Limpar
+                    </button>
                 </form>
-
-                <!-- Success Message -->
-                <div class="success-message" id="successMessage">
-                    ✅ Cliente cadastrado com sucesso!
-                </div>
-
-                <!-- Quick Actions -->
-                <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
-                    <h5>🚀 Ações Rápidas</h5>
-                    <button class="btn" onclick="openClientList()">👥 Ver Clientes</button>
-                    <button class="btn secondary" onclick="exportClientes()">📊 Exportar Lista</button>
-                    <button class="btn secondary" onclick="importContacts()">📲 Importar Contatos</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Universal -->
-    <div id="universalModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modalContent">
-                <!-- Conteúdo será inserido dinamicamente -->
             </div>
         </div>
     </div>
 
     <script>
-        // Dados simulados
-        let systemData = {
-            cadastros: {
-                total: 1247,
-                lastImport: new Date('2025-08-10T10:30:00'),
-                newToday: 12
-            },
-            movimentos: {
-                total: 2856,
-                lastImport: new Date('2025-08-15T14:30:00'),
-                revenue: 4500
-            },
-            manual: {
-                today: 12,
-                week: 47,
-                month: 156,
-                dailyGoal: 15
-            }
-        };
+        let clienteEditando = null;
+        let progressInterval = null;
 
-        // Atualizar tempos decorridos
-        function updateTimeSince() {
-            const now = new Date();
+        // ===== FUNÇÕES DE FORMATAÇÃO DE TELEFONE =====
+        function formatarTelefone(telefone) {
+            if (!telefone) return '';
             
-            // Cadastro
-            const cadastroDiff = now - systemData.cadastros.lastImport;
-            const cadastroDays = Math.floor(cadastroDiff / (1000 * 60 * 60 * 24));
-            document.getElementById('cadastroTimeSince').textContent = `${cadastroDays} dias`;
+            // Remove tudo que não é número
+            const apenasNumeros = telefone.toString().replace(/\D/g, '');
             
-            // Movimento
-            const movimentoDiff = now - systemData.movimentos.lastImport;
-            const movimentoDays = Math.floor(movimentoDiff / (1000 * 60 * 60 * 24));
-            document.getElementById('movimentoTimeSince').textContent = `${movimentoDays} dias`;
-        }
-
-        // Handlers de arquivos
-        function handleCadastroFile(input) {
-            if (input.files.length > 0) {
-                const file = input.files[0];
-                document.getElementById('cadastroFileName').textContent = file.name;
-                document.getElementById('cadastroPreview').style.display = 'block';
-                showNotification(`📊 Arquivo "${file.name}" analisado!`, 'success');
+            // Se tem 11 dígitos (celular com DDD)
+            if (apenasNumeros.length === 11) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+            }
+            // Se tem 10 dígitos (fixo com DDD)  
+            else if (apenasNumeros.length === 10) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+            }
+            // Se tem 9 dígitos (celular sem DDD)
+            else if (apenasNumeros.length === 9) {
+                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+            }
+            // Se tem 8 dígitos (fixo sem DDD)
+            else if (apenasNumeros.length === 8) {
+                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+            }
+            // Para outros tamanhos, retorna apenas os números
+            else {
+                return apenasNumeros;
             }
         }
 
-        function handleMovimentoFile(input) {
-            if (input.files.length > 0) {
-                const file = input.files[0];
-                document.getElementById('movimentoFileName').textContent = file.name;
-                document.getElementById('movimentoPreview').style.display = 'block';
-                showNotification(`🏆 Arquivo "${file.name}" analisado!`, 'success');
-            }
+        function aplicarMascaraTelefone(input) {
+            const valorFormatado = formatarTelefone(input.value);
+            input.value = valorFormatado;
         }
 
-        // Processamento de arquivos
-        function processCadastro() {
-            showProgress('Processando cadastros...', () => {
-                systemData.cadastros.total += 156;
-                systemData.cadastros.lastImport = new Date();
-                document.getElementById('totalRegistros').textContent = systemData.cadastros.total.toLocaleString();
-                document.getElementById('totalCadastros').textContent = systemData.cadastros.total.toLocaleString();
-                document.getElementById('lastCadastroDate').textContent = new Date().toLocaleDateString('pt-BR');
-                document.getElementById('cadastroPreview').style.display = 'none';
-                updateTimeSince();
-                showNotification('✅ Cadastros importados com sucesso! 156 novos registros.', 'success');
+        // ===== FUNÇÕES DA BARRA DE PROGRESSO =====
+        function mostrarProgresso(titulo, subtitulo = 'Aguarde enquanto processamos os dados') {
+            const container = document.getElementById('progressContainer');
+            const titleElement = document.getElementById('progressTitle');
+            const subtitleElement = document.getElementById('progressSubtitle');
+            
+            titleElement.textContent = titulo;
+            subtitleElement.textContent = subtitulo;
+            
+            // Reset dos valores
+            atualizarProgresso(0, 0, 0);
+            
+            container.classList.add('active');
+            
+            // Scroll suave para a barra de progresso
+            container.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
             });
         }
 
-        function processMovimento() {
-            showProgress('Processando movimentos...', () => {
-                systemData.movimentos.total += 89;
-                systemData.movimentos.lastImport = new Date();
-                document.getElementById('totalMovimentosCount').textContent = systemData.movimentos.total.toLocaleString();
-                document.getElementById('totalMovimentos').textContent = systemData.movimentos.total.toLocaleString();
-                document.getElementById('lastMovimentoDate').textContent = new Date().toLocaleDateString('pt-BR');
-                document.getElementById('movimentoPreview').style.display = 'none';
-                updateTimeSince();
-                showNotification('🏆 Movimentos importados com sucesso! 89 novos registros.', 'success');
-            });
+        function ocultarProgresso() {
+            const container = document.getElementById('progressContainer');
+            container.classList.remove('active');
+            
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
         }
 
-        // Cliente manual
-        function saveCliente() {
-            const form = document.getElementById('clienteForm');
-            const nome = document.getElementById('nomeCliente').value;
-            const telefone = document.getElementById('telefoneCliente').value;
-            
-            if (!nome || !telefone) {
-                showNotification('⚠️ Preencha pelo menos nome e telefone!', 'warning');
-                return;
+        function atualizarProgresso(atual, total, percentual = null) {
+            if (percentual === null && total > 0) {
+                percentual = Math.round((atual / total) * 100);
             }
+            
+            document.getElementById('progressCurrent').textContent = atual;
+            document.getElementById('progressTotal').textContent = total;
+            document.getElementById('progressPercentage').textContent = `${percentual || 0}%`;
+            document.getElementById('progressBar').style.width = `${percentual || 0}%`;
+        }
 
-            // Simular salvamento
-            showProgress('Salvando cliente...', () => {
-                systemData.manual.today++;
-                systemData.manual.week++;
-                systemData.manual.month++;
-                systemData.cadastros.total++;
+        function simularProgressoImportacao(totalLinhas, tipoImportacao = 'clientes') {
+            let currentProgress = 0;
+            const incremento = Math.max(1, Math.ceil(totalLinhas / 50)); // Incrementa de forma suave
+            
+            progressInterval = setInterval(() => {
+                currentProgress += incremento;
                 
-                // Atualizar interface
-                document.getElementById('cadastrosHojeCount').textContent = systemData.manual.today;
-                document.getElementById('cadastrosSemana').textContent = systemData.manual.week;
-                document.getElementById('cadastrosMes').textContent = systemData.manual.month;
-                document.getElementById('cadastrosHoje').textContent = systemData.manual.today;
-                document.getElementById('totalCadastros').textContent = systemData.cadastros.total.toLocaleString();
-                
-                // Limpar formulário
-                form.reset();
-                
-                // Mostrar sucesso
-                const successMsg = document.getElementById('successMessage');
-                successMsg.style.display = 'block';
-                setTimeout(() => {
-                    successMsg.style.display = 'none';
-                }, 3000);
-                
-                showNotification(`✅ Cliente "${nome}" cadastrado com sucesso!`, 'success');
-                
-                // Verificar meta
-                const remaining = systemData.manual.dailyGoal - systemData.manual.today;
-                if (remaining <= 0) {
-                    showNotification('🎉 Meta diária atingida! Parabéns!', 'success');
+                if (currentProgress >= totalLinhas) {
+                    currentProgress = totalLinhas;
+                    clearInterval(progressInterval);
+                    progressInterval = null;
                 }
-            });
+                
+                atualizarProgresso(currentProgress, totalLinhas);
+                
+                // Atualizar subtítulo com base no progresso e tipo
+                const subtitle = document.getElementById('progressSubtitle');
+                const progPercent = currentProgress / totalLinhas;
+                
+                if (tipoImportacao === 'servicos') {
+                    if (progPercent < 0.3) {
+                        subtitle.textContent = `Validando dados dos serviços...`;
+                    } else if (progPercent < 0.6) {
+                        subtitle.textContent = `Buscando clientes existentes...`;
+                    } else if (progPercent < 0.9) {
+                        subtitle.textContent = `Adicionando serviços ao histórico...`;
+                    } else {
+                        subtitle.textContent = `Finalizando importação de serviços...`;
+                    }
+                } else {
+                    if (progPercent < 0.3) {
+                        subtitle.textContent = `Lendo e validando dados...`;
+                    } else if (progPercent < 0.7) {
+                        subtitle.textContent = `Verificando duplicatas...`;
+                    } else if (progPercent < 1.0) {
+                        subtitle.textContent = `Salvando no banco de dados...`;
+                    } else {
+                        subtitle.textContent = `Processamento concluído!`;
+                    }
+                }
+                
+            }, 100); // Atualiza a cada 100ms
         }
 
-        function clearForm() {
-            document.getElementById('clienteForm').reset();
-            showNotification('🔄 Formulário limpo!', 'info');
-        }
-
-        function fillExample() {
-            document.getElementById('nomeCliente').value = 'João Silva Santos';
-            document.getElementById('telefoneCliente').value = '(11) 99999-9999';
-            document.getElementById('emailCliente').value = 'joao.silva@email.com';
-            document.getElementById('enderecoCliente').value = 'Rua das Flores, 123 - Centro';
-            document.getElementById('servicoPreferido').value = 'completo';
-            document.getElementById('valorUsual').value = '35.00';
-            document.getElementById('observacoes').value = 'Cliente preferencial, gosta de conversar sobre futebol.';
-            showNotification('📝 Exemplo preenchido!', 'info');
-        }
-
-        // Modais
-        function openCadastroHistory() {
-            const content = `
-                <h2>📋 Histórico de Importações - Cadastros</h2>
-                <div style="margin: 20px 0;">
-                    <input type="text" placeholder="🔍 Buscar..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-                </div>
-                <div class="history-item">
-                    <div style="font-weight: bold; color: #ffd700;">📅 10/08/2025 - 10:30</div>
-                    <div style="margin-top: 5px; opacity: 0.8;">📁 cadastros_agosto.xlsx | 👥 +156 novos | 🔄 23 atualizações | ✅ Sucesso</div>
-                </div>
-                <div class="history-item">
-                    <div style="font-weight: bold; color: #ffd700;">📅 03/08/2025 - 14:15</div>
-                    <div style="margin-top: 5px; opacity: 0.8;">📁 base_julho.csv | 👥 +89 novos | 🔄 12 atualizações | ✅ Sucesso</div>
-                </div>
-                <div class="history-item">
-                    <div style="font-weight: bold; color: #ffd700;">📅 28/07/2025 - 09:45</div>
-                    <div style="margin-top: 5px; opacity: 0.8;">📁 clientes_promocao.xlsx | 👥 +67 novos | 🔄 8 atualizações | ⚠️ 3 erros</div>
-                </div>
-                <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn secondary">📊 Exportar Relatório</button>
-                    <button class="btn danger">🗑️ Limpar Histórico</button>
-                </div>
-            `;
-            openModal(content);
-        }
-
-        function openMovimentoHistory() {
-            const content = `
-                <h2>📋 Histórico de Movimentos</h2>
-                <div style="margin: 20px 0;">
-                    <input type="text" placeholder="🔍 Buscar..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-                </div>
-                <div class="history-item">
-                    <div style="font-weight: bold; color: #ffd700;">📅 15/08/2025 - 14:30</div>
-                    <div style="margin-top: 5px; opacity: 0.8;">📁 movimentos_agosto.xlsx | 🏆 +89 novos | 💰 R$ 4.500 | ✅ Sucesso</div>
-                </div>
-                <div class="history-item">
-                    <div style="font-weight: bold; color: #ffd700;">📅 12/08/2025 - 11:20</div>
-                    <div style="margin-top: 5px; opacity: 0.8;">📁 vendas_semana.csv | 🏆 +67 novos | 💰 R$ 3.200 | ✅ Sucesso</div>
-                </div>
-                <div class="history-item">
-                    <div style="font-weight: bold; color: #ffd700;">📅 08/08/2025 - 16:15</div>
-                    <div style="margin-top: 5px; opacity: 0.8;">📁 relatorio_julho.xlsx | 🏆 +124 novos | 💰 R$ 5.800 | ✅ Sucesso</div>
-                </div>
-                <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn secondary">📊 Gerar Relatório</button>
-                    <button class="btn secondary">💾 Backup Completo</button>
-                </div>
-            `;
-            openModal(content);
-        }
-
-        function openClientList() {
-            const content = `
-                <h2>👥 Lista de Clientes Recentes</h2>
-                <div style="margin: 20px 0;">
-                    <input type="text" placeholder="🔍 Buscar cliente..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
-                </div>
-                <div style="max-height: 400px; overflow-y: auto;">
-                    <div class="history-item">
-                        <div style="font-weight: bold;">👤 João Silva Santos</div>
-                        <div style="opacity: 0.8;">📱 (11) 99999-9999 | ✂️ Corte + Barba | 💰 R$ 35,00</div>
-                    </div>
-                    <div class="history-item">
-                        <div style="font-weight: bold;">👤 Maria Oliveira</div>
-                        <div style="opacity: 0.8;">📱 (11) 88888-8888 | ✂️ Corte | 💰 R$ 25,00</div>
-                    </div>
-                    <div class="history-item">
-                        <div style="font-weight: bold;">👤 Carlos Mendes</div>
-                        <div style="opacity: 0.8;">📱 (11) 77777-7777 | ✂️ Barba | 💰 R$ 15,00</div>
-                    </div>
-                    <div class="history-item">
-                        <div style="font-weight: bold;">👤 Ana Costa</div>
-                        <div style="opacity: 0.8;">📱 (11) 66666-6666 | ✂️ Completo | 💰 R$ 40,00</div>
-                    </div>
-                </div>
-                <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn">📝 Novo Cliente</button>
-                    <button class="btn secondary">📊 Exportar Lista</button>
-                </div>
-            `;
-            openModal(content);
-        }
-
-        function openModal(content) {
-            document.getElementById('modalContent').innerHTML = content;
-            document.getElementById('universalModal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            document.getElementById('universalModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // Utilitários
-        function showProgress(message, callback) {
-            showNotification(`⏳ ${message}`, 'info');
-            setTimeout(callback, 2000);
-        }
-
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `alert ${type}`;
-            notification.style.position = 'fixed';
-            notification.style.top = '20px';
-            notification.style.right = '20px';
-            notification.style.zIndex = '1001';
-            notification.style.minWidth = '300px';
-            notification.style.maxWidth = '400px';
-            notification.innerHTML = `<span>${message}</span>`;
+        // Verificar autenticação ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
             
-            document.body.appendChild(notification);
+            // DETECTOR DE REMOÇÃO DE ALERTAS
+            const alertsContainer = document.getElementById('alerts');
+            if (alertsContainer) {
+                // Observer para detectar quando elementos são removidos
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList') {
+                            mutation.removedNodes.forEach(function(node) {
+                                if (node.nodeType === Node.ELEMENT_NODE && 
+                                    node.getAttribute && 
+                                    node.getAttribute('data-permanente') === 'true') {
+                                    console.log('🚨 ALERTA PERMANENTE FOI REMOVIDO FORÇADAMENTE!');
+                                    console.log('📄 Elemento removido:', node);
+                                }
+                            });
+                        }
+                    });
+                });
+                
+                observer.observe(alertsContainer, {
+                    childList: true,
+                    subtree: true
+                });
+                
+                console.log('👁️ Observer de remoção ativado');
+            }
+            
+            // Event listener para formulário
+            document.getElementById('clienteForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                adicionarCliente();
+            });
+            
+            // ✅ NOVO: Event listener para formatação automática do telefone
+            const telefoneInput = document.getElementById('telefone');
+            if (telefoneInput) {
+                // Formatar enquanto digita
+                telefoneInput.addEventListener('input', function() {
+                    aplicarMascaraTelefone(this);
+                });
+                
+                // Formatar quando sai do campo
+                telefoneInput.addEventListener('blur', function() {
+                    aplicarMascaraTelefone(this);
+                });
+            }
+        });
+
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Função para mostrar alertas
+        function mostrarAlert(mensagem, tipo = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.textContent = mensagem;
+            
+            alertsContainer.appendChild(alert);
             
             setTimeout(() => {
-                notification.remove();
+                alert.remove();
             }, 5000);
         }
 
-        // Funções de ação
-        function validateCadastro() {
-            showProgress('Validando dados...', () => {
-                showNotification('✅ Cadastros validados! 1.247 registros íntegros.', 'success');
-            });
-        }
-
-        function exportCadastro() {
-            showProgress('Exportando cadastros...', () => {
-                showNotification('💾 Arquivo exportado: cadastros_backup_' + new Date().toISOString().split('T')[0] + '.xlsx', 'success');
-            });
-        }
-
-        function exportMovimento() {
-            showProgress('Exportando movimentos...', () => {
-                showNotification('💾 Arquivo exportado: movimentos_backup_' + new Date().toISOString().split('T')[0] + '.xlsx', 'success');
-            });
-        }
-
-        function generateReport() {
-            showProgress('Gerando relatório...', () => {
-                showNotification('📊 Relatório gerado! Receita total: R$ 4.500,00 | Atendimentos: 89', 'success');
-            });
-        }
-
-        function exportClientes() {
-            showProgress('Exportando lista de clientes...', () => {
-                showNotification('📊 Lista exportada: clientes_completa_' + new Date().toISOString().split('T')[0] + '.xlsx', 'success');
-            });
-        }
-
-        function importContacts() {
-            showNotification('📲 Funcionalidade em desenvolvimento! Em breve você poderá importar da agenda.', 'info');
-        }
-
-        // Drag and Drop
-        function setupDragAndDrop() {
-            const uploadAreas = ['cadastroUpload', 'movimentoUpload'];
+        // Adicionar novo cliente
+        async function adicionarCliente() {
+            const nome = document.getElementById('nome').value.trim();
+            let ddi = document.getElementById('ddi').value.trim();
+            let telefone = document.getElementById('telefone').value.trim();
+            const dataNascimento = document.getElementById('dataNascimento').value;
             
-            uploadAreas.forEach(areaId => {
-                const area = document.getElementById(areaId);
-                
-                area.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    area.classList.add('dragover');
+            // 🔧 CORREÇÃO: Limpar DDI removendo + se houver
+            ddi = ddi.replace(/^\+/, ''); // Remove + do início se existir
+            if (!ddi || ddi === '') {
+                ddi = '55'; // Padrão Brasil se vazio
+            }
+            
+            // ✅ NOVO: Garantir que o telefone está formatado antes de enviar
+            telefone = formatarTelefone(telefone);
+            
+            if (!nome || !ddi || !telefone || !dataNascimento) {
+                mostrarAlert('Por favor, preencha todos os campos.', 'error', false); // Temporário
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/clientes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome, ddi, telefone, dataNascimento })
                 });
                 
-                area.addEventListener('dragleave', () => {
-                    area.classList.remove('dragover');
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.ok) {
+                    mostrarAlert(`✅ Cliente "${nome}" adicionado com sucesso!`, 'success', true); // FIXO
+                    limparFormulario();
+                } else {
+                    const erro = await response.json();
+                    mostrarAlert(erro.erro || 'Erro ao adicionar cliente', 'error', true); // FIXO
+                }
+            } catch (error) {
+                mostrarAlert('Erro de conexão', 'error', false); // Temporário
+                console.error('Erro:', error);
+            }
+        }
+
+        // Upload de Excel - VERSÃO MELHORADA COM PROGRESSO
+        async function uploadExcel() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                mostrarAlert('Por favor, selecione um arquivo Excel.', 'error');
+                return;
+            }
+            
+            // Verificar se é arquivo Excel
+            const tipoArquivo = file.name.toLowerCase();
+            if (!tipoArquivo.endsWith('.xlsx') && !tipoArquivo.endsWith('.xls')) {
+                mostrarAlert('Por favor, selecione apenas arquivos Excel (.xlsx ou .xls)', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('excel', file);
+            
+            try {
+                // Mostrar barra de progresso
+                mostrarProgresso('📤 Importando Cadastro de Clientes', 'Enviando arquivo para o servidor...');
+                
+                // Simular progresso inicial (leitura do arquivo)
+                setTimeout(() => {
+                    atualizarProgresso(1, 100, 5);
+                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo Excel...';
+                }, 200);
+                
+                const response = await fetch('/api/upload-excel', {
+                    method: 'POST',
+                    body: formData
                 });
                 
-                area.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    area.classList.remove('dragover');
+                if (response.status === 401) {
+                    ocultarProgresso();
+                    window.location.href = '/';
+                    return;
+                }
+                
+                const resultado = await response.json();
+                
+                if (response.ok) {
+                    // Simular progresso do processamento baseado no total de linhas
+                    if (resultado.totalLinhas > 0) {
+                        atualizarProgresso(5, 100, 10);
+                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros...`;
+                        
+                        // Simular o processamento linha por linha
+                        simularProgressoImportacao(resultado.totalLinhas, 'clientes');
+                        
+                        // Aguardar conclusão da simulação
+                        await new Promise(resolve => {
+                            const checkComplete = setInterval(() => {
+                                if (!progressInterval) {
+                                    clearInterval(checkComplete);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
                     
-                    const files = e.dataTransfer.files;
-                    if (files.length > 0) {
-                        const fileInput = areaId === 'cadastroUpload' ? 
-                            document.getElementById('fileCadastro') : 
-                            document.getElementById('fileMovimento');
+                    // Finalizar progresso
+                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
+                    document.getElementById('progressSubtitle').textContent = '✅ Importação concluída com sucesso!';
+                    
+                    // Aguardar um pouco antes de ocultar
+                    setTimeout(() => {
+                        ocultarProgresso();
+                    }, 2000);
+                    
+                    // Mostrar resultado detalhado FIXO
+                    let mensagemCompleta = `🎉 ${resultado.mensagem}`;
+                    
+                    if (resultado.sucessos && resultado.sucessos.length > 0) {
+                        console.log('✅ Clientes adicionados com sucesso:', resultado.sucessos);
+                    }
+                    
+                    if (resultado.erros && resultado.erros.length > 0) {
+                        console.log('⚠️ Detalhes dos erros/avisos:', resultado.erros);
                         
-                        fileInput.files = files;
+                        if (resultado.clientesJaExistem > 0) {
+                            mensagemCompleta += `\n\n📋 ${resultado.clientesJaExistem} clientes já existiam na base (não foram duplicados).`;
+                        }
                         
-                        if (areaId === 'cadastroUpload') {
-                            handleCadastroFile(fileInput);
-                        } else {
-                            handleMovimentoFile(fileInput);
+                        if (resultado.totalErros > 0) {
+                            mensagemCompleta += `\n\n⚠️ ${resultado.totalErros} erros encontrados. Verifique o console (F12) para detalhes.`;
+                        }
+                        
+                        // Mostrar alguns erros na tela para facilitar
+                        if (resultado.erros.length > 0) {
+                            const primeirosErros = resultado.erros.slice(0, 5); // Mostrar 5 ao invés de 3
+                            mensagemCompleta += `\n\n🔍 Principais problemas encontrados:\n${primeirosErros.join('\n')}`;
+                            
+                            if (resultado.erros.length > 5) {
+                                mensagemCompleta += `\n... e mais ${resultado.erros.length - 5} erros (veja console F12)`;
+                            }
                         }
                     }
-                });
-            });
-        }
+                    
+                    // 🎯 MENSAGEM FIXA - COM LOG DE DEBUG
+                    console.log('🚀 CRIANDO MENSAGEM FIXA PRINCIPAL...');
+                    mostrarAlert(mensagemCompleta, 'success', true);
+                    fileInput.value = '';
+                    
+                    // Mostrar estatísticas detalhadas TAMBÉM FIXA
+                    if (resultado.totalLinhas > 0) {
+                        setTimeout(() => {
+                            console.log('🚀 CRIANDO MENSAGEM FIXA DE ESTATÍSTICAS...');
+                            const estatisticas = `📊 RESUMO DETALHADO DA IMPORTAÇÃO:
+• Total de linhas processadas: ${resultado.totalLinhas}
+• Clientes novos adicionados: ${resultado.clientesInseridos}
+• Clientes que já existiam: ${resultado.clientesJaExistem || 0}
+• Linhas com erro: ${resultado.totalErros || 0}
 
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', function() {
-            updateTimeSince();
-            setupDragAndDrop();
-            
-            // Atualizar a cada minuto
-            setInterval(updateTimeSince, 60000);
-            
-            // Notificação de boas-vindas
-            setTimeout(() => {
-                showNotification('🎉 Sistema completo carregado! Todas as funcionalidades estão ativas.', 'success');
-            }, 1000);
-            
-            // Simular atualização de dados em tempo real
-            setInterval(() => {
-                // Pequenas variações aleatórias nos números
-                if (Math.random() > 0.7) {
-                    systemData.manual.today += Math.floor(Math.random() * 2);
-                    document.getElementById('cadastrosHojeCount').textContent = systemData.manual.today;
-                    document.getElementById('cadastrosHoje').textContent = systemData.manual.today;
+${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.primeiraLinhaExemplo.join(', ') : ''}
+
+✅ IMPORTAÇÃO CONCLUÍDA COM SUCESSO!`;
+                            
+                            mostrarAlert(estatisticas, 'info', true);
+                        }, 1000);
+                    }
+                } else {
+                    ocultarProgresso();
+                    mostrarAlert(resultado.erro || 'Erro ao processar arquivo Excel', 'error', true); // FIXO
+                    if (resultado.detalhes) {
+                        console.error('Detalhes do erro:', resultado.detalhes);
+                    }
                 }
-            }, 30000);
-        });
-
-        // Fechar modal clicando fora
-        window.onclick = function(event) {
-            const modal = document.getElementById('universalModal');
-            if (event.target === modal) {
-                closeModal();
+            } catch (error) {
+                ocultarProgresso();
+                mostrarAlert('Erro ao fazer upload do arquivo', 'error', true); // FIXO
+                console.error('Erro:', error);
             }
         }
 
-        // Formatação de telefone automática
-        document.getElementById('telefoneCliente').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length >= 11) {
-                value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-            } else if (value.length >= 7) {
-                value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-            } else if (value.length >= 3) {
-                value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
-            }
-            e.target.value = value;
-        });
+        // Baixar modelo de Excel (REAL XLSX)
+        function baixarModelo() {
+            // Criar modelo de Excel real
+            const dados = [
+                ['Nome', 'DDI', 'Telefone', 'Data de Nascimento'],
+                ['João Silva', '55', '(11) 99999-9999', '15/05/1990'],
+                ['Maria Santos', '55', '(11) 88888-8888', '22/08/1985'],
+                ['Pedro Oliveira', '55', '(11) 77777-7777', '10/12/1992'],
+                ['Ana Costa', '55', '(11) 66666-6666', '03/03/1988'],
+                ['Carlos Mendes', '1', '(555) 123-4567', '18/11/1995']
+            ];
+            
+            // Criar planilha Excel manualmente (formato TSV para Excel)
+            const excelContent = dados.map(row => row.join('\t')).join('\n');
+            const blob = new Blob([excelContent], { 
+                type: 'application/vnd.ms-excel;charset=utf-8;' 
+            });
+            
+            // Download
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'modelo_clientes.xls');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            mostrarAlert('📥 Modelo Excel baixado com sucesso! DDI apenas com números (ex: 55)', 'success', false); // Temporário
+        }
 
-        // Validação de email
-        document.getElementById('emailCliente').addEventListener('blur', function(e) {
-            const email = e.target.value;
-            if (email && !email.includes('@')) {
-                showNotification('⚠️ Email inválido!', 'warning');
-                e.target.focus();
+        // ✅ NOVA FUNÇÃO: Baixar modelo de serviços
+        function baixarModeloServicos() {
+            // Criar modelo de histórico de serviços
+            const dados = [
+                ['Serviço', 'Cliente', 'Telefone', 'Profissional', 'Data'],
+                ['Corte', 'João Silva', '(11) 99999-9999', 'Carlos', '15/01/2025'],
+                ['Barba', 'Maria Santos', '(11) 88888-8888', 'Pedro', '16/01/2025'],
+                ['Escova', 'Pedro Oliveira', '(11) 77777-7777', 'Ana', '17/01/2025'],
+                ['Corte + Barba', 'José Costa', '(11) 66666-6666', 'Carlos', '18/01/2025'],
+                ['Sobrancelha', 'Roberto Lima', '(11) 55555-5555', 'Maria', '19/01/2025']
+            ];
+            
+            // Criar planilha Excel (formato TSV)
+            const excelContent = dados.map(row => row.join('\t')).join('\n');
+            const blob = new Blob([excelContent], { 
+                type: 'application/vnd.ms-excel;charset=utf-8;' 
+            });
+            
+            // Download
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'modelo_historico_servicos.xls');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            mostrarAlert('📥 Modelo de histórico de serviços baixado com sucesso!', 'success', false);
+        }
+
+        // Limpar formulário
+        function limparFormulario() {
+            document.getElementById('clienteForm').reset();
+            document.getElementById('ddi').value = '55'; // Recolocar valor padrão SEM +
+        }
+
+        // Upload de histórico de serviços - COM PROGRESSO
+        async function uploadServicos() {
+            const fileInput = document.getElementById('servicosFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                mostrarAlert('Por favor, selecione um arquivo de serviços.', 'error');
+                return;
             }
-        });
+            const tipoArquivo = file.name.toLowerCase();
+            if (!tipoArquivo.endsWith('.xlsx') && !tipoArquivo.endsWith('.xls')) {
+                mostrarAlert('Por favor, selecione apenas arquivos Excel (.xlsx ou .xls)', 'error');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('excel', file); // Corrigido para 'excel' igual ao backend
+            
+            try {
+                // Mostrar barra de progresso para serviços
+                mostrarProgresso('🏆 Importando Histórico de Serviços', 'Enviando arquivo para o servidor...');
+                
+                // Simular progresso inicial
+                setTimeout(() => {
+                    atualizarProgresso(1, 100, 5);
+                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo de serviços...';
+                }, 200);
+                
+                const response = await fetch('/api/upload-servicos', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.status === 401) {
+                    ocultarProgresso();
+                    window.location.href = '/';
+                    return;
+                }
+                const resultado = await response.json();
+                if (response.ok) {
+                    // Simular progresso do processamento
+                    if (resultado.totalLinhas > 0) {
+                        atualizarProgresso(5, 100, 10);
+                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros de serviços...`;
+                        
+                        // Simular o processamento específico para serviços
+                        simularProgressoImportacao(resultado.totalLinhas, 'servicos');
+                        
+                        // Aguardar conclusão da simulação
+                        await new Promise(resolve => {
+                            const checkComplete = setInterval(() => {
+                                if (!progressInterval) {
+                                    clearInterval(checkComplete);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
+                    
+                    // Finalizar progresso
+                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
+                    document.getElementById('progressSubtitle').textContent = '✅ Importação de serviços concluída!';
+                    
+                    // Aguardar um pouco antes de ocultar
+                    setTimeout(() => {
+                        ocultarProgresso();
+                    }, 2000);
+                    
+                    let mensagemCompleta = `🎉 ${resultado.mensagem || 'Histórico importado com sucesso!'}`;
+                    if (resultado.sucessos && resultado.sucessos.length > 0) {
+                        console.log('✅ Serviços adicionados com sucesso:', resultado.sucessos);
+                    }
+                    if (resultado.erros && resultado.erros.length > 0) {
+                        console.log('⚠️ Detalhes dos erros/avisos:', resultado.erros);
+                        if (resultado.totalErros > 0) {
+                            mensagemCompleta += `\n\n⚠️ ${resultado.totalErros} erros encontrados. Verifique o console (F12) para detalhes.`;
+                        }
+                        if (resultado.erros.length > 0) {
+                            const primeirosErros = resultado.erros.slice(0, 5);
+                            mensagemCompleta += `\n\n🔍 Principais problemas encontrados:\n${primeirosErros.join('\n')}`;
+                            if (resultado.erros.length > 5) {
+                                mensagemCompleta += `\n... e mais ${resultado.erros.length - 5} erros (veja console F12)`;
+                            }
+                        }
+                    }
+                    mostrarAlert(mensagemCompleta, 'success', true);
+                    fileInput.value = '';
+                    if (resultado.totalLinhas > 0) {
+                        setTimeout(() => {
+                            const estatisticas = `📊 RESUMO DA IMPORTAÇÃO DE SERVIÇOS:
+• Total de linhas: ${resultado.totalLinhas}
+• Serviços adicionados: ${resultado.servicosAdicionados || 0}
+• Clientes atualizados: ${resultado.clientesAtualizados || 0}
+• Clientes novos criados: ${resultado.clientesNovos || 0}
+• Linhas com erro: ${resultado.totalErros || 0}
+
+✅ IMPORTAÇÃO DE SERVIÇOS CONCLUÍDA!`;
+                            mostrarAlert(estatisticas, 'info', true);
+                        }, 1000);
+                    }
+                } else {
+                    ocultarProgresso();
+                    mostrarAlert(resultado.erro || 'Erro ao processar arquivo de serviços', 'error', true);
+                    if (resultado.detalhes) {
+                        console.error('Detalhes do erro:', resultado.detalhes);
+                    }
+                }
+            } catch (error) {
+                ocultarProgresso();
+                mostrarAlert('Erro ao fazer upload do arquivo de serviços', 'error', true);
+                console.error('Erro:', error);
+            }
+        }
     </script>
 </body>
 </html>
