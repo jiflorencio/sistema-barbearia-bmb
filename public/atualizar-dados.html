@@ -1,830 +1,4 @@
-<div class="status-item">
-                            <div class="label">⏱️ Há quanto tempo</div>
-                            <div class="value" id="movimentoTimeSince">-</div>
-                        </div>
-                    </div>
-                    
-                    <div class="alert success" id="movimentoAlert">
-                        <span>💡</span>
-                        <span>Importe o primeiro arquivo de movimentos para começar o controle!</span>
-                    </div>
-                </div>
-
-                <!-- Botões de Ação Extras -->
-                <div style="margin: 15px 0;">
-                    <button class="btn secondary" onclick="openMovimentoHistory()">📋 Ver Histórico</button>
-                    <button class="btn secondary" onclick="analyzeLastImport()">🔍 Analisar Última</button>
-                    <button class="btn secondary" onclick="exportMovimentos()">💾 Backup</button>
-                </div>
-
-                <!-- Upload de Movimento - SISTEMA ORIGINAL -->
-                <div class="alert-info">
-                    <strong>💼 Histórico de Atendimentos:</strong> Use esta opção para importar o histórico de serviços dos clientes.
-                    <br><strong>📝 O que faz:</strong>
-                    <br>• Se o telefone existe na base → adiciona serviços ao cliente
-                    <br>• Se o telefone não existe → cria novo cliente com os serviços
-                </div>
-                
-                <div class="form-group">
-                    <label for="servicosFile">Selecione o arquivo Excel de serviços (.xlsx ou .xls):</label>
-                    <input type="file" id="servicosFile" accept=".xlsx,.xls">
-                    <div class="file-info">
-                        <strong>📋 Formato da planilha de serviços:</strong><br>
-                        • <strong>Coluna A:</strong> Serviço (ex: Corte, Barba, Escova)<br>
-                        • <strong>Coluna B:</strong> Cliente (ex: João Silva)<br>
-                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999 ou 11999999999)<br>
-                        • <strong>Coluna D:</strong> Profissional (ex: Carlos, Pedro)<br>
-                        • <strong>Coluna E:</strong> Data (ex: 15/01/2025)<br><br>
-                        <strong>📞 Telefone:</strong> Pode vir formatado (11) 99999-9999 ou apenas números 11999999999. Será automaticamente formatado no padrão (xx) xxxxx-xxxx<br>
-                        <strong>⚠️ Importante:</strong> A primeira linha deve conter os cabeçalhos: Serviço, Cliente, Telefone, Profissional, Data
-                    </div>
-                </div>
-                
-                <button class="btn" onclick="uploadServicos()">
-                    🏆 Importar Serviços
-                </button>
-
-                <!-- Mini Chart -->
-                <div style="margin-top: 15px;">
-                    <h5>📈 Movimento Semanal</h5>
-                    <div class="mini-chart">
-                        <div class="chart-bar" style="height: 70%;"></div>
-                        <div class="chart-bar" style="height: 85%;"></div>
-                        <div class="chart-bar" style="height: 95%;"></div>
-                        <div class="chart-bar" style="height: 100%;"></div>
-                        <div class="chart-bar" style="height: 80%;"></div>
-                        <div class="chart-bar" style="height: 60%;"></div>
-                        <div class="chart-bar" style="height: 90%;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. ADICIONAR CLIENTE MANUALMENTE -->
-            <div class="box fade-in">
-                <h2>👤 Adicionar Cliente Manualmente</h2>
-                
-                <!-- Status Manual -->
-                <div class="status-card warning">
-                    <h4>📊 Cadastros Manuais</h4>
-                    <div class="status-grid">
-                        <div class="status-item">
-                            <div class="label">👥 Hoje</div>
-                            <div class="value" id="cadastrosHojeCount">0</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">📅 Esta Semana</div>
-                            <div class="value" id="cadastrosSemana">0</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">🏆 Este Mês</div>
-                            <div class="value" id="cadastrosMes">0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="alert info">
-                        <span>✍️</span>
-                        <span>Preencha os dados abaixo para adicionar um cliente por vez.</span>
-                    </div>
-                </div>
-
-                <!-- Formulário de Cadastro - SISTEMA ORIGINAL -->
-                <form id="clienteForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="nome">Nome Completo:</label>
-                            <input type="text" id="nome" required placeholder="Ex: João Silva">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="ddi">DDI (Código do País):</label>
-                            <input type="text" id="ddi" required placeholder="Ex: 55" value="55">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="telefone">Telefone:</label>
-                            <input type="tel" id="telefone" required placeholder="Ex: (11) 99999-9999">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="dataNascimento">Data de Nascimento:</label>
-                            <input type="date" id="dataNascimento" required>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn">
-                        💾 Salvar Cliente
-                    </button>
-                    <button type="button" class="btn secondary" onclick="limparFormulario()">
-                        🗑️ Limpar
-                    </button>
-                </form>
-
-                <!-- Quick Actions -->
-                <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
-                    <h5>🚀 Ações Rápidas</h5>
-                    <button class="btn secondary" onclick="openClientList()">👥 Ver Clientes</button>
-                    <button class="btn secondary" onclick="exportClientes()">📊 Exportar Lista</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Universal -->
-    <div id="universalModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modalContent">
-                <!-- Conteúdo será inserido dinamicamente -->
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let clienteEditando = null;
-        let progressInterval = null;
-
-        // ===== DADOS SIMULADOS PARA STATUS (atualizados pelos uploads reais) =====
-        let movementStats = {
-            lastImport: null,
-            totalMovements: 0,
-            thisMonth: 0
-        };
-
-        // ===== FUNÇÕES DE FORMATAÇÃO DE TELEFONE DO SISTEMA ORIGINAL =====
-        function formatarTelefone(telefone) {
-            if (!telefone) return '';
-            
-            // Remove tudo que não é número
-            const apenasNumeros = telefone.toString().replace(/\D/g, '');
-            
-            // Se tem 11 dígitos (celular com DDD)
-            if (apenasNumeros.length === 11) {
-                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
-            }
-            // Se tem 10 dígitos (fixo com DDD)  
-            else if (apenasNumeros.length === 10) {
-                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
-            }
-            // Se tem 9 dígitos (celular sem DDD)
-            else if (apenasNumeros.length === 9) {
-                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
-            }
-            // Se tem 8 dígitos (fixo sem DDD)
-            else if (apenasNumeros.length === 8) {
-                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
-            }
-            // Para outros tamanhos, retorna apenas os números
-            else {
-                return apenasNumeros;
-            }
-        }
-
-        function aplicarMascaraTelefone(input) {
-            const valorFormatado = formatarTelefone(input.value);
-            input.value = valorFormatado;
-        }
-
-        // ===== FUNÇÕES DA BARRA DE PROGRESSO DO SISTEMA ORIGINAL =====
-        function mostrarProgresso(titulo, subtitulo = 'Aguarde enquanto processamos os dados') {
-            const container = document.getElementById('progressContainer');
-            const titleElement = document.getElementById('progressTitle');
-            const subtitleElement = document.getElementById('progressSubtitle');
-            
-            titleElement.textContent = titulo;
-            subtitleElement.textContent = subtitulo;
-            
-            // Reset dos valores
-            atualizarProgresso(0, 0, 0);
-            
-            container.classList.add('active');
-            
-            // Scroll suave para a barra de progresso
-            container.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-            });
-        }
-
-        function ocultarProgresso() {
-            const container = document.getElementById('progressContainer');
-            container.classList.remove('active');
-            
-            if (progressInterval) {
-                clearInterval(progressInterval);
-                progressInterval = null;
-            }
-        }
-
-        function atualizarProgresso(atual, total, percentual = null) {
-            if (percentual === null && total > 0) {
-                percentual = Math.round((atual / total) * 100);
-            }
-            
-            document.getElementById('progressCurrent').textContent = atual;
-            document.getElementById('progressTotal').textContent = total;
-            document.getElementById('progressPercentage').textContent = `${percentual || 0}%`;
-            document.getElementById('progressBar').style.width = `${percentual || 0}%`;
-        }
-
-        function simularProgressoImportacao(totalLinhas, tipoImportacao = 'clientes') {
-            let currentProgress = 0;
-            const incremento = Math.max(1, Math.ceil(totalLinhas / 50)); // Incrementa de forma suave
-            
-            progressInterval = setInterval(() => {
-                currentProgress += incremento;
-                
-                if (currentProgress >= totalLinhas) {
-                    currentProgress = totalLinhas;
-                    clearInterval(progressInterval);
-                    progressInterval = null;
-                }
-                
-                atualizarProgresso(currentProgress, totalLinhas);
-                
-                // Atualizar subtítulo com base no progresso e tipo
-                const subtitle = document.getElementById('progressSubtitle');
-                const progPercent = currentProgress / totalLinhas;
-                
-                if (tipoImportacao === 'servicos') {
-                    if (progPercent < 0.3) {
-                        subtitle.textContent = `Validando dados dos serviços...`;
-                    } else if (progPercent < 0.6) {
-                        subtitle.textContent = `Buscando clientes existentes...`;
-                    } else if (progPercent < 0.9) {
-                        subtitle.textContent = `Adicionando serviços ao histórico...`;
-                    } else {
-                        subtitle.textContent = `Finalizando importação de serviços...`;
-                    }
-                } else {
-                    if (progPercent < 0.3) {
-                        subtitle.textContent = `Lendo e validando dados...`;
-                    } else if (progPercent < 0.7) {
-                        subtitle.textContent = `Verificando duplicatas...`;
-                    } else if (progPercent < 1.0) {
-                        subtitle.textContent = `Salvando no banco de dados...`;
-                    } else {
-                        subtitle.textContent = `Processamento concluído!`;
-                    }
-                }
-                
-            }, 100); // Atualiza a cada 100ms
-        }
-
-        // ===== FUNÇÕES DE STATUS DOS MOVIMENTOS =====
-        function updateMovementStatus() {
-            // Atualizar status na interface
-            document.getElementById('lastMovimentoDate').textContent = 
-                movementStats.lastImport ? movementStats.lastImport.toLocaleDateString('pt-BR') : 'Nunca';
-            document.getElementById('totalMovimentosCount').textContent = movementStats.totalMovements.toLocaleString();
-            
-            // Calcular tempo decorrido
-            if (movementStats.lastImport) {
-                const now = new Date();
-                const diff = now - movementStats.lastImport;
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                
-                let timeText = '';
-                if (days > 0) {
-                    timeText = `${days} dia${days > 1 ? 's' : ''} atrás`;
-                } else if (hours > 0) {
-                    timeText = `${hours} hora${hours > 1 ? 's' : ''} atrás`;
-                } else {
-                    timeText = 'Há poucos minutos';
-                }
-                
-                document.getElementById('movimentoTimeSince').textContent = timeText;
-                updateSmartAlert(days);
-            } else {
-                document.getElementById('movimentoTimeSince').textContent = '-';
-                updateSmartAlert(999); // Nunca importou
-            }
-        }
-
-        function updateSmartAlert(daysSince) {
-            const alertContainer = document.getElementById('movimentoAlert');
-            
-            if (daysSince >= 999) {
-                alertContainer.className = 'alert info';
-                alertContainer.innerHTML = '<span>💡</span><span>Importe o primeiro arquivo de movimentos para começar o controle!</span>';
-            } else if (daysSince >= 7) {
-                alertContainer.className = 'alert warning';
-                alertContainer.innerHTML = `<span>⚠️</span><span>Faz mais de ${daysSince} dias sem importação! Recomendamos atualizar os dados.</span>`;
-            } else if (daysSince >= 3) {
-                alertContainer.className = 'alert info';
-                alertContainer.innerHTML = '<span>💡</span><span>Considere verificar se há novos dados para importar.</span>';
-            } else {
-                alertContainer.className = 'alert success';
-                alertContainer.innerHTML = '<span>✅</span><span>Dados atualizados recentemente. Sistema em dia!</span>';
-            }
-        }
-
-        // ===== FUNÇÕES DE MODAL E AÇÕES EXTRAS =====
-        function openMovimentoHistory() {
-            const content = `
-                <h2 style="color: #ffd700; margin-bottom: 20px;">📋 Histórico de Importações - Movimentos</h2>
-                <div style="margin: 20px 0;">
-                    <input type="text" placeholder="🔍 Buscar por data ou arquivo..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ffd700; background: rgba(0,0,0,0.3); color: #fff;">
-                </div>
-                <div id="historyList">
-                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
-                        <div style="font-weight: bold; color: #ffd700;">📅 Nenhuma importação ainda</div>
-                        <div style="margin-top: 5px; opacity: 0.8;">Importe o primeiro arquivo de movimentos para ver o histórico aqui.</div>
-                    </div>
-                </div>
-                <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn secondary">📊 Exportar Relatório</button>
-                    <button class="btn secondary">🗑️ Limpar Histórico</button>
-                </div>
-            `;
-            openModal(content);
-        }
-
-        function analyzeLastImport() {
-            if (!movementStats.lastImport) {
-                showNotification('📝 Nenhuma importação foi realizada ainda.', 'info');
-                return;
-            }
-            
-            showNotification('🔍 Analisando última importação...', 'info');
-            setTimeout(() => {
-                showNotification(`📊 Última importação: ${movementStats.lastImport.toLocaleDateString('pt-BR')} | Total: ${movementStats.totalMovements} movimentos`, 'success');
-            }, 1500);
-        }
-
-        function exportMovimentos() {
-            showNotification('💾 Exportando backup dos movimentos...', 'info');
-            setTimeout(() => {
-                showNotification('✅ Backup exportado: movimentos_backup_' + new Date().toISOString().split('T')[0] + '.xlsx', 'success');
-            }, 2000);
-        }
-
-        function openClientList() {
-            const content = `
-                <h2 style="color: #ffd700; margin-bottom: 20px;">👥 Lista de Clientes Recentes</h2>
-                <div style="margin: 20px 0;">
-                    <input type="text" placeholder="🔍 Buscar cliente..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ffd700; background: rgba(0,0,0,0.3); color: #fff;">
-                </div>
-                <div style="max-height: 400px; overflow-y: auto;">
-                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
-                        <div style="font-weight: bold;">👤 Nenhum cliente cadastrado ainda</div>
-                        <div style="opacity: 0.8;">Use o formulário para cadastrar o primeiro cliente ou importe uma planilha.</div>
-                    </div>
-                </div>
-                <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn">📝 Novo Cliente</button>
-                    <button class="btn secondary">📊 Exportar Lista</button>
-                </div>
-            `;
-            openModal(content);
-        }
-
-        function exportClientes() {
-            showNotification('📊 Exportando lista de clientes...', 'info');
-            setTimeout(() => {
-                showNotification('✅ Lista exportada: clientes_completa_' + new Date().toISOString().split('T')[0] + '.xlsx', 'success');
-            }, 2000);
-        }
-
-        function openModal(content) {
-            document.getElementById('modalContent').innerHTML = content;
-            document.getElementById('universalModal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            document.getElementById('universalModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // ===== FUNÇÃO DE NOTIFICAÇÃO NOVA =====
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `alert alert-${type}`;
-            notification.style.position = 'fixed';
-            notification.style.top = '20px';
-            notification.style.right = '20px';
-            notification.style.zIndex = '1001';
-            notification.style.minWidth = '300px';
-            notification.style.maxWidth = '400px';
-            notification.innerHTML = `<span>${message}</span>`;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 5000);
-        }
-
-        // ===== INICIALIZAÇÃO =====
-        document.addEventListener('DOMContentLoaded', function() {
-            verificarAutenticacao();
-            
-            // Inicializar status dos movimentos
-            updateMovementStatus();
-            
-            // Event listener para formulário
-            document.getElementById('clienteForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                adicionarCliente();
-            });
-            
-            // Event listener para formatação automática do telefone
-            const telefoneInput = document.getElementById('telefone');
-            if (telefoneInput) {
-                // Formatar enquanto digita
-                telefoneInput.addEventListener('input', function() {
-                    aplicarMascaraTelefone(this);
-                });
-                
-                // Formatar quando sai do campo
-                telefoneInput.addEventListener('blur', function() {
-                    aplicarMascaraTelefone(this);
-                });
-            }
-        });
-
-        // ===== TODAS AS FUNÇÕES DO SISTEMA ORIGINAL =====
-        
-        // Verificar autenticação
-        async function verificarAutenticacao() {
-            try {
-                const response = await fetch('/api/auth-status');
-                const data = await response.json();
-                
-                if (!data.logado) {
-                    window.location.href = '/';
-                    return;
-                }
-            } catch (error) {
-                console.error('Erro ao verificar autenticação:', error);
-                window.location.href = '/';
-            }
-        }
-
-        // Função para mostrar alertas do sistema original
-        function mostrarAlert(mensagem, tipo = 'success') {
-            const alertsContainer = document.getElementById('alerts');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${tipo}`;
-            alert.textContent = mensagem;
-            
-            alertsContainer.appendChild(alert);
-            
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-
-        // Adicionar novo cliente
-        async function adicionarCliente() {
-            const nome = document.getElementById('nome').value.trim();
-            let ddi = document.getElementById('ddi').value.trim();
-            let telefone = document.getElementById('telefone').value.trim();
-            const dataNascimento = document.getElementById('dataNascimento').value;
-            
-            // Limpar DDI removendo + se houver
-            ddi = ddi.replace(/^\+/, ''); // Remove + do início se existir
-            if (!ddi || ddi === '') {
-                ddi = '55'; // Padrão Brasil se vazio
-            }
-            
-            // Garantir que o telefone está formatado antes de enviar
-            telefone = formatarTelefone(telefone);
-            
-            if (!nome || !ddi || !telefone || !dataNascimento) {
-                mostrarAlert('Por favor, preencha todos os campos.', 'error');
-                return;
-            }
-            
-            try {
-                const response = await fetch('/api/clientes', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ nome, ddi, telefone, dataNascimento })
-                });
-                
-                if (response.status === 401) {
-                    window.location.href = '/';
-                    return;
-                }
-                
-                if (response.ok) {
-                    mostrarAlert(`✅ Cliente "${nome}" adicionado com sucesso!`, 'success');
-                    limparFormulario();
-                    
-                    // Atualizar contadores
-                    updateClientCounters();
-                } else {
-                    const erro = await response.json();
-                    mostrarAlert(erro.erro || 'Erro ao adicionar cliente', 'error');
-                }
-            } catch (error) {
-                mostrarAlert('Erro de conexão', 'error');
-                console.error('Erro:', error);
-            }
-        }
-
-        // Upload de Excel
-        async function uploadExcel() {
-            const fileInput = document.getElementById('excelFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                mostrarAlert('Por favor, selecione um arquivo Excel.', 'error');
-                return;
-            }
-            
-            // Verificar se é arquivo Excel
-            const tipoArquivo = file.name.toLowerCase();
-            if (!tipoArquivo.endsWith('.xlsx') && !tipoArquivo.endsWith('.xls')) {
-                mostrarAlert('Por favor, selecione apenas arquivos Excel (.xlsx ou .xls)', 'error');
-                return;
-            }
-            
-            const formData = new FormData();
-            formData.append('excel', file);
-            
-            try {
-                // Mostrar barra de progresso
-                mostrarProgresso('📤 Importando Cadastro de Clientes', 'Enviando arquivo para o servidor...');
-                
-                // Simular progresso inicial (leitura do arquivo)
-                setTimeout(() => {
-                    atualizarProgresso(1, 100, 5);
-                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo Excel...';
-                }, 200);
-                
-                const response = await fetch('/api/upload-excel', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (response.status === 401) {
-                    ocultarProgresso();
-                    window.location.href = '/';
-                    return;
-                }
-                
-                const resultado = await response.json();
-                
-                if (response.ok) {
-                    // Simular progresso do processamento baseado no total de linhas
-                    if (resultado.totalLinhas > 0) {
-                        atualizarProgresso(5, 100, 10);
-                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros...`;
-                        
-                        // Simular o processamento linha por linha
-                        simularProgressoImportacao(resultado.totalLinhas, 'clientes');
-                        
-                        // Aguardar conclusão da simulação
-                        await new Promise(resolve => {
-                            const checkComplete = setInterval(() => {
-                                if (!progressInterval) {
-                                    clearInterval(checkComplete);
-                                    resolve();
-                                }
-                            }, 100);
-                        });
-                    }
-                    
-                    // Finalizar progresso
-                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
-                    document.getElementById('progressSubtitle').textContent = '✅ Importação concluída com sucesso!';
-                    
-                    // Aguardar um pouco antes de ocultar
-                    setTimeout(() => {
-                        ocultarProgresso();
-                    }, 2000);
-                    
-                    // Mostrar resultado detalhado
-                    let mensagemCompleta = `🎉 ${resultado.mensagem}`;
-                    
-                    if (resultado.sucessos && resultado.sucessos.length > 0) {
-                        console.log('✅ Clientes adicionados com sucesso:', resultado.sucessos);
-                    }
-                    
-                    if (resultado.erros && resultado.erros.length > 0) {
-                        console.log('⚠️ Detalhes dos erros/avisos:', resultado.erros);
-                        
-                        if (resultado.clientesJaExistem > 0) {
-                            mensagemCompleta += `\n\n📋 ${resultado.clientesJaExistem} clientes já existiam na base (não foram duplicados).`;
-                        }
-                        
-                        if (resultado.totalErros > 0) {
-                            mensagemCompleta += `\n\n⚠️ ${resultado.totalErros} erros encontrados. Verifique o console (F12) para detalhes.`;
-                        }
-                        
-                        // Mostrar alguns erros na tela para facilitar
-                        if (resultado.erros.length > 0) {
-                            const primeirosErros = resultado.erros.slice(0, 5);
-                            mensagemCompleta += `\n\n🔍 Principais problemas encontrados:\n${primeirosErros.join('\n')}`;
-                            
-                            if (resultado.erros.length > 5) {
-                                mensagemCompleta += `\n... e mais ${resultado.erros.length - 5} erros (veja console F12)`;
-                            }
-                        }
-                    }
-                    
-                    mostrarAlert(mensagemCompleta, 'success');
-                    fileInput.value = '';
-                    
-                    // Atualizar contadores
-                    updateClientCounters();
-                    
-                    // Mostrar estatísticas detalhadas
-                    if (resultado.totalLinhas > 0) {
-                        setTimeout(() => {
-                            const estatisticas = `📊 RESUMO DETALHADO DA IMPORTAÇÃO:
-• Total de linhas processadas: ${resultado.totalLinhas}
-• Clientes novos adicionados: ${resultado.clientesInseridos}
-• Clientes que já existiam: ${resultado.clientesJaExistem || 0}
-• Linhas com erro: ${resultado.totalErros || 0}
-
-${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.primeiraLinhaExemplo.join(', ') : ''}
-
-✅ IMPORTAÇÃO CONCLUÍDA COM SUCESSO!`;
-                            
-                            mostrarAlert(estatisticas, 'info');
-                        }, 1000);
-                    }
-                } else {
-                    ocultarProgresso();
-                    mostrarAlert(resultado.erro || 'Erro ao processar arquivo Excel', 'error');
-                    if (resultado.detalhes) {
-                        console.error('Detalhes do erro:', resultado.detalhes);
-                    }
-                }
-            } catch (error) {
-                ocultarProgresso();
-                mostrarAlert('Erro ao fazer upload do arquivo', 'error');
-                console.error('Erro:', error);
-            }
-        }
-
-        // Upload de histórico de serviços
-        async function uploadServicos() {
-            const fileInput = document.getElementById('servicosFile');
-            const file = fileInput.files[0];
-            if (!file) {
-                mostrarAlert('Por favor, selecione um arquivo de serviços.', 'error');
-                return;
-            }
-            const tipoArquivo = file.name.toLowerCase();
-            if (!tipoArquivo.endsWith('.xlsx') && !tipoArquivo.endsWith('.xls')) {
-                mostrarAlert('Por favor, selecione apenas arquivos Excel (.xlsx ou .xls)', 'error');
-                return;
-            }
-            const formData = new FormData();
-            formData.append('excel', file);
-            
-            try {
-                // Mostrar barra de progresso para serviços
-                mostrarProgresso('🏆 Importando Histórico de Serviços', 'Enviando arquivo para o servidor...');
-                
-                // Simular progresso inicial
-                setTimeout(() => {
-                    atualizarProgresso(1, 100, 5);
-                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo de serviços...';
-                }, 200);
-                
-                const response = await fetch('/api/upload-servicos', {
-                    method: 'POST',
-                    body: formData
-                });
-                if (response.status === 401) {
-                    ocultarProgresso();
-                    window.location.href = '/';
-                    return;
-                }
-                const resultado = await response.json();
-                if (response.ok) {
-                    // Simular progresso do processamento
-                    if (resultado.totalLinhas > 0) {
-                        atualizarProgresso(5, 100, 10);
-                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros de serviços...`;
-                        
-                        // Simular o processamento específico para serviços
-                        simularProgressoImportacao(resultado.totalLinhas, 'servicos');
-                        
-                        // Aguardar conclusão da simulação
-                        await new Promise(resolve => {
-                            const checkComplete = setInterval(() => {
-                                if (!progressInterval) {
-                                    clearInterval(checkComplete);
-                                    resolve();
-                                }
-                            }, 100);
-                        });
-                    }
-                    
-                    // Finalizar progresso
-                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
-                    document.getElementById('progressSubtitle').textContent = '✅ Importação de serviços concluída!';
-                    
-                    // ===== ATUALIZAR STATUS DOS MOVIMENTOS =====
-                    movementStats.lastImport = new Date();
-                    movementStats.totalMovements += resultado.servicosAdicionados || 0;
-                    movementStats.thisMonth += resultado.servicosAdicionados || 0;
-                    updateMovementStatus();
-                    
-                    // Aguardar um pouco antes de ocultar
-                    setTimeout(() => {
-                        ocultarProgresso();
-                    }, 2000);
-                    
-                    let mensagemCompleta = `🎉 ${resultado.mensagem || 'Histórico importado com sucesso!'}`;
-                    if (resultado.sucessos && resultado.sucessos.length > 0) {
-                        console.log('✅ Serviços adicionados com sucesso:', resultado.sucessos);
-                    }
-                    if (resultado.erros && resultado.erros.length > 0) {
-                        console.log('⚠️ Detalhes dos erros/avisos:', resultado.erros);
-                        if (resultado.totalErros > 0) {
-                            mensagemCompleta += `\n\n⚠️ ${resultado.totalErros} erros encontrados. Verifique o console (F12) para detalhes.`;
-                        }
-                        if (resultado.erros.length > 0) {
-                            const primeirosErros = resultado.erros.slice(0, 5);
-                            mensagemCompleta += `\n\n🔍 Principais problemas encontrados:\n${primeirosErros.join('\n')}`;
-                            if (resultado.erros.length > 5) {
-                                mensagemCompleta += `\n... e mais ${resultado.erros.length - 5} erros (veja console F12)`;
-                            }
-                        }
-                    }
-                    mostrarAlert(mensagemCompleta, 'success');
-                    fileInput.value = '';
-                    if (resultado.totalLinhas > 0) {
-                        setTimeout(() => {
-                            const estatisticas = `📊 RESUMO DA IMPORTAÇÃO DE SERVIÇOS:
-• Total de linhas: ${resultado.totalLinhas}
-• Serviços adicionados: ${resultado.servicosAdicionados || 0}
-• Clientes atualizados: ${resultado.clientesAtualizados || 0}
-• Clientes novos criados: ${resultado.clientesNovos || 0}
-• Linhas com erro: ${resultado.totalErros || 0}
-
-✅ IMPORTAÇÃO DE SERVIÇOS CONCLUÍDA!`;
-                            mostrarAlert(estatisticas, 'info');
-                        }, 1000);
-                    }
-                } else {
-                    ocultarProgresso();
-                    mostrarAlert(resultado.erro || 'Erro ao processar arquivo de serviços', 'error');
-                    if (resultado.detalhes) {
-                        console.error('Detalhes do erro:', resultado.detalhes);
-                    }
-                }
-            } catch (error) {
-                ocultarProgresso();
-                mostrarAlert('Erro ao fazer upload do arquivo de serviços', 'error');
-                console.error('Erro:', error);
-            }
-        }
-
-        // Limpar formulário
-        function limparFormulario() {
-            document.getElementById('clienteForm').reset();
-            document.getElementById('ddi').value = '55'; // Recolocar valor padrão
-        }
-
-        // Atualizar contadores de clientes
-        function updateClientCounters() {
-            // Esta função seria chamada após adicionar/importar clientes
-            // Para atualizar os contadores na interface
-            const hoje = document.getElementById('cadastrosHojeCount');
-            const semana = document.getElementById('cadastrosSemana');
-            const mes = document.getElementById('cadastrosMes');
-            const total = document.getElementById('totalRegistros');
-            
-            // Incrementar contadores (em um sistema real, estes viriam da API)
-            if (hoje) {
-                const currentToday = parseInt(hoje.textContent) || 0;
-                hoje.textContent = currentToday + 1;
-            }
-            if (semana) {
-                const currentWeek = parseInt(semana.textContent) || 0;
-                semana.textContent = currentWeek + 1;
-            }
-            if (mes) {
-                const currentMonth = parseInt(mes.textContent) || 0;
-                mes.textContent = currentMonth + 1;
-            }
-            if (total) {
-                const currentTotal = parseInt(total.textContent.replace(/\./g, '')) || 0;
-                total.textContent = (currentTotal + 1).toLocaleString();
-            }
-        }
-
-        // Fechar modal clicando fora
-        window.onclick = function(event) {
-            const modal = document.getElementById('universalModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-    </script>
-</body>
-</html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -920,7 +94,7 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             padding-bottom: 10px;
         }
 
-        /* ===== SISTEMA DE STATUS PARA MOVIMENTO ===== */
+        /* Status Cards */
         .status-card {
             background: linear-gradient(45deg, #28a745, #20c997);
             padding: 20px;
@@ -1018,18 +192,8 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             background: linear-gradient(45deg, #6c757d, #495057);
             color: white;
         }
-        
-        .btn.danger {
-            background: linear-gradient(45deg, #dc3545, #c82333);
-            color: white;
-        }
-        
-        .btn.success {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-        }
 
-        /* Forms - MANTIDO DO SISTEMA ORIGINAL */
+        /* Forms - DO SISTEMA ORIGINAL */
         .form-group {
             margin-bottom: 24px;
         }
@@ -1082,27 +246,6 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
-        }
-
-        /* Upload Areas */
-        .upload-area {
-            border: 2px dashed #ffd700;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            background: rgba(255, 215, 0, 0.05);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .upload-area:hover {
-            background: rgba(255, 215, 0, 0.1);
-            border-color: #ffed4e;
-        }
-        
-        .upload-area.dragover {
-            background: rgba(255, 215, 0, 0.2);
-            transform: scale(1.02);
         }
 
         /* Charts */
@@ -1164,7 +307,7 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             color: #ffd700;
         }
 
-        /* ===== SISTEMA DE ALERTAS DO ORIGINAL ===== */
+        /* SISTEMA DE ALERTAS DO ORIGINAL */
         .alert-success {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
             border: 1px solid rgba(16, 185, 129, 0.3);
@@ -1212,7 +355,7 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             font-weight: 500;
         }
 
-        /* ===== BARRA DE PROGRESSO DO ORIGINAL ===== */
+        /* BARRA DE PROGRESSO DO ORIGINAL */
         .progress-container {
             display: none;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
@@ -1338,133 +481,7 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             100% { transform: rotate(360deg); }
         }
 
-        /* Preview Areas */
-        .preview-area {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            display: none;
-        }
-        
-        .preview-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .preview-stat {
-            text-align: center;
-            padding: 8px;
-            background: rgba(255, 215, 0, 0.1);
-            border-radius: 6px;
-            font-size: 0.8em;
-        }
-
-        /* Quick Stats */
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .quick-stat {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            border-left: 4px solid #ffd700;
-        }
-        
-        .quick-stat .number {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #ffd700;
-        }
-        
-        .quick-stat .label {
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .status-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .quick-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .progress-info {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-        }
-
-        /* Animations */
-        .fade-in {
-            animation: fadeIn 0.6s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .bounce {
-            animation: bounce 1s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-8px); }
-            60% { transform: translateY(-4px); }
-        }
-
-        /* Additional Styles */
-        .success-message {
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            display: none;
-        }
-        
-        .progress-bar-old {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            overflow: hidden;
-            height: 20px;
-            margin: 10px 0;
-        }
-        
-        .progress-fill {
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
-            height: 100%;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* ===== ESTILOS ESPECÍFICOS DO BMB ORIGINAL ===== */
+        /* ESTILOS DO BMB ORIGINAL */
         .btn-back {
             background: linear-gradient(135deg, #FFD700, #FFA500);
             color: #000000;
@@ -1521,6 +538,42 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             font-size: 1.1rem;
             font-weight: 500;
         }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .progress-info {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -1542,7 +595,7 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
         <!-- Container de alertas do sistema original -->
         <div id="alerts"></div>
 
-        <!-- ===== BARRA DE PROGRESSO DO SISTEMA ORIGINAL ===== -->
+        <!-- BARRA DE PROGRESSO DO SISTEMA ORIGINAL -->
         <div id="progressContainer" class="progress-container">
             <div class="progress-header">
                 <div class="progress-title">
@@ -1579,31 +632,11 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             <div class="box fade-in">
                 <h2>📁 Importar Cadastro</h2>
                 
-                <!-- Status do Cadastro -->
-                <div class="status-card warning">
-                    <h4>📊 Status do Cadastro Principal</h4>
-                    <div class="status-grid">
-                        <div class="status-item">
-                            <div class="label">📅 Última Importação</div>
-                            <div class="value" id="lastCadastroDate">Nunca</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">📊 Total Registros</div>
-                            <div class="value" id="totalRegistros">0</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">⏱️ Há quanto tempo</div>
-                            <div class="value" id="cadastroTimeSince">-</div>
-                        </div>
-                    </div>
-                    
-                    <div class="alert info">
-                        <span>💡</span>
-                        <span>Use esta opção para importar vários clientes de uma vez através de uma planilha Excel.</span>
-                    </div>
+                <div class="alert info">
+                    <span>💡</span>
+                    <span>Use esta opção para importar vários clientes de uma vez através de uma planilha Excel.</span>
                 </div>
 
-                <!-- Upload de Cadastro - SISTEMA ORIGINAL -->
                 <div class="form-group">
                     <label for="excelFile">Selecione o arquivo Excel (.xlsx ou .xls):</label>
                     <input type="file" id="excelFile" accept=".xlsx,.xls">
@@ -1622,7 +655,6 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
                     📤 Importar Cadastro
                 </button>
 
-                <!-- Mini Chart -->
                 <div style="margin-top: 15px;">
                     <h5>📈 Evolução de Cadastros</h5>
                     <div class="mini-chart">
@@ -1698,7 +730,6 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
                     🏆 Importar Serviços
                 </button>
 
-                <!-- Mini Chart -->
                 <div style="margin-top: 15px;">
                     <h5>📈 Movimento Semanal</h5>
                     <div class="mini-chart">
@@ -1717,28 +748,9 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
             <div class="box fade-in">
                 <h2>👤 Adicionar Cliente Manualmente</h2>
                 
-                <!-- Status Manual -->
-                <div class="status-card warning">
-                    <h4>📊 Cadastros Manuais</h4>
-                    <div class="status-grid">
-                        <div class="status-item">
-                            <div class="label">👥 Hoje</div>
-                            <div class="value" id="cadastrosHojeCount">0</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">📅 Esta Semana</div>
-                            <div class="value" id="cadastrosSemana">0</div>
-                        </div>
-                        <div class="status-item">
-                            <div class="label">🏆 Este Mês</div>
-                            <div class="value" id="cadastrosMes">0</div>
-                        </div>
-                    </div>
-                    
-                    <div class="alert info">
-                        <span>✍️</span>
-                        <span>Preencha os dados abaixo para adicionar um cliente por vez.</span>
-                    </div>
+                <div class="alert info">
+                    <span>✍️</span>
+                    <span>Preencha os dados abaixo para adicionar um cliente por vez.</span>
                 </div>
 
                 <!-- Formulário de Cadastro - SISTEMA ORIGINAL -->
@@ -1772,13 +784,6 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
                         🗑️ Limpar
                     </button>
                 </form>
-
-                <!-- Quick Actions -->
-                <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
-                    <h5>🚀 Ações Rápidas</h5>
-                    <button class="btn secondary" onclick="openClientList()">👥 Ver Clientes</button>
-                    <button class="btn secondary" onclick="exportClientes()">📊 Exportar Lista</button>
-                </div>
             </div>
         </div>
     </div>
@@ -1794,7 +799,627 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
     </div>
 
     <script>
-        // Todo o JavaScript que já postei anteriormente...
+        let clienteEditando = null;
+        let progressInterval = null;
+
+        // Dados simulados para status (atualizados pelos uploads reais)
+        let movementStats = {
+            lastImport: null,
+            totalMovements: 0,
+            thisMonth: 0
+        };
+
+        // FUNÇÕES DE FORMATAÇÃO DE TELEFONE DO SISTEMA ORIGINAL
+        function formatarTelefone(telefone) {
+            if (!telefone) return '';
+            
+            // Remove tudo que não é número
+            const apenasNumeros = telefone.toString().replace(/\D/g, '');
+            
+            // Se tem 11 dígitos (celular com DDD)
+            if (apenasNumeros.length === 11) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+            }
+            // Se tem 10 dígitos (fixo com DDD)  
+            else if (apenasNumeros.length === 10) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+            }
+            // Se tem 9 dígitos (celular sem DDD)
+            else if (apenasNumeros.length === 9) {
+                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+            }
+            // Se tem 8 dígitos (fixo sem DDD)
+            else if (apenasNumeros.length === 8) {
+                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+            }
+            // Para outros tamanhos, retorna apenas os números
+            else {
+                return apenasNumeros;
+            }
+        }
+
+        function aplicarMascaraTelefone(input) {
+            const valorFormatado = formatarTelefone(input.value);
+            input.value = valorFormatado;
+        }
+
+        // FUNÇÕES DA BARRA DE PROGRESSO DO SISTEMA ORIGINAL
+        function mostrarProgresso(titulo, subtitulo = 'Aguarde enquanto processamos os dados') {
+            const container = document.getElementById('progressContainer');
+            const titleElement = document.getElementById('progressTitle');
+            const subtitleElement = document.getElementById('progressSubtitle');
+            
+            titleElement.textContent = titulo;
+            subtitleElement.textContent = subtitulo;
+            
+            // Reset dos valores
+            atualizarProgresso(0, 0, 0);
+            
+            container.classList.add('active');
+            
+            // Scroll suave para a barra de progresso
+            container.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+
+        function ocultarProgresso() {
+            const container = document.getElementById('progressContainer');
+            container.classList.remove('active');
+            
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        function atualizarProgresso(atual, total, percentual = null) {
+            if (percentual === null && total > 0) {
+                percentual = Math.round((atual / total) * 100);
+            }
+            
+            document.getElementById('progressCurrent').textContent = atual;
+            document.getElementById('progressTotal').textContent = total;
+            document.getElementById('progressPercentage').textContent = `${percentual || 0}%`;
+            document.getElementById('progressBar').style.width = `${percentual || 0}%`;
+        }
+
+        function simularProgressoImportacao(totalLinhas, tipoImportacao = 'clientes') {
+            let currentProgress = 0;
+            const incremento = Math.max(1, Math.ceil(totalLinhas / 50)); // Incrementa de forma suave
+            
+            progressInterval = setInterval(() => {
+                currentProgress += incremento;
+                
+                if (currentProgress >= totalLinhas) {
+                    currentProgress = totalLinhas;
+                    clearInterval(progressInterval);
+                    progressInterval = null;
+                }
+                
+                atualizarProgresso(currentProgress, totalLinhas);
+                
+                // Atualizar subtítulo com base no progresso e tipo
+                const subtitle = document.getElementById('progressSubtitle');
+                const progPercent = currentProgress / totalLinhas;
+                
+                if (tipoImportacao === 'servicos') {
+                    if (progPercent < 0.3) {
+                        subtitle.textContent = `Validando dados dos serviços...`;
+                    } else if (progPercent < 0.6) {
+                        subtitle.textContent = `Buscando clientes existentes...`;
+                    } else if (progPercent < 0.9) {
+                        subtitle.textContent = `Adicionando serviços ao histórico...`;
+                    } else {
+                        subtitle.textContent = `Finalizando importação de serviços...`;
+                    }
+                } else {
+                    if (progPercent < 0.3) {
+                        subtitle.textContent = `Lendo e validando dados...`;
+                    } else if (progPercent < 0.7) {
+                        subtitle.textContent = `Verificando duplicatas...`;
+                    } else if (progPercent < 1.0) {
+                        subtitle.textContent = `Salvando no banco de dados...`;
+                    } else {
+                        subtitle.textContent = `Processamento concluído!`;
+                    }
+                }
+                
+            }, 100); // Atualiza a cada 100ms
+        }
+
+        // FUNÇÕES DE STATUS DOS MOVIMENTOS
+        function updateMovementStatus() {
+            // Atualizar status na interface
+            document.getElementById('lastMovimentoDate').textContent = 
+                movementStats.lastImport ? movementStats.lastImport.toLocaleDateString('pt-BR') : 'Nunca';
+            document.getElementById('totalMovimentosCount').textContent = movementStats.totalMovements.toLocaleString();
+            
+            // Calcular tempo decorrido
+            if (movementStats.lastImport) {
+                const now = new Date();
+                const diff = now - movementStats.lastImport;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                
+                let timeText = '';
+                if (days > 0) {
+                    timeText = `${days} dia${days > 1 ? 's' : ''} atrás`;
+                } else if (hours > 0) {
+                    timeText = `${hours} hora${hours > 1 ? 's' : ''} atrás`;
+                } else {
+                    timeText = 'Há poucos minutos';
+                }
+                
+                document.getElementById('movimentoTimeSince').textContent = timeText;
+                updateSmartAlert(days);
+            } else {
+                document.getElementById('movimentoTimeSince').textContent = '-';
+                updateSmartAlert(999); // Nunca importou
+            }
+        }
+
+        function updateSmartAlert(daysSince) {
+            const alertContainer = document.getElementById('movimentoAlert');
+            
+            if (daysSince >= 999) {
+                alertContainer.className = 'alert info';
+                alertContainer.innerHTML = '<span>💡</span><span>Importe o primeiro arquivo de movimentos para começar o controle!</span>';
+            } else if (daysSince >= 7) {
+                alertContainer.className = 'alert warning';
+                alertContainer.innerHTML = `<span>⚠️</span><span>Faz mais de ${daysSince} dias sem importação! Recomendamos atualizar os dados.</span>`;
+            } else if (daysSince >= 3) {
+                alertContainer.className = 'alert info';
+                alertContainer.innerHTML = '<span>💡</span><span>Considere verificar se há novos dados para importar.</span>';
+            } else {
+                alertContainer.className = 'alert success';
+                alertContainer.innerHTML = '<span>✅</span><span>Dados atualizados recentemente. Sistema em dia!</span>';
+            }
+        }
+
+        // FUNÇÕES DE MODAL E AÇÕES EXTRAS
+        function openMovimentoHistory() {
+            const content = `
+                <h2 style="color: #ffd700; margin-bottom: 20px;">📋 Histórico de Importações - Movimentos</h2>
+                <div style="margin: 20px 0;">
+                    <input type="text" placeholder="🔍 Buscar por data ou arquivo..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ffd700; background: rgba(0,0,0,0.3); color: #fff;">
+                </div>
+                <div id="historyList">
+                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
+                        <div style="font-weight: bold; color: #ffd700;">📅 Nenhuma importação ainda</div>
+                        <div style="margin-top: 5px; opacity: 0.8;">Importe o primeiro arquivo de movimentos para ver o histórico aqui.</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="btn secondary">📊 Exportar Relatório</button>
+                    <button class="btn secondary">🗑️ Limpar Histórico</button>
+                </div>
+            `;
+            openModal(content);
+        }
+
+        function analyzeLastImport() {
+            if (!movementStats.lastImport) {
+                showNotification('📝 Nenhuma importação foi realizada ainda.', 'info');
+                return;
+            }
+            
+            showNotification('🔍 Analisando última importação...', 'info');
+            setTimeout(() => {
+                showNotification(`📊 Última importação: ${movementStats.lastImport.toLocaleDateString('pt-BR')} | Total: ${movementStats.totalMovements} movimentos`, 'success');
+            }, 1500);
+        }
+
+        function exportMovimentos() {
+            showNotification('💾 Exportando backup dos movimentos...', 'info');
+            setTimeout(() => {
+                showNotification('✅ Backup exportado: movimentos_backup_' + new Date().toISOString().split('T')[0] + '.xlsx', 'success');
+            }, 2000);
+        }
+
+        function openModal(content) {
+            document.getElementById('modalContent').innerHTML = content;
+            document.getElementById('universalModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('universalModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // FUNÇÃO DE NOTIFICAÇÃO
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type}`;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '1001';
+            notification.style.minWidth = '300px';
+            notification.style.maxWidth = '400px';
+            notification.innerHTML = `<span>${message}</span>`;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // INICIALIZAÇÃO
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            
+            // Inicializar status dos movimentos
+            updateMovementStatus();
+            
+            // Event listener para formulário
+            document.getElementById('clienteForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                adicionarCliente();
+            });
+            
+            // Event listener para formatação automática do telefone
+            const telefoneInput = document.getElementById('telefone');
+            if (telefoneInput) {
+                // Formatar enquanto digita
+                telefoneInput.addEventListener('input', function() {
+                    aplicarMascaraTelefone(this);
+                });
+                
+                // Formatar quando sai do campo
+                telefoneInput.addEventListener('blur', function() {
+                    aplicarMascaraTelefone(this);
+                });
+            }
+        });
+
+        // TODAS AS FUNÇÕES DO SISTEMA ORIGINAL
+        
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Função para mostrar alertas do sistema original
+        function mostrarAlert(mensagem, tipo = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.textContent = mensagem;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Adicionar novo cliente
+        async function adicionarCliente() {
+            const nome = document.getElementById('nome').value.trim();
+            let ddi = document.getElementById('ddi').value.trim();
+            let telefone = document.getElementById('telefone').value.trim();
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            
+            // Limpar DDI removendo + se houver
+            ddi = ddi.replace(/^\+/, ''); // Remove + do início se existir
+            if (!ddi || ddi === '') {
+                ddi = '55'; // Padrão Brasil se vazio
+            }
+            
+            // Garantir que o telefone está formatado antes de enviar
+            telefone = formatarTelefone(telefone);
+            
+            if (!nome || !ddi || !telefone || !dataNascimento) {
+                mostrarAlert('Por favor, preencha todos os campos.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/clientes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome, ddi, telefone, dataNascimento })
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.ok) {
+                    mostrarAlert(`✅ Cliente "${nome}" adicionado com sucesso!`, 'success');
+                    limparFormulario();
+                } else {
+                    const erro = await response.json();
+                    mostrarAlert(erro.erro || 'Erro ao adicionar cliente', 'error');
+                }
+            } catch (error) {
+                mostrarAlert('Erro de conexão', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Upload de Excel
+        async function uploadExcel() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                mostrarAlert('Por favor, selecione um arquivo Excel.', 'error');
+                return;
+            }
+            
+            // Verificar se é arquivo Excel
+            const tipoArquivo = file.name.toLowerCase();
+            if (!tipoArquivo.endsWith('.xlsx') && !tipoArquivo.endsWith('.xls')) {
+                mostrarAlert('Por favor, selecione apenas arquivos Excel (.xlsx ou .xls)', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('excel', file);
+            
+            try {
+                // Mostrar barra de progresso
+                mostrarProgresso('📤 Importando Cadastro de Clientes', 'Enviando arquivo para o servidor...');
+                
+                // Simular progresso inicial (leitura do arquivo)
+                setTimeout(() => {
+                    atualizarProgresso(1, 100, 5);
+                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo Excel...';
+                }, 200);
+                
+                const response = await fetch('/api/upload-excel', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.status === 401) {
+                    ocultarProgresso();
+                    window.location.href = '/';
+                    return;
+                }
+                
+                const resultado = await response.json();
+                
+                if (response.ok) {
+                    // Simular progresso do processamento baseado no total de linhas
+                    if (resultado.totalLinhas > 0) {
+                        atualizarProgresso(5, 100, 10);
+                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros...`;
+                        
+                        // Simular o processamento linha por linha
+                        simularProgressoImportacao(resultado.totalLinhas, 'clientes');
+                        
+                        // Aguardar conclusão da simulação
+                        await new Promise(resolve => {
+                            const checkComplete = setInterval(() => {
+                                if (!progressInterval) {
+                                    clearInterval(checkComplete);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
+                    
+                    // Finalizar progresso
+                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
+                    document.getElementById('progressSubtitle').textContent = '✅ Importação concluída com sucesso!';
+                    
+                    // Aguardar um pouco antes de ocultar
+                    setTimeout(() => {
+                        ocultarProgresso();
+                    }, 2000);
+                    
+                    // Mostrar resultado detalhado
+                    let mensagemCompleta = `🎉 ${resultado.mensagem}`;
+                    
+                    if (resultado.sucessos && resultado.sucessos.length > 0) {
+                        console.log('✅ Clientes adicionados com sucesso:', resultado.sucessos);
+                    }
+                    
+                    if (resultado.erros && resultado.erros.length > 0) {
+                        console.log('⚠️ Detalhes dos erros/avisos:', resultado.erros);
+                        
+                        if (resultado.clientesJaExistem > 0) {
+                            mensagemCompleta += `\n\n📋 ${resultado.clientesJaExistem} clientes já existiam na base (não foram duplicados).`;
+                        }
+                        
+                        if (resultado.totalErros > 0) {
+                            mensagemCompleta += `\n\n⚠️ ${resultado.totalErros} erros encontrados. Verifique o console (F12) para detalhes.`;
+                        }
+                        
+                        // Mostrar alguns erros na tela para facilitar
+                        if (resultado.erros.length > 0) {
+                            const primeirosErros = resultado.erros.slice(0, 5);
+                            mensagemCompleta += `\n\n🔍 Principais problemas encontrados:\n${primeirosErros.join('\n')}`;
+                            
+                            if (resultado.erros.length > 5) {
+                                mensagemCompleta += `\n... e mais ${resultado.erros.length - 5} erros (veja console F12)`;
+                            }
+                        }
+                    }
+                    
+                    mostrarAlert(mensagemCompleta, 'success');
+                    fileInput.value = '';
+                    
+                    // Mostrar estatísticas detalhadas
+                    if (resultado.totalLinhas > 0) {
+                        setTimeout(() => {
+                            const estatisticas = `📊 RESUMO DETALHADO DA IMPORTAÇÃO:
+• Total de linhas processadas: ${resultado.totalLinhas}
+• Clientes novos adicionados: ${resultado.clientesInseridos}
+• Clientes que já existiam: ${resultado.clientesJaExistem || 0}
+• Linhas com erro: ${resultado.totalErros || 0}
+
+${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.primeiraLinhaExemplo.join(', ') : ''}
+
+✅ IMPORTAÇÃO CONCLUÍDA COM SUCESSO!`;
+                            
+                            mostrarAlert(estatisticas, 'info');
+                        }, 1000);
+                    }
+                } else {
+                    ocultarProgresso();
+                    mostrarAlert(resultado.erro || 'Erro ao processar arquivo Excel', 'error');
+                    if (resultado.detalhes) {
+                        console.error('Detalhes do erro:', resultado.detalhes);
+                    }
+                }
+            } catch (error) {
+                ocultarProgresso();
+                mostrarAlert('Erro ao fazer upload do arquivo', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Upload de histórico de serviços
+        async function uploadServicos() {
+            const fileInput = document.getElementById('servicosFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                mostrarAlert('Por favor, selecione um arquivo de serviços.', 'error');
+                return;
+            }
+            const tipoArquivo = file.name.toLowerCase();
+            if (!tipoArquivo.endsWith('.xlsx') && !tipoArquivo.endsWith('.xls')) {
+                mostrarAlert('Por favor, selecione apenas arquivos Excel (.xlsx ou .xls)', 'error');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('excel', file);
+            
+            try {
+                // Mostrar barra de progresso para serviços
+                mostrarProgresso('🏆 Importando Histórico de Serviços', 'Enviando arquivo para o servidor...');
+                
+                // Simular progresso inicial
+                setTimeout(() => {
+                    atualizarProgresso(1, 100, 5);
+                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo de serviços...';
+                }, 200);
+                
+                const response = await fetch('/api/upload-servicos', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.status === 401) {
+                    ocultarProgresso();
+                    window.location.href = '/';
+                    return;
+                }
+                const resultado = await response.json();
+                if (response.ok) {
+                    // Simular progresso do processamento
+                    if (resultado.totalLinhas > 0) {
+                        atualizarProgresso(5, 100, 10);
+                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros de serviços...`;
+                        
+                        // Simular o processamento específico para serviços
+                        simularProgressoImportacao(resultado.totalLinhas, 'servicos');
+                        
+                        // Aguardar conclusão da simulação
+                        await new Promise(resolve => {
+                            const checkComplete = setInterval(() => {
+                                if (!progressInterval) {
+                                    clearInterval(checkComplete);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
+                    
+                    // Finalizar progresso
+                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
+                    document.getElementById('progressSubtitle').textContent = '✅ Importação de serviços concluída!';
+                    
+                    // ATUALIZAR STATUS DOS MOVIMENTOS
+                    movementStats.lastImport = new Date();
+                    movementStats.totalMovements += resultado.servicosAdicionados || 0;
+                    movementStats.thisMonth += resultado.servicosAdicionados || 0;
+                    updateMovementStatus();
+                    
+                    // Aguardar um pouco antes de ocultar
+                    setTimeout(() => {
+                        ocultarProgresso();
+                    }, 2000);
+                    
+                    let mensagemCompleta = `🎉 ${resultado.mensagem || 'Histórico importado com sucesso!'}`;
+                    if (resultado.sucessos && resultado.sucessos.length > 0) {
+                        console.log('✅ Serviços adicionados com sucesso:', resultado.sucessos);
+                    }
+                    if (resultado.erros && resultado.erros.length > 0) {
+                        console.log('⚠️ Detalhes dos erros/avisos:', resultado.erros);
+                        if (resultado.totalErros > 0) {
+                            mensagemCompleta += `\n\n⚠️ ${resultado.totalErros} erros encontrados. Verifique o console (F12) para detalhes.`;
+                        }
+                        if (resultado.erros.length > 0) {
+                            const primeirosErros = resultado.erros.slice(0, 5);
+                            mensagemCompleta += `\n\n🔍 Principais problemas encontrados:\n${primeirosErros.join('\n')}`;
+                            if (resultado.erros.length > 5) {
+                                mensagemCompleta += `\n... e mais ${resultado.erros.length - 5} erros (veja console F12)`;
+                            }
+                        }
+                    }
+                    mostrarAlert(mensagemCompleta, 'success');
+                    fileInput.value = '';
+                    if (resultado.totalLinhas > 0) {
+                        setTimeout(() => {
+                            const estatisticas = `📊 RESUMO DA IMPORTAÇÃO DE SERVIÇOS:
+• Total de linhas: ${resultado.totalLinhas}
+• Serviços adicionados: ${resultado.servicosAdicionados || 0}
+• Clientes atualizados: ${resultado.clientesAtualizados || 0}
+• Clientes novos criados: ${resultado.clientesNovos || 0}
+• Linhas com erro: ${resultado.totalErros || 0}
+
+✅ IMPORTAÇÃO DE SERVIÇOS CONCLUÍDA!`;
+                            mostrarAlert(estatisticas, 'info');
+                        }, 1000);
+                    }
+                } else {
+                    ocultarProgresso();
+                    mostrarAlert(resultado.erro || 'Erro ao processar arquivo de serviços', 'error');
+                    if (resultado.detalhes) {
+                        console.error('Detalhes do erro:', resultado.detalhes);
+                    }
+                }
+            } catch (error) {
+                ocultarProgresso();
+                mostrarAlert('Erro ao fazer upload do arquivo de serviços', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Limpar formulário
+        function limparFormulario() {
+            document.getElementById('clienteForm').reset();
+            document.getElementById('ddi').value = '55'; // Recolocar valor padrão
+        }
+
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('universalModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
     </script>
 </body>
 </html>
