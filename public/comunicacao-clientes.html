@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunicação Clientes - Sistema Barbearia</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.9) 0%, 
+                rgba(20, 20, 20, 0.9) 50%, 
+                rgba(0, 0, 0, 0.9) 100%);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(212, 175, 55, 0.1) 0%, 
+                rgba(255, 215, 0, 0.05) 50%, 
+                rgba(212, 175, 55, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+        }
+
+        .header-info h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #d4af37, #ffd700, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .header-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-back:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .main-content {
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 32px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-card.success-card::before {
+            background: linear-gradient(90deg, #22c55e, #16a34a, #22c55e);
+        }
+
+        .stat-card.total-card::before {
+            background: linear-gradient(90deg, #8b5cf6, #7c3aed, #8b5cf6);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-number.success-number {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-number.total-number {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== BARRA DE PROGRESSO ===== */
+        .progress-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 32px;
+            margin: 24px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .progress-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .progress-bar-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 25px;
+            height: 24px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+            background-size: 200% 100%;
+            border-radius: 25px;
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: progressGradient 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes progressGradient {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .progress-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .progress-stat {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .progress-stat:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .progress-stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .progress-stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .progress-percentage {
+            background: linear-gradient(135deg, #d4af37, #ffd700) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        .progress-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .upload-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 32px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+        }
+
+        .upload-section h2 {
+            color: white;
+            margin-bottom: 24px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-input-display {
+            padding: 20px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .file-input-display:hover {
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            color: white;
+        }
+
+        .file-input-display.has-file {
+            border-style: solid;
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            color: white;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-upload:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .communications-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .communications-section h2 {
+            color: white;
+            margin-bottom: 32px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .communications-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .communication-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .communication-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .communication-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(212, 175, 55, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .communication-card:hover::before {
+            opacity: 1;
+        }
+
+        .communication-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 16px;
+        }
+
+        .communication-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .communication-date {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .communication-stats {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .communication-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .communication-stat-number {
+            font-weight: 700;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .no-communications {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .no-communications-icon {
+            font-size: 4rem;
+            margin-bottom: 24px;
+            opacity: 0.5;
+        }
+
+        .no-communications h3 {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .no-communications p {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.2);
+            backdrop-filter: blur(10px);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.5);
+            transform: scale(1.05);
+            color: #fff;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                margin: 15px;
+                border-radius: 20px;
+            }
+            
+            .main-content {
+                padding: 30px;
+            }
+            
+            .stats-section {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+                padding: 24px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .main-content {
+                padding: 24px;
+            }
+
+            .upload-section,
+            .communications-section {
+                padding: 24px;
+            }
+
+            .communication-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .communication-stats {
+                justify-content: space-between;
+                gap: 16px;
+            }
+
+            .progress-info {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .btn-upload {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 5px;
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .upload-section,
+            .communications-section {
+                padding: 20px;
+            }
+
+            .communication-stats {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <img src="https://barbeariabmb.com.br/wp-content/uploads/2023/11/logomarca-colorido-fundo-preto-1.webp" 
+                     alt="BMB Barbearia" 
+                     class="logo">
+                <div class="header-info">
+                    <h1>Comunicação Clientes</h1>
+                    <p>BMB Jd São Paulo</p>
+                </div>
+            </div>
+            <a href="/dashboard" class="btn-back">
+                ← Voltar ao Dashboard
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div id="alerts"></div>
+
+            <!-- ===== BARRA DE PROGRESSO ===== -->
+            <div id="progressContainer" class="progress-container">
+                <div class="progress-header">
+                    <div class="progress-title">
+                        <span class="progress-spinner"></span>
+                        <span id="progressTitle">Processando comunicação...</span>
+                    </div>
+                    <div class="progress-subtitle" id="progressSubtitle">Analisando números e cruzando com banco de dados</div>
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="progress-info">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value progress-percentage" id="progressPercentage">0%</div>
+                        <div class="progress-stat-label">Progresso</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressCurrent">0</div>
+                        <div class="progress-stat-label">Processados</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressTotal">0</div>
+                        <div class="progress-stat-label">Total</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estatísticas -->
+            <div class="stats-section">
+                <div class="stat-card total-card">
+                    <div class="stat-number total-number" id="totalComunicacoes">-</div>
+                    <div class="stat-label">Total de Comunicações Enviadas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalClientesAlcancados">-</div>
+                    <div class="stat-label">Clientes Alcançados (Únicos)</div>
+                </div>
+                <div class="stat-card success-card">
+                    <div class="stat-number success-number" id="totalRealizados">-</div>
+                    <div class="stat-label">Total de Realizados</div>
+                </div>
+            </div>
+
+            <!-- Upload de Nova Comunicação -->
+            <div class="upload-section">
+                <h2>Nova Comunicação</h2>
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="tituloComunicacao">Título da Comunicação *</label>
+                        <input type="text" 
+                               id="tituloComunicacao" 
+                               class="form-input"
+                               placeholder="Ex: Dia dos Pais 03/08/2024"
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="excelFile">Arquivo Excel do Wasender *</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" 
+                                   id="excelFile" 
+                                   class="file-input"
+                                   accept=".xlsx,.xls"
+                                   required>
+                            <div class="file-input-display" id="fileDisplay">
+                                Clique para selecionar o arquivo Excel
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-upload" id="uploadBtn">
+                        Importar Comunicação
+                    </button>
+                </form>
+            </div>
+
+            <!-- Lista de Comunicações -->
+            <div class="communications-section">
+                <h2>Histórico de Comunicações</h2>
+                <div class="communications-list" id="communicationsList">
+                    <div class="loading">
+                        🔄 Carregando comunicações...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let comunicacoes = [];
+
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            carregarComunicacoes();
+            configurarEventListeners();
+        });
+
+        // Configurar event listeners
+        function configurarEventListeners() {
+            // Upload de arquivo
+            document.getElementById('excelFile').addEventListener('change', function() {
+                const file = this.files[0];
+                const display = document.getElementById('fileDisplay');
+                
+                if (file) {
+                    display.textContent = `${file.name}`;
+                    display.classList.add('has-file');
+                } else {
+                    display.textContent = 'Clique para selecionar o arquivo Excel';
+                    display.classList.remove('has-file');
+                }
+            });
+
+            // Clique no display também abre o seletor
+            document.getElementById('fileDisplay').addEventListener('click', function() {
+                document.getElementById('excelFile').click();
+            });
+
+            // Submit do formulário
+            document.getElementById('uploadForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                enviarComunicacao();
+            });
+        }
+
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Função para mostrar alertas
+        function mostrarAlert(mensagem, tipo = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.textContent = mensagem;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // ===== FUNÇÕES DA BARRA DE PROGRESSO =====
+        function mostrarProgresso(titulo, subtitulo) {
+            const container = document.getElementById('progressContainer');
+            const titleElement = document.getElementById('progressTitle');
+            const subtitleElement = document.getElementById('progressSubtitle');
+            
+            titleElement.textContent = titulo;
+            subtitleElement.textContent = subtitulo;
+            
+            // Reset dos valores
+            atualizarProgresso(0, 0, 0);
+            
+            container.classList.add('active');
+            
+            // Scroll suave para a barra de progresso
+            container.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+
+        function ocultarProgresso() {
+            const container = document.getElementById('progressContainer');
+            container.classList.remove('active');
+        }
+
+        function atualizarProgresso(atual, total, percentual = null) {
+            if (percentual === null && total > 0) {
+                percentual = Math.round((atual / total) * 100);
+            }
+            
+            document.getElementById('progressCurrent').textContent = atual;
+            document.getElementById('progressTotal').textContent = total;
+            document.getElementById('progressPercentage').textContent = `${percentual || 0}%`;
+            document.getElementById('progressBar').style.width = `${percentual || 0}%`;
+        }
+
+        // Carregar todas as comunicações
+        async function carregarComunicacoes() {
+            try {
+                const response = await fetch('/api/comunicacoes');
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                comunicacoes = await response.json();
+                renderizarComunicacoes(comunicacoes);
+                atualizarEstatisticas();
+            } catch (error) {
+                mostrarAlert('Erro ao carregar comunicações', 'error');
+                console.error('Erro:', error);
+                document.getElementById('communicationsList').innerHTML = 
+                    '<div class="no-communications"><div class="no-communications-icon">❌</div><h3>Erro ao carregar dados</h3><p>Tente recarregar a página</p></div>';
+            }
+        }
+
+        // Renderizar comunicações na lista
+        function renderizarComunicacoes(comunicacoesParaRenderizar) {
+            const container = document.getElementById('communicationsList');
+            
+            if (comunicacoesParaRenderizar.length === 0) {
+                container.innerHTML = `
+                    <div class="no-communications">
+                        <div class="no-communications-icon">💬</div>
+                        <h3>Nenhuma comunicação encontrada</h3>
+                        <p>Importe seu primeiro arquivo Excel do Wasender para começar</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = comunicacoesParaRenderizar.map(comunicacao => `
+                <div class="communication-card">
+                    <div class="communication-header">
+                        <div onclick="verDetalhesComunicacao('${comunicacao._id}')" style="cursor: pointer; flex: 1;">
+                            <div class="communication-title">${comunicacao.titulo}</div>
+                            <div class="communication-date">${new Date(comunicacao.criadoEm).toLocaleDateString('pt-BR')} às ${new Date(comunicacao.criadoEm).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
+                        </div>
+                        <button class="delete-btn" onclick="event.stopPropagation(); excluirComunicacao('${comunicacao._id}', '${comunicacao.titulo.replace(/'/g, '\\\'')}')" title="Excluir comunicação">
+                            🗑️
+                        </button>
+                    </div>
+                    <div class="communication-stats" onclick="verDetalhesComunicacao('${comunicacao._id}')" style="cursor: pointer;">
+                        <div class="communication-stat">
+                            <span>👥</span>
+                            <span class="communication-stat-number">${comunicacao.totalClientes}</span>
+                            <span>clientes</span>
+                        </div>
+                        <div class="communication-stat">
+                            <span>✅</span>
+                            <span class="communication-stat-number">${comunicacao.clientesEncontrados}</span>
+                            <span>encontrados</span>
+                        </div>
+                        <div class="communication-stat">
+                            <span>❓</span>
+                            <span class="communication-stat-number">${comunicacao.clientesNaoEncontrados}</span>
+                            <span>não encontrados</span>
+                        </div>
+                        <div class="communication-stat">
+                            <span>🎯</span>
+                            <span class="communication-stat-number">${comunicacao.clientesRealizados || 0}</span>
+                            <span>realizados</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Atualizar estatísticas
+        function atualizarEstatisticas() {
+            const total = comunicacoes.length;
+            document.getElementById('totalComunicacoes').textContent = total;
+            
+            // Calcular clientes únicos alcançados e total de realizados
+            const clientesUnicos = new Set();
+            let totalRealizados = 0;
+            
+            comunicacoes.forEach(com => {
+                if (com.clientes) {
+                    com.clientes.forEach(cliente => {
+                        if (cliente.encontrado) {
+                            clientesUnicos.add(cliente.clienteId);
+                        }
+                    });
+                }
+                
+                // Somar realizados desta comunicação
+                totalRealizados += (com.clientesRealizados || 0);
+            });
+            
+            document.getElementById('totalClientesAlcancados').textContent = clientesUnicos.size;
+            
+            // Atualizar estatística de realizados se existir
+            const elementoRealizados = document.getElementById('totalRealizados');
+            if (elementoRealizados) {
+                elementoRealizados.textContent = totalRealizados;
+            }
+        }
+
+        // Enviar nova comunicação
+        async function enviarComunicacao() {
+            const titulo = document.getElementById('tituloComunicacao').value.trim();
+            const arquivo = document.getElementById('excelFile').files[0];
+            
+            if (!titulo || !arquivo) {
+                mostrarAlert('Título e arquivo são obrigatórios', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('titulo', titulo);
+            formData.append('excel', arquivo);
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '⏳ Processando...';
+            
+            try {
+                mostrarProgresso('📤 Processando Comunicação', 'Analisando arquivo e cruzando dados...');
+                
+                const response = await fetch('/api/comunicacoes', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const resultado = await response.json();
+                
+                if (response.ok) {
+                    atualizarProgresso(100, 100, 100);
+                    document.getElementById('progressSubtitle').textContent = 'Comunicação processada com sucesso!';
+                    
+                    setTimeout(() => {
+                        ocultarProgresso();
+                    }, 2000);
+                    
+                    mostrarAlert(resultado.mensagem, 'success');
+                    
+                    // Limpar formulário
+                    document.getElementById('uploadForm').reset();
+                    document.getElementById('fileDisplay').textContent = 'Clique para selecionar o arquivo Excel';
+                    document.getElementById('fileDisplay').classList.remove('has-file');
+                    
+                    // Recarregar lista
+                    carregarComunicacoes();
+                } else {
+                    ocultarProgresso();
+                    mostrarAlert(resultado.erro || 'Erro ao processar comunicação', 'error');
+                }
+                
+            } catch (error) {
+                ocultarProgresso();
+                mostrarAlert('Erro de conexão', 'error');
+                console.error('Erro:', error);
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = 'Importar Comunicação';
+            }
+        }
+
+        // Excluir comunicação
+        async function excluirComunicacao(comunicacaoId, titulo) {
+            if (!confirm(`Tem certeza que deseja excluir a comunicação "${titulo}"?\n\nEsta ação não pode ser desfeita.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/comunicacoes/${comunicacaoId}`, {
+                    method: 'DELETE'
+                });
+
+                const resultado = await response.json();
+
+                if (response.ok) {
+                    mostrarAlert('Comunicação excluída com sucesso!', 'success');
+                    
+                    // Recarregar lista
+                    carregarComunicacoes();
+                } else {
+                    mostrarAlert(resultado.erro || 'Erro ao excluir comunicação', 'error');
+                }
+
+            } catch (error) {
+                mostrarAlert('Erro de conexão ao excluir comunicação', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Ver detalhes da comunicação
+        function verDetalhesComunicacao(comunicacaoId) {
+            window.location.href = `/comunicacao-detalhes?id=${comunicacaoId}`;
+        }
+    </script>
+</body>
+</html>

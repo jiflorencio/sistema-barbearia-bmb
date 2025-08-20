@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMB Barbearia - Consultar Dados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            color: white;
+            padding: 32px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #FFD700;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bmb-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            border: 2px solid #FFD700;
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.3);
+            display: block;
+            flex-shrink: 0;
+        }
+
+        .header-info h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, #FFA500, #FFD700);
+        }
+
+        .main-content {
+            padding: 48px 40px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+            border-color: #FFD700;
+        }
+
+        .stat-card.total-card {
+            border-left: 4px solid #FFD700;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-number.total-number {
+            color: #FFD700;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .unidades-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .unidade-stat {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .unidade-stat:hover {
+            transform: translateY(-2px);
+            border-color: #FFD700;
+            box-shadow: 0 8px 16px rgba(255, 215, 0, 0.2);
+        }
+
+        .unidade-stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .unidade-stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .unidade-stat.jsp {
+            border-left: 3px solid #10b981;
+        }
+
+        .unidade-stat.sem-unidade {
+            border-left: 3px solid #f59e0b;
+        }
+
+        /* ===== BARRA DE PROGRESSO ===== */
+        .progress-container {
+            display: none;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+            backdrop-filter: blur(10px);
+            border: 2px solid #ef4444;
+            border-radius: 20px;
+            padding: 32px;
+            margin: 32px 0;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ef4444;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .progress-bar-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 25px;
+            height: 24px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #dc2626, #b91c1c);
+            background-size: 200% 100%;
+            border-radius: 25px;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progressGradient 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
+        @keyframes progressGradient {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .progress-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .progress-stat {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ef4444;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-percentage {
+            font-size: 2.5rem !important;
+            color: #ef4444 !important;
+        }
+
+        .progress-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #ef4444;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .search-section {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 165, 0, 0.02));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-section h2 {
+            color: #FFD700;
+            margin-bottom: 24px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 280px;
+            padding: 16px 20px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .filter-unidade {
+            padding: 16px 20px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-width: 180px;
+            font-family: inherit;
+        }
+
+        .filter-unidade:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .filter-unidade:hover {
+            border-color: #FFD700;
+        }
+
+        .filter-unidade option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .filter-label {
+            color: #FFD700;
+            font-size: 14px;
+            margin-right: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .clients-section {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.02), rgba(255, 165, 0, 0.01));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .clients-section h2 {
+            color: #FFD700;
+            margin-bottom: 24px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ===== CONTROLES DE SELEÇÃO ===== */
+        .controls-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .selection-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .select-all {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #FFD700;
+            cursor: pointer;
+        }
+
+        .select-all input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #FFD700;
+        }
+
+        .btn-delete-selected {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #ffffff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-delete-selected.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .btn-delete-selected:hover.active {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(239, 68, 68, 0.5);
+        }
+
+        .selected-count {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        /* ===== TABELA DE CLIENTES ===== */
+        .clients-table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .clients-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .clients-table th {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 14px;
+            border: none;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .clients-table th:first-child {
+            width: 50px;
+            text-align: center;
+        }
+
+        .clients-table th:nth-child(3) {
+            width: 100px;
+            text-align: center;
+        }
+
+        .clients-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            vertical-align: middle;
+            color: #ffffff;
+        }
+
+        .clients-table tr:hover {
+            background-color: rgba(255, 215, 0, 0.05);
+        }
+
+        .clients-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .ddi-coluna {
+            min-width: 70px;
+            max-width: 100px;
+            text-align: center;
+            white-space: nowrap;
+            font-size: 0.9em;
+        }
+
+        .ddi-valor {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            border-radius: 3px;
+            vertical-align: middle;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .client-name {
+            font-weight: 600;
+            color: #FFD700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .client-name:hover {
+            color: #FFA500;
+            text-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .client-phone {
+            color: rgba(255, 255, 255, 0.8);
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+
+        .client-ddi {
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .client-ddi .country-flag {
+            font-size: 1.1em;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .client-date {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .client-unidade {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .client-unidade.vazio {
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+        }
+
+        .checkbox-cell {
+            text-align: center;
+            width: 50px;
+        }
+
+        .client-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #FFD700;
+        }
+
+        .no-clients {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .no-clients-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-clients h3 {
+            color: #FFD700;
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+        }
+
+        .no-clients p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .alert {
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            
+            .container {
+                margin: 0;
+                border-radius: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+                padding: 24px 20px;
+            }
+
+            .header-info {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .bmb-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .header-info h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                padding: 32px 20px;
+            }
+            
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
+
+            .controls-section {
+                flex-direction: column;
+                gap: 16px;
+                align-items: stretch;
+            }
+
+            .search-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box,
+            .filter-unidade {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .clients-table {
+                font-size: 14px;
+            }
+
+            .clients-table th,
+            .clients-table td {
+                padding: 12px 8px;
+            }
+
+            .progress-info {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .btn-delete-selected {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-info">
+                <img src="https://barbeariabmb.com.br/wp-content/uploads/2023/11/logomarca-colorido-fundo-preto-1.webp" alt="BMB Barbearia" class="bmb-logo">
+                <div>
+                    <h1>Consultar Banco de Dados</h1>
+                    <p>BMB Jd São Paulo</p>
+                </div>
+            </div>
+            <a href="/dashboard" class="btn-back">
+                ← Voltar ao Dashboard
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div id="alerts"></div>
+
+            <!-- ===== BARRA DE PROGRESSO ===== -->
+            <div id="progressContainer" class="progress-container">
+                <div class="progress-header">
+                    <div class="progress-title">
+                        <span class="progress-spinner"></span>
+                        <span id="progressTitle">Excluindo clientes selecionados...</span>
+                    </div>
+                    <div class="progress-subtitle" id="progressSubtitle">Aguarde enquanto processamos a exclusão</div>
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="progress-info">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value progress-percentage" id="progressPercentage">0%</div>
+                        <div class="progress-stat-label">Progresso</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressCurrent">0</div>
+                        <div class="progress-stat-label">Excluídos</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressTotal">0</div>
+                        <div class="progress-stat-label">Total</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estatísticas -->
+            <div class="stats-section">
+                <div class="stat-card total-card">
+                    <div class="stat-number total-number" id="totalClientes">-</div>
+                    <div class="stat-label">Total de Clientes Cadastrados</div>
+                    
+                    <!-- ✅ NOVO: Estatísticas por Unidade -->
+                    <div class="unidades-stats" id="unidadesStats" style="display: none;">
+                        <div class="unidade-stat jsp">
+                            <div class="unidade-stat-number" id="clientesJSP">0</div>
+                            <div class="unidade-stat-label">JSP</div>
+                        </div>
+                        <div class="unidade-stat sem-unidade">
+                            <div class="unidade-stat-number" id="clientesSemUnidade">0</div>
+                            <div class="unidade-stat-label">Sem Unidade</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Busca -->
+            <div class="search-section">
+                <h2>🔎 Buscar Clientes</h2>
+                <div class="search-controls">
+                    <input type="text" class="search-box" id="searchBox" 
+                           placeholder="Digite o nome ou telefone do cliente...">
+                    
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="filter-label">Filtrar por:</span>
+                        <select class="filter-unidade" id="unidadeFilter">
+                            <option value="">Todas as Unidades</option>
+                            <option value="JSP">JSP</option>
+                            <option value="sem-unidade">Sem Unidade</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Clientes -->
+            <div class="clients-section">
+                <h2>👥 Clientes Cadastrados</h2>
+                
+                <!-- Controles de Seleção -->
+                <div class="controls-section">
+                    <div class="selection-controls">
+                        <label class="select-all">
+                            <input type="checkbox" id="selectAll"> 
+                            Selecionar Todos
+                        </label>
+                        <span class="selected-count" id="selectedCount">0 selecionados</span>
+                    </div>
+                    <button class="btn-delete-selected" id="deleteSelectedBtn" onclick="deletarSelecionados()">
+                        🗑️ Excluir Selecionados
+                    </button>
+                </div>
+
+                <!-- Tabela de Clientes -->
+                <div class="clients-table-container">
+                    <table class="clients-table" id="clientesTable">
+                        <thead>
+                            <tr>
+                                <th>☐</th>
+                                <th>Nome</th>
+                                <th>DDI</th>
+                                <th>Telefone</th>
+                                <th>Data de Nascimento</th>
+                                <th>Data de Cadastro</th>
+                                <th>Unidade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesTableBody">
+                            <tr>
+                                <td colspan="7" class="loading">
+                                    🔄 Carregando clientes...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clientes = [];
+        let clientesFiltrados = [];
+        let clientesSelecionados = new Set();
+
+        // ===== FUNÇÕES DE FORMATAÇÃO DE TELEFONE =====
+        function formatarTelefone(telefone) {
+            if (!telefone) return '';
+            
+            // Remove tudo que não é número
+            const apenasNumeros = telefone.toString().replace(/\D/g, '');
+            
+            // Se tem 11 dígitos (celular com DDI)
+            if (apenasNumeros.length === 11) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+            }
+            // Se tem 10 dígitos (fixo com DDI)  
+            else if (apenasNumeros.length === 10) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+            }
+            // Se tem 9 dígitos (celular sem DDI)
+            else if (apenasNumeros.length === 9) {
+                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+            }
+            // Se tem 8 dígitos (fixo sem DDI)
+            else if (apenasNumeros.length === 8) {
+                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+            }
+            // Para outros tamanhos, retorna apenas os números
+            else {
+                return apenasNumeros;
+            }
+        }
+
+        // ===== FUNÇÃO PARA BANDEIRA DO PAÍS =====
+        function obterBandeiraPais(ddi) {
+            const bandeiras = {
+                '55': 'br', // Brasil
+                '1': 'us',   // Estados Unidos
+                '44': 'gb',  // Reino Unido
+                '33': 'fr',  // França
+                '49': 'de',  // Alemanha
+                '39': 'it',  // Itália
+                '34': 'es',  // Espanha
+                '351': 'pt', // Portugal
+                '52': 'mx',  // México
+                '54': 'ar',  // Argentina
+                '56': 'cl',  // Chile
+                '57': 'co',  // Colômbia
+                '58': 've',  // Venezuela
+                '51': 'pe',  // Peru
+                '593': 'ec', // Equador
+                '598': 'uy', // Uruguai
+                '595': 'py', // Paraguai
+                '591': 'bo', // Bolívia
+                '81': 'jp',  // Japão
+                '82': 'kr',  // Coreia do Sul
+                '86': 'cn',  // China
+                '91': 'in',  // Índia
+                '61': 'au',  // Austrália
+                '7': 'ru',   // Rússia
+                '41': 'ch',  // Suíça
+                '31': 'nl',  // Holanda
+                '32': 'be',  // Bélgica
+                '43': 'at',  // Áustria
+                '45': 'dk',  // Dinamarca
+                '46': 'se',  // Suécia
+                '47': 'no',  // Noruega
+                '358': 'fi', // Finlândia
+                '48': 'pl',  // Polônia
+                '420': 'cz', // República Tcheca
+                '421': 'sk', // Eslováquia
+                '36': 'hu',  // Hungria
+                '40': 'ro',  // Romênia
+                '359': 'bg', // Bulgária
+                '385': 'hr', // Croácia
+                '381': 'rs', // Sérvia
+                '30': 'gr',  // Grécia
+                '90': 'tr',  // Turquia
+                '972': 'il', // Israel
+                '20': 'eg',  // Egito
+                '27': 'za',  // África do Sul
+                '234': 'ng', // Nigéria
+                '254': 'ke', // Quênia
+                '65': 'sg',  // Singapura
+                '60': 'my',  // Malásia
+                '66': 'th',  // Tailândia
+                '84': 'vn',  // Vietnã
+                '62': 'id',  // Indonésia
+                '63': 'ph',  // Filipinas
+                '64': 'nz',  // Nova Zelândia
+            };
+            
+            // Remove o + se houver e converte para string
+            const ddiLimpo = ddi.toString().replace(/^\+/, '');
+            const codigoPais = bandeiras[ddiLimpo] || 'un'; // UN (genérico) se não encontrar
+            
+            // Retorna HTML da imagem da bandeira
+            return `<img src="https://flagcdn.com/w20/${codigoPais}.png" alt="Bandeira" class="flag-icon" onerror="this.style.display='none'">`;
+        }
+
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            carregarClientes();
+            configurarEventListeners();
+        });
+
+        // Configurar event listeners
+        function configurarEventListeners() {
+            // Busca
+            document.getElementById('searchBox').addEventListener('input', function() {
+                aplicarFiltros();
+            });
+
+            // Filtro de unidade
+            document.getElementById('unidadeFilter').addEventListener('change', function() {
+                aplicarFiltros();
+            });
+
+            // Selecionar todos
+            document.getElementById('selectAll').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.client-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    const clienteId = checkbox.dataset.clienteId;
+                    if (this.checked) {
+                        clientesSelecionados.add(clienteId);
+                    } else {
+                        clientesSelecionados.delete(clienteId);
+                    }
+                });
+                atualizarContadorSelecao();
+            });
+        }
+
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Função para mostrar alertas
+        function mostrarAlert(mensagem, tipo = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.textContent = mensagem;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Carregar todos os clientes
+        async function carregarClientes() {
+            try {
+                const response = await fetch('/api/clientes');
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                clientes = await response.json();
+                clientesFiltrados = [...clientes];
+                renderizarClientes(clientesFiltrados);
+                atualizarEstatisticas();
+                carregarUnidadesUnicas();
+            } catch (error) {
+                mostrarAlert('Erro ao carregar clientes', 'error');
+                console.error('Erro:', error);
+                document.getElementById('clientesTableBody').innerHTML = 
+                    '<tr><td colspan="7" class="no-clients"><div class="no-clients-icon">❌</div><h3>Erro ao carregar dados</h3><p>Tente recarregar a página</p></td></tr>';
+            }
+        }
+
+        // Carregar unidades únicas para o filtro
+        function carregarUnidadesUnicas() {
+            const unidadesSet = new Set();
+            clientes.forEach(cliente => {
+                if (cliente.unidade) {
+                    unidadesSet.add(cliente.unidade);
+                }
+            });
+            
+            // Se houver outras unidades além de JSP, adicionar ao select
+            const unidadeFilter = document.getElementById('unidadeFilter');
+            unidadesSet.forEach(unidade => {
+                if (unidade !== 'JSP') {
+                    const option = document.createElement('option');
+                    option.value = unidade;
+                    option.textContent = unidade;
+                    unidadeFilter.appendChild(option);
+                }
+            });
+        }
+
+        // Aplicar filtros
+        function aplicarFiltros() {
+            const termo = document.getElementById('searchBox').value.toLowerCase();
+            const unidadeFiltro = document.getElementById('unidadeFilter').value;
+            
+            clientesFiltrados = clientes.filter(cliente => {
+                // Filtro de busca - buscar tanto no telefone original quanto formatado
+                const matchBusca = termo === '' || 
+                    cliente.nome.toLowerCase().includes(termo) ||
+                    cliente.telefone.includes(termo) ||
+                    formatarTelefone(cliente.telefone).includes(termo);
+                
+                // Filtro de unidade
+                let matchUnidade = true;
+                if (unidadeFiltro !== '') {
+                    if (unidadeFiltro === 'sem-unidade') {
+                        matchUnidade = !cliente.unidade || cliente.unidade === '';
+                    } else {
+                        matchUnidade = cliente.unidade === unidadeFiltro;
+                    }
+                }
+                
+                return matchBusca && matchUnidade;
+            });
+            
+            renderizarClientes(clientesFiltrados);
+        }
+
+        // Renderizar clientes na tabela
+        function renderizarClientes(clientesParaRenderizar) {
+            const tbody = document.getElementById('clientesTableBody');
+            
+            if (clientesParaRenderizar.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="no-clients">
+                            <div class="no-clients-icon">👥</div>
+                            <h3>Nenhum cliente encontrado</h3>
+                            <p>Tente ajustar os filtros ou adicione clientes através da página "Atualizar Banco de Dados"</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = clientesParaRenderizar.map(cliente => `
+                <tr>
+                    <td class="checkbox-cell">
+                        <input type="checkbox" class="client-checkbox" 
+                               data-cliente-id="${cliente._id}" 
+                               onchange="toggleClienteSelecao('${cliente._id}')">
+                    </td>
+                    <td>
+                        <div class="client-name" onclick="verDetalhes('${cliente._id}')">
+                            ${cliente.nome}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="client-ddi">
+                            <div class="ddi-valor">${obterBandeiraPais(cliente.ddi || '55')}+${cliente.ddi || '55'}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="client-phone">
+                            ${formatarTelefone(cliente.telefone)}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="client-date">
+                            ${cliente.dataNascimento ? new Date(cliente.dataNascimento).toLocaleDateString('pt-BR') : 'Não Informado'}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="client-date">
+                            ${new Date(cliente.criadoEm).toLocaleDateString('pt-BR')}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="client-unidade ${!cliente.unidade ? 'vazio' : ''}">
+                            ${cliente.unidade || '-'}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Atualizar estatísticas
+        function atualizarEstatisticas() {
+            const total = clientes.length;
+            document.getElementById('totalClientes').textContent = total;
+            
+            // ✅ NOVO: Calcular estatísticas por unidade
+            const estatisticasUnidade = {
+                JSP: 0,
+                semUnidade: 0
+            };
+            
+            clientes.forEach(cliente => {
+                if (cliente.unidade === 'JSP') {
+                    estatisticasUnidade.JSP++;
+                } else {
+                    estatisticasUnidade.semUnidade++;
+                }
+            });
+            
+            // Atualizar elementos das estatísticas
+            document.getElementById('clientesJSP').textContent = estatisticasUnidade.JSP;
+            document.getElementById('clientesSemUnidade').textContent = estatisticasUnidade.semUnidade;
+            
+            // Mostrar/ocultar seção de estatísticas por unidade
+            const unidadesStats = document.getElementById('unidadesStats');
+            if (total > 0) {
+                unidadesStats.style.display = 'grid';
+            } else {
+                unidadesStats.style.display = 'none';
+            }
+        }
+
+        // Toggle seleção de cliente
+        function toggleClienteSelecao(clienteId) {
+            if (clientesSelecionados.has(clienteId)) {
+                clientesSelecionados.delete(clienteId);
+            } else {
+                clientesSelecionados.add(clienteId);
+            }
+            atualizarContadorSelecao();
+        }
+
+        // Atualizar contador de seleção
+        function atualizarContadorSelecao() {
+            const count = clientesSelecionados.size;
+            const countElement = document.getElementById('selectedCount');
+            const deleteBtn = document.getElementById('deleteSelectedBtn');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            
+            countElement.textContent = `${count} selecionado${count !== 1 ? 's' : ''}`;
+            
+            if (count > 0) {
+                deleteBtn.classList.add('active');
+            } else {
+                deleteBtn.classList.remove('active');
+            }
+
+            // Atualizar checkbox "Selecionar Todos"
+            const totalCheckboxes = document.querySelectorAll('.client-checkbox').length;
+            selectAllCheckbox.indeterminate = count > 0 && count < totalCheckboxes;
+            selectAllCheckbox.checked = count === totalCheckboxes && count > 0;
+        }
+
+        // ===== FUNÇÕES DA BARRA DE PROGRESSO =====
+        function mostrarProgresso(titulo, subtitulo = 'Aguarde enquanto processamos a exclusão') {
+            const container = document.getElementById('progressContainer');
+            const titleElement = document.getElementById('progressTitle');
+            const subtitleElement = document.getElementById('progressSubtitle');
+            
+            titleElement.textContent = titulo;
+            subtitleElement.textContent = subtitulo;
+            
+            // Reset dos valores
+            atualizarProgresso(0, 0, 0);
+            
+            container.classList.add('active');
+            
+            // Scroll suave para a barra de progresso
+            container.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+
+        function ocultarProgresso() {
+            const container = document.getElementById('progressContainer');
+            container.classList.remove('active');
+        }
+
+        function atualizarProgresso(atual, total, percentual = null) {
+            if (percentual === null && total > 0) {
+                percentual = Math.round((atual / total) * 100);
+            }
+            
+            document.getElementById('progressCurrent').textContent = atual;
+            document.getElementById('progressTotal').textContent = total;
+            document.getElementById('progressPercentage').textContent = `${percentual || 0}%`;
+            document.getElementById('progressBar').style.width = `${percentual || 0}%`;
+        }
+
+        // Ver detalhes do cliente
+        function verDetalhes(clienteId) {
+            window.location.href = `/cliente-detalhes?id=${clienteId}`;
+        }
+
+        // Deletar clientes selecionados
+        async function deletarSelecionados() {
+            if (clientesSelecionados.size === 0) return;
+            
+            const count = clientesSelecionados.size;
+            if (!confirm(`Tem certeza que deseja excluir ${count} cliente${count !== 1 ? 's' : ''} selecionado${count !== 1 ? 's' : ''}?\n\nEsta ação não pode ser desfeita.`)) {
+                return;
+            }
+            
+            try {
+                // ✅ NOVO: Mostrar barra de progresso
+                mostrarProgresso('🗑️ Excluindo Clientes Selecionados', 'Processando exclusões...');
+                
+                let sucessos = 0;
+                let erros = 0;
+                const clientesArray = Array.from(clientesSelecionados);
+                
+                // Atualizar progresso inicial
+                atualizarProgresso(0, count, 0);
+                
+                for (let i = 0; i < clientesArray.length; i++) {
+                    const clienteId = clientesArray[i];
+                    
+                    try {
+                        const response = await fetch(`/api/clientes/${clienteId}`, {
+                            method: 'DELETE'
+                        });
+                        
+                        if (response.ok) {
+                            sucessos++;
+                        } else {
+                            erros++;
+                        }
+                    } catch (error) {
+                        erros++;
+                    }
+                    
+                    // ✅ NOVO: Atualizar progresso a cada exclusão
+                    const processados = i + 1;
+                    const percentual = Math.round((processados / count) * 100);
+                    atualizarProgresso(processados, count, percentual);
+                    
+                    // ✅ NOVO: Atualizar subtítulo baseado no progresso
+                    const subtitle = document.getElementById('progressSubtitle');
+                    if (percentual < 50) {
+                        subtitle.textContent = `Excluindo cliente ${processados} de ${count}...`;
+                    } else if (percentual < 90) {
+                        subtitle.textContent = `Processando exclusões... ${sucessos} concluídos`;
+                    } else {
+                        subtitle.textContent = `Finalizando exclusões...`;
+                    }
+                    
+                    // Pequena pausa para visualizar o progresso
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+                
+                // ✅ NOVO: Finalizar progresso
+                atualizarProgresso(count, count, 100);
+                document.getElementById('progressSubtitle').textContent = '✅ Exclusão concluída!';
+                
+                // Aguardar um pouco antes de ocultar
+                setTimeout(() => {
+                    ocultarProgresso();
+                }, 2000);
+                
+                if (sucessos > 0) {
+                    mostrarAlert(`✅ ${sucessos} cliente${sucessos !== 1 ? 's' : ''} excluído${sucessos !== 1 ? 's' : ''} com sucesso!`);
+                }
+                
+                if (erros > 0) {
+                    mostrarAlert(`⚠️ ${erros} erro${erros !== 1 ? 's' : ''} ao excluir cliente${erros !== 1 ? 's' : ''}`, 'error');
+                }
+                
+                // Limpar seleções e recarregar
+                clientesSelecionados.clear();
+                carregarClientes();
+                
+            } catch (error) {
+                ocultarProgresso();
+                mostrarAlert('Erro de conexão', 'error');
+                console.error('Erro:', error);
+            }
+        }
+    </script>
+</body>
+</html>

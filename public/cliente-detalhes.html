@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Cliente - Sistema Barbearia</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #ffffff;
+            line-height: 1.6;
+            font-size: 14px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.9) 0%, 
+                rgba(20, 20, 20, 0.9) 50%, 
+                rgba(0, 0, 0, 0.9) 100%);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(212, 175, 55, 0.1) 0%, 
+                rgba(255, 215, 0, 0.05) 50%, 
+                rgba(212, 175, 55, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+        }
+
+        .header-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-info h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #d4af37, #ffd700, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .header-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-back:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 32px;
+            align-items: start;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            width: 100%;
+        }
+
+        .client-info-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 20px;
+            overflow: hidden;
+        }
+
+        .client-info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+        }
+
+        .client-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000;
+            margin: 0 auto 24px;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+
+        .client-name {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 32px;
+            letter-spacing: -0.02em;
+        }
+
+        .client-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .detail-item {
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #d4af37;
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(4px);
+            border-left-color: #ffd700;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .actions-section {
+            margin-top: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-back-list {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-back-list:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        /* ===== ESTILOS PARA BANDEIRAS =====  */
+        .country-flag {
+            display: inline-block;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        
+        .detail-value .country-flag {
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            border-radius: 3px;
+            vertical-align: middle;
+            margin-right: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-block;
+        }
+
+        /* ===== SEÇÃO DE SERVIÇOS ===== */
+        .services-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .services-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+        }
+
+        .services-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .services-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .services-count {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .services-content {
+            width: 100%;
+        }
+
+        .no-services {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .no-services-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .no-services p {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .no-services small {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        .services-list {
+            width: 100%;
+        }
+
+        .service-item {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .service-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .service-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .service-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex: 1;
+        }
+
+        .service-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            min-width: 150px;
+        }
+
+        .service-professional {
+            font-size: 0.9rem;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 120px;
+        }
+
+        .service-date {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .alert {
+            padding: 18px 24px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+        }
+
+        .loading::before {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            text-align: center;
+            padding: 80px 20px;
+            color: #ef4444;
+            font-size: 1.1rem;
+        }
+
+        /* Communications Section Styles */
+        .communications-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .communications-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #7c3aed, #8b5cf6);
+        }
+
+        .communications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .communications-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .communications-count {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .communication-item {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .communication-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .communication-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .communication-header-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .communication-title-item {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .communication-date-item {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .communication-stats-item {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .communication-stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .communication-stat-number {
+            font-weight: 600;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .no-communications {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .no-communications-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Modal Styles - Mais moderno */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            padding: 28px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: none;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .close {
+            color: #000;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .close:hover {
+            background: rgba(0, 0, 0, 0.25);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 32px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-form-group {
+            margin-bottom: 24px;
+        }
+
+        .modal-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .modal-form-group input,
+        .modal-form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modal-form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .modal-form-group input:focus,
+        .modal-form-group select:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .modal-form-group select {
+            cursor: pointer;
+        }
+
+        .modal-form-group select option {
+            background: #1a1a1a;
+            color: white;
+            padding: 10px;
+        }
+
+        .modal-footer {
+            padding: 24px 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-modal {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-modal-primary {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-modal-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-modal-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-modal-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .container {
+                margin: 15px;
+                border-radius: 20px;
+            }
+            
+            .main-content {
+                grid-template-columns: 350px 1fr;
+                gap: 24px;
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 16px;
+            }
+            
+            .header {
+                padding: 24px;
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .header-info h1 {
+                font-size: 1.5rem;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 24px;
+            }
+            
+            .right-column {
+                gap: 20px;
+            }
+            
+            .client-info-card {
+                position: static;
+                padding: 24px;
+            }
+
+            .client-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .services-header {
+                padding: 24px 20px 20px;
+            }
+            
+            .service-item {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .service-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .service-name,
+            .service-professional {
+                min-width: unset;
+            }
+            
+            .actions-section {
+                flex-direction: column;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+            
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding: 20px;
+            }
+
+            .services-section,
+            .communications-section {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 5px;
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .header-info h1 {
+                font-size: 1.25rem;
+            }
+
+            .client-name {
+                font-size: 1.25rem;
+            }
+
+            .service-item {
+                padding: 16px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .service-info {
+                gap: 6px;
+            }
+
+            .services-header {
+                padding: 20px 16px 16px;
+            }
+
+            .services-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 4px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <img src="https://barbeariabmb.com.br/wp-content/uploads/2023/11/logomarca-colorido-fundo-preto-1.webp" 
+                     alt="BMB Barbearia" 
+                     class="logo">
+                <div class="header-info">
+                    <h1>Detalhes do Cliente</h1>
+                    <p>BMB Jd São Paulo</p>
+                </div>
+            </div>
+            <a href="/consultar-dados" class="btn-back">
+                ← Voltar à Lista
+            </a>
+        </div>
+
+        <div id="alerts"></div>
+
+        <div class="main-content">
+            <div class="client-info-card">
+                <div id="clienteInfo">
+                    <div class="loading">
+                        Carregando informações do cliente...
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-column">
+                <div class="services-section">
+                    <div class="services-header">
+                        <div class="services-title" id="servicesTitle">
+                            Histórico de Serviços <span class="services-count" id="servicesCount">0</span>
+                        </div>
+                    </div>
+                    <div class="services-content" id="servicesContent">
+                        <div class="no-services">
+                            <div class="no-services-icon">📝</div>
+                            <p>Carregando histórico de serviços...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Comunicações Recebidas -->
+                <div class="communications-section">
+                    <div class="communications-header">
+                        <div class="communications-title" id="communicationsTitle">
+                            Comunicações Recebidas <span class="communications-count" id="communicationsCount">0</span>
+                        </div>
+                    </div>
+                    <div class="communications-content" id="communicationsContent">
+                        <div class="no-communications">
+                            <div class="no-communications-icon">📱</div>
+                            <p>Carregando comunicações...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Cliente</h2>
+                <span class="close" onclick="fecharModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="modal-form-group">
+                        <label for="editNome">Nome Completo:</label>
+                        <input type="text" id="editNome" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editDdi">DDI (Código do País):</label>
+                        <input type="text" id="editDdi" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editTelefone">Telefone:</label>
+                        <input type="tel" id="editTelefone" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editDataNascimento">Data de Nascimento (Opcional):</label>
+                        <input type="date" id="editDataNascimento">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="editUnidade">Unidade:</label>
+                        <select id="editUnidade">
+                            <option value="">N/A (Sem Unidade)</option>
+                            <option value="JSP">JSP</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal btn-modal-secondary" onclick="fecharModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn-modal btn-modal-primary" onclick="salvarEdicao()">
+                    Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clienteAtual = null;
+        let clienteId = null;
+
+        // ===== FUNÇÃO PARA BANDEIRA DO PAÍS =====
+        function obterBandeiraPais(ddi) {
+            const bandeiras = {
+                '55': 'br', // Brasil
+                '1': 'us',   // Estados Unidos
+                '44': 'gb',  // Reino Unido
+                '33': 'fr',  // França
+                '49': 'de',  // Alemanha
+                '39': 'it',  // Itália
+                '34': 'es',  // Espanha
+                '351': 'pt', // Portugal
+                '52': 'mx',  // México
+                '54': 'ar',  // Argentina
+                '56': 'cl',  // Chile
+                '57': 'co',  // Colômbia
+                '58': 've',  // Venezuela
+                '51': 'pe',  // Peru
+                '593': 'ec', // Equador
+                '598': 'uy', // Uruguai
+                '595': 'py', // Paraguai
+                '591': 'bo', // Bolívia
+                '81': 'jp',  // Japão
+                '82': 'kr',  // Coreia do Sul
+                '86': 'cn',  // China
+                '91': 'in',  // Índia
+                '61': 'au',  // Austrália
+                '7': 'ru',   // Rússia
+                '41': 'ch',  // Suíça
+                '31': 'nl',  // Holanda
+                '32': 'be',  // Bélgica
+                '43': 'at',  // Áustria
+                '45': 'dk',  // Dinamarca
+                '46': 'se',  // Suécia
+                '47': 'no',  // Noruega
+                '358': 'fi', // Finlândia
+                '48': 'pl',  // Polônia
+                '420': 'cz', // República Tcheca
+                '421': 'sk', // Eslováquia
+                '36': 'hu',  // Hungria
+                '40': 'ro',  // Romênia
+                '359': 'bg', // Bulgária
+                '385': 'hr', // Croácia
+                '381': 'rs', // Sérvia
+                '30': 'gr',  // Grécia
+                '90': 'tr',  // Turquia
+                '972': 'il', // Israel
+                '20': 'eg',  // Egito
+                '27': 'za',  // África do Sul
+                '234': 'ng', // Nigéria
+                '254': 'ke', // Quênia
+                '65': 'sg',  // Singapura
+                '60': 'my',  // Malásia
+                '66': 'th',  // Tailândia
+                '84': 'vn',  // Vietnã
+                '62': 'id',  // Indonésia
+                '63': 'ph',  // Filipinas
+                '64': 'nz',  // Nova Zelândia
+            };
+            
+            // Remove o + se houver e converte para string
+            const ddiLimpo = ddi.toString().replace(/^\+/, '');
+            const codigoPais = bandeiras[ddiLimpo] || 'un'; // UN (genérico) se não encontrar
+            
+            // Retorna HTML da imagem da bandeira
+            return `<img src="https://flagcdn.com/w20/${codigoPais}.png" alt="Bandeira" class="flag-icon" onerror="this.style.display='none'">`;
+        }
+
+        // ===== FUNÇÕES DE FORMATAÇÃO DE TELEFONE =====
+        function formatarTelefone(telefone) {
+            if (!telefone) return '';
+            
+            // Remove tudo que não é número
+            const apenasNumeros = telefone.toString().replace(/\D/g, '');
+            
+            // Se tem 11 dígitos (celular com DDD)
+            if (apenasNumeros.length === 11) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+            }
+            // Se tem 10 dígitos (fixo com DDD)  
+            else if (apenasNumeros.length === 10) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+            }
+            // Se tem 9 dígitos (celular sem DDD)
+            else if (apenasNumeros.length === 9) {
+                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+            }
+            // Se tem 8 dígitos (fixo sem DDD)
+            else if (apenasNumeros.length === 8) {
+                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+            }
+            // Para outros tamanhos, retorna apenas os números
+            else {
+                return apenasNumeros;
+            }
+        }
+
+        function aplicarMascaraTelefone(input) {
+            const valorFormatado = formatarTelefone(input.value);
+            input.value = valorFormatado;
+        }
+
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            obterClienteId();
+            carregarDadosCliente();
+            carregarComunicacoesCliente(); // ✅ NOVA: Carregar comunicações do cliente
+            
+            // ✅ NOVO: Event listener para formatação automática do telefone no modal
+            const telefoneInput = document.getElementById('editTelefone');
+            if (telefoneInput) {
+                // Formatar enquanto digita
+                telefoneInput.addEventListener('input', function() {
+                    aplicarMascaraTelefone(this);
+                });
+                
+                // Formatar quando sai do campo
+                telefoneInput.addEventListener('blur', function() {
+                    aplicarMascaraTelefone(this);
+                });
+            }
+        });
+
+        // Obter ID do cliente da URL
+        function obterClienteId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            clienteId = urlParams.get('id');
+            
+            if (!clienteId) {
+                mostrarErro('ID do cliente não fornecido');
+                return;
+            }
+        }
+
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Função para mostrar alertas
+        function mostrarAlert(mensagem, tipo = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.textContent = mensagem;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Carregar dados do cliente
+        async function carregarDadosCliente() {
+            if (!clienteId) return;
+
+            try {
+                const response = await fetch(`/api/clientes/${clienteId}`);
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.status === 404) {
+                    mostrarErro('Cliente não encontrado');
+                    return;
+                }
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar cliente');
+                }
+                
+                clienteAtual = await response.json();
+                renderizarCliente();
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarErro('Erro ao carregar dados do cliente');
+            }
+        }
+
+        // Renderizar informações do cliente
+        function renderizarCliente() {
+            if (!clienteAtual) return;
+
+            const container = document.getElementById('clienteInfo');
+            
+            // Calcular idade (se data de nascimento for válida)
+            let idadeTexto = 'Não Informado';
+            if (clienteAtual.dataNascimento) {
+                try {
+                    const nascimento = new Date(clienteAtual.dataNascimento);
+                    if (!isNaN(nascimento.getTime())) {
+                        const hoje = new Date();
+                        let idade = hoje.getFullYear() - nascimento.getFullYear();
+                        const mesAtual = hoje.getMonth();
+                        const mesNascimento = nascimento.getMonth();
+                        if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
+                            idade--;
+                        }
+                        idadeTexto = `${nascimento.toLocaleDateString('pt-BR')} (${idade} anos)`;
+                    }
+                } catch (error) {
+                    console.warn('Erro ao processar data de nascimento:', error);
+                }
+            }
+
+            // Obter inicial do nome para avatar
+            const inicial = clienteAtual.nome.charAt(0).toUpperCase();
+
+            container.innerHTML = `
+                <div class="client-avatar">${inicial}</div>
+                <div class="client-name">${clienteAtual.nome}</div>
+                
+                <div class="client-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Código do País</div>
+                        <div class="detail-value">${obterBandeiraPais(clienteAtual.ddi || '55')}+${clienteAtual.ddi || '55'}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Telefone</div>
+                        <div class="detail-value">${formatarTelefone(clienteAtual.telefone)}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Data de Nascimento</div>
+                        <div class="detail-value">${idadeTexto}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Data de Cadastro</div>
+                        <div class="detail-value">${new Date(clienteAtual.criadoEm).toLocaleDateString('pt-BR')}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Unidade</div>
+                        <div class="detail-value">${clienteAtual.unidade || 'N/A'}</div>
+                    </div>
+                </div>
+                
+                <div class="actions-section">
+                    <button class="btn btn-edit" onclick="editarCliente()">
+                        Editar
+                    </button>
+                    <button class="btn btn-delete" onclick="deletarCliente()">
+                        Excluir
+                    </button>
+                    <a href="/consultar-dados" class="btn btn-back-list">
+                        Voltar à Lista
+                    </a>
+                </div>
+            `;
+            
+            // Renderizar histórico de serviços separadamente
+            renderizarHistoricoServicos();
+        }
+
+        // ✅ NOVA FUNÇÃO: Renderizar histórico de serviços
+        function renderizarHistoricoServicos() {
+            const servicesContent = document.getElementById('servicesContent');
+            const servicesCount = document.getElementById('servicesCount');
+            
+            if (!clienteAtual.historicoServicos || clienteAtual.historicoServicos.length === 0) {
+                servicesCount.textContent = '0';
+                servicesContent.innerHTML = `
+                    <div class="no-services">
+                        <div class="no-services-icon">📝</div>
+                        <p><strong>Nenhum serviço registrado ainda</strong></p>
+                        <small>Importe o histórico através da página "Atualizar Dados"</small>
+                    </div>
+                `;
+                return;
+            }
+
+            // Ordenar serviços por data (mais recente primeiro)
+            const servicosOrdenados = [...clienteAtual.historicoServicos].sort((a, b) => 
+                new Date(b.dataServico) - new Date(a.dataServico)
+            );
+
+            servicesCount.textContent = servicosOrdenados.length;
+
+            const servicosHtml = servicosOrdenados.map(servico => `
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">${servico.servico}</div>
+                        <div class="service-professional">Profissional: ${servico.profissional}</div>
+                    </div>
+                    <div class="service-date">${new Date(servico.dataServico).toLocaleDateString('pt-BR')}</div>
+                </div>
+            `).join('');
+
+            servicesContent.innerHTML = `
+                <div class="services-list">
+                    ${servicosHtml}
+                </div>
+            `;
+        }
+        
+
+        // Mostrar erro
+        function mostrarErro(mensagem) {
+            const container = document.getElementById('clienteInfo');
+            const servicesContent = document.getElementById('servicesContent');
+            
+            container.innerHTML = `
+                <div class="error">
+                    <h2>❌ ${mensagem}</h2>
+                    <p>Verifique se o cliente existe ou tente novamente.</p>
+                    <a href="/consultar-dados" class="btn btn-back-list" style="margin-top: 20px;">
+                        Voltar à Lista
+                    </a>
+                </div>
+            `;
+            
+            servicesContent.innerHTML = `
+                <div class="no-services">
+                    <div class="no-services-icon">❌</div>
+                    <p><strong>Erro ao carregar serviços</strong></p>
+                </div>
+            `;
+        }
+
+        // Editar cliente (abrir modal)
+        function editarCliente() {
+            if (!clienteAtual) return;
+            
+            // Preencher campos do modal
+            document.getElementById('editNome').value = clienteAtual.nome;
+            document.getElementById('editDdi').value = clienteAtual.ddi || '55'; // ✅ SEM +
+            document.getElementById('editTelefone').value = formatarTelefone(clienteAtual.telefone); // ✅ FORMATADO
+            
+            // ✅ CORREÇÃO: Tratar data de nascimento null
+            if (clienteAtual.dataNascimento) {
+                try {
+                    const data = new Date(clienteAtual.dataNascimento);
+                    if (!isNaN(data.getTime())) {
+                        document.getElementById('editDataNascimento').value = clienteAtual.dataNascimento.split('T')[0];
+                    } else {
+                        document.getElementById('editDataNascimento').value = '';
+                    }
+                } catch (error) {
+                    document.getElementById('editDataNascimento').value = '';
+                }
+            } else {
+                document.getElementById('editDataNascimento').value = '';
+            }
+            
+            // ✅ NOVO: Preencher campo de unidade
+            document.getElementById('editUnidade').value = clienteAtual.unidade || '';
+            
+            // Abrir modal
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Salvar edição
+        async function salvarEdicao() {
+            if (!clienteAtual) return;
+            
+            const nome = document.getElementById('editNome').value.trim();
+            let ddi = document.getElementById('editDdi').value.trim();
+            let telefone = document.getElementById('editTelefone').value.trim();
+            const dataNascimento = document.getElementById('editDataNascimento').value;
+            const unidade = document.getElementById('editUnidade').value;
+            
+            // ✅ NOVO: Limpar DDI e garantir formatação do telefone
+            ddi = ddi.replace(/^\+/, ''); // Remove + se houver
+            if (!ddi || ddi === '') {
+                ddi = '55'; // Padrão Brasil
+            }
+            telefone = formatarTelefone(telefone); // Garantir formatação
+            
+            // ✅ CORREÇÃO: Data de nascimento agora é opcional na edição
+            if (!nome || !ddi || !telefone) {
+                mostrarAlert('Por favor, preencha Nome, DDI e Telefone. Data de nascimento e unidade são opcionais.', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/clientes/${clienteId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome, ddi, telefone, dataNascimento, unidade })
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.ok) {
+                    mostrarAlert(`Cliente "${nome}" atualizado com sucesso!`);
+                    fecharModal();
+                    carregarDadosCliente(); // Recarregar dados
+                } else {
+                    const erro = await response.json();
+                    mostrarAlert(erro.erro || 'Erro ao atualizar cliente', 'error');
+                }
+            } catch (error) {
+                mostrarAlert('Erro de conexão', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Deletar cliente
+        async function deletarCliente() {
+            if (!clienteAtual) return;
+            
+            if (!confirm(`Tem certeza que deseja excluir o cliente "${clienteAtual.nome}"?\n\nEsta ação não pode ser desfeita.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/clientes/${clienteId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.ok) {
+                    mostrarAlert(`Cliente "${clienteAtual.nome}" excluído com sucesso!`);
+                    
+                    // Redirecionar para lista após 2 segundos
+                    setTimeout(() => {
+                        window.location.href = '/consultar-dados';
+                    }, 2000);
+                } else {
+                    const erro = await response.json();
+                    mostrarAlert(erro.erro || 'Erro ao excluir cliente', 'error');
+                }
+            } catch (error) {
+                mostrarAlert('Erro de conexão', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // ===================================
+        // FUNÇÕES PARA COMUNICAÇÕES RECEBIDAS
+        // ===================================
+
+        // Carregar comunicações do cliente
+        async function carregarComunicacoesCliente() {
+            if (!clienteId) return;
+
+            try {
+                const response = await fetch(`/api/clientes/${clienteId}/comunicacoes`);
+                
+                if (response.ok) {
+                    const comunicacoes = await response.json();
+                    renderizarComunicacoes(comunicacoes);
+                } else {
+                    document.getElementById('communicationsContent').innerHTML = `
+                        <div class="no-communications">
+                            <div class="no-communications-icon">❌</div>
+                            <p>Erro ao carregar comunicações</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar comunicações:', error);
+                document.getElementById('communicationsContent').innerHTML = `
+                    <div class="no-communications">
+                        <div class="no-communications-icon">❌</div>
+                        <p>Erro de conexão ao carregar comunicações</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Renderizar comunicações
+        function renderizarComunicacoes(comunicacoes) {
+            const container = document.getElementById('communicationsContent');
+            const countElement = document.getElementById('communicationsCount');
+            
+            countElement.textContent = comunicacoes.length;
+
+            if (comunicacoes.length === 0) {
+                container.innerHTML = `
+                    <div class="no-communications">
+                        <div class="no-communications-icon">📭</div>
+                        <p>Este cliente ainda não recebeu nenhuma comunicação via WhatsApp</p>
+                        <small style="color: #94a3b8; margin-top: 8px; display: block;">
+                            As comunicações aparecerão aqui quando enviadas através do sistema
+                        </small>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = comunicacoes.map(comunicacao => `
+                <div class="communication-item" onclick="verDetalhesComunicacao('${comunicacao._id}')">
+                    <div class="communication-header-item">
+                        <div>
+                            <div class="communication-title-item">${comunicacao.titulo}</div>
+                        </div>
+                        <div class="communication-date-item">
+                            ${new Date(comunicacao.criadoEm).toLocaleDateString('pt-BR', { 
+                                day: '2-digit', 
+                                month: '2-digit', 
+                                year: 'numeric' 
+                            })}
+                        </div>
+                    </div>
+                    <div class="communication-stats-item">
+                        <div class="communication-stat-item">
+                            <span>👥</span>
+                            <span class="communication-stat-number">${comunicacao.totalClientes}</span>
+                            <span>total</span>
+                        </div>
+                        <div class="communication-stat-item">
+                            <span>✅</span>
+                            <span class="communication-stat-number">${comunicacao.clientesEncontrados}</span>
+                            <span>encontrados</span>
+                        </div>
+                        <div class="communication-stat-item">
+                            <span>📱</span>
+                            <span style="color: #8b5cf6; font-weight: 600;">Recebida</span>
+                        </div>
+                        <div class="communication-stat-item">
+                            <span>${comunicacao.clienteRealizado ? '🎯' : '⏳'}</span>
+                            <span style="color: ${comunicacao.clienteRealizado ? '#22c55e' : '#f59e0b'}; font-weight: 600;">
+                                ${comunicacao.clienteRealizado ? 'Realizado' : 'Pendente'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Ir para detalhes da comunicação
+        function verDetalhesComunicacao(comunicacaoId) {
+            window.location.href = `/comunicacao-detalhes?id=${comunicacaoId}`;
+        }
+
+        // Fechar modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                fecharModal();
+            }
+        }
+    </script>
+</body>
+</html>

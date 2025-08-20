@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMB Barbearia - Atualizar Dados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            color: white;
+            padding: 32px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #FFD700;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bmb-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            border: 2px solid #FFD700;
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.3);
+            display: block;
+            flex-shrink: 0;
+        }
+
+        .header-info h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, #FFA500, #FFD700);
+        }
+
+        .main-content {
+            padding: 48px 40px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .section {
+            margin-bottom: 48px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 165, 0, 0.02));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .section h2 {
+            color: #FFD700;
+            margin-bottom: 24px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #FFD700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"], input[type="tel"], input[type="date"], input[type="file"] {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, input[type="tel"]:focus, input[type="date"]:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        input[type="text"]::placeholder, input[type="tel"]::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        input[type="file"] {
+            padding: 16px;
+            border-style: dashed;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000000;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            margin-right: 16px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, #FFA500, #FFD700);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            color: #ffffff;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            border-color: #FFD700;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            white-space: pre-line;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+
+        .file-info {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 16px;
+            color: #FFD700;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        /* ===== BARRA DE PROGRESSO ===== */
+        .progress-container {
+            display: none;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05));
+            backdrop-filter: blur(10px);
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            padding: 32px;
+            margin: 32px 0;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-container.active {
+            display: block;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .progress-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .progress-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .progress-bar-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 25px;
+            height: 24px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+            background-size: 200% 100%;
+            border-radius: 25px;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progressGradient 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        @keyframes progressGradient {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .progress-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .progress-stat {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-percentage {
+            font-size: 2.5rem !important;
+            color: #FFD700 !important;
+        }
+
+        .progress-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+            
+            .container {
+                margin: 0;
+                border-radius: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+                padding: 24px 20px;
+            }
+
+            .header-info {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .bmb-logo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .header-info h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                padding: 32px 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-info {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .btn {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-info">
+                <img src="https://barbeariabmb.com.br/wp-content/uploads/2023/11/logomarca-colorido-fundo-preto-1.webp" alt="BMB Barbearia" class="bmb-logo">
+                <div>
+                    <h1>Atualizar Banco de Dados</h1>
+                    <p>BMB Jd São Paulo</p>
+                </div>
+            </div>
+            <a href="/dashboard" class="btn-back">
+                ← Voltar ao Dashboard
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div id="alerts"></div>
+
+            <!-- ===== BARRA DE PROGRESSO ===== -->
+            <div id="progressContainer" class="progress-container">
+                <div class="progress-header">
+                    <div class="progress-title">
+                        <span class="progress-spinner"></span>
+                        <span id="progressTitle">Processando arquivo...</span>
+                    </div>
+                    <div class="progress-subtitle" id="progressSubtitle">Aguarde enquanto processamos os dados</div>
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="progress-info">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value progress-percentage" id="progressPercentage">0%</div>
+                        <div class="progress-stat-label">Progresso</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressCurrent">0</div>
+                        <div class="progress-stat-label">Processados</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="progressTotal">0</div>
+                        <div class="progress-stat-label">Total</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Upload Excel -->
+            <div class="section">
+                <h2>📁 Importar Cadastro</h2>
+                <div class="alert-info">
+                    <strong>💡 Dica:</strong> Use esta opção para importar vários clientes de uma vez através de uma planilha Excel.
+                </div>
+                
+                <div class="form-group">
+                    <label for="excelFile">Selecione o arquivo Excel (.xlsx ou .xls):</label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls">
+                    <div class="file-info">
+                        <strong>📋 Formato da planilha:</strong><br>
+                        • <strong>Coluna A:</strong> Nome (ex: João Silva)<br>
+                        • <strong>Coluna B:</strong> DDI (ex: 55)<br>
+                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999 ou 11999999999)<br>
+                        • <strong>Coluna D:</strong> Data de Nascimento (ex: 15/05/1990)<br><br>
+                        <strong>📞 Telefone:</strong> Pode vir formatado (11) 99999-9999 ou apenas números 11999999999. Será automaticamente formatado no padrão (xx) xxxxx-xxxx<br>
+                        <strong>⚠️ Importante:</strong> A primeira linha deve conter os cabeçalhos: Nome, DDI, Telefone, Data de Nascimento
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="uploadExcel()">
+                    📤 Importar Cadastro
+                </button>
+                
+            </div>
+
+            <!-- ✅ NOVA SEÇÃO: Upload de Histórico de Serviços -->
+            <div class="section">
+                <h2>🏆 Importar/Atualizar Movimento de Clientes</h2>
+                <div class="alert-info">
+                    <strong>💼 Histórico de Atendimentos:</strong> Use esta opção para importar o histórico de serviços dos clientes.
+                    <br><strong>📝 O que faz:</strong>
+                    <br>• Se o telefone existe na base → adiciona serviços ao cliente
+                    <br>• Se o telefone não existe → cria novo cliente com os serviços
+                </div>
+                
+                <div class="form-group">
+                    <label for="servicosFile">Selecione o arquivo Excel de serviços (.xlsx ou .xls):</label>
+                    <input type="file" id="servicosFile" accept=".xlsx,.xls">
+                    <div class="file-info">
+                        <strong>📋 Formato da planilha de serviços:</strong><br>
+                        • <strong>Coluna A:</strong> Serviço (ex: Corte, Barba, Escova)<br>
+                        • <strong>Coluna B:</strong> Cliente (ex: João Silva)<br>
+                        • <strong>Coluna C:</strong> Telefone (ex: (11) 99999-9999 ou 11999999999)<br>
+                        • <strong>Coluna D:</strong> Profissional (ex: Carlos, Pedro)<br>
+                        • <strong>Coluna E:</strong> Data (ex: 15/01/2025)<br><br>
+                        <strong>📞 Telefone:</strong> Pode vir formatado (11) 99999-9999 ou apenas números 11999999999. Será automaticamente formatado no padrão (xx) xxxxx-xxxx<br>
+                        <strong>⚠️ Importante:</strong> A primeira linha deve conter os cabeçalhos: Serviço, Cliente, Telefone, Profissional, Data
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="uploadServicos()">
+                    🏆 Importar Serviços
+                </button>
+               
+            </div>
+
+            <!-- Seção de Cadastro Manual -->
+            <div class="section">
+                <h2>➕ Adicionar Cliente Manualmente</h2>
+                <div class="alert-info">
+                    <strong>✍️ Cadastro Individual:</strong> Preencha os dados abaixo para adicionar um cliente por vez.
+                </div>
+
+                <form id="clienteForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo:</label>
+                            <input type="text" id="nome" required placeholder="Ex: João Silva">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ddi">DDI (Código do País):</label>
+                            <input type="text" id="ddi" required placeholder="Ex: 55" value="55">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="telefone">Telefone:</label>
+                            <input type="tel" id="telefone" required placeholder="Ex: (11) 99999-9999">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dataNascimento">Data de Nascimento:</label>
+                            <input type="date" id="dataNascimento" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        💾 Salvar Cliente
+                    </button>
+                    <button type="button" class="btn-secondary btn" onclick="limparFormulario()">
+                        🗑️ Limpar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clienteEditando = null;
+        let progressInterval = null;
+
+        // ===== FUNÇÕES DE FORMATAÇÃO DE TELEFONE =====
+        function formatarTelefone(telefone) {
+            if (!telefone) return '';
+            
+            // Remove tudo que não é número
+            const apenasNumeros = telefone.toString().replace(/\D/g, '');
+            
+            // Se tem 11 dígitos (celular com DDD)
+            if (apenasNumeros.length === 11) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+            }
+            // Se tem 10 dígitos (fixo com DDD)  
+            else if (apenasNumeros.length === 10) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+            }
+            // Se tem 9 dígitos (celular sem DDD)
+            else if (apenasNumeros.length === 9) {
+                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+            }
+            // Se tem 8 dígitos (fixo sem DDD)
+            else if (apenasNumeros.length === 8) {
+                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+            }
+            // Para outros tamanhos, retorna apenas os números
+            else {
+                return apenasNumeros;
+            }
+        }
+
+        function aplicarMascaraTelefone(input) {
+            const valorFormatado = formatarTelefone(input.value);
+            input.value = valorFormatado;
+        }
+
+        // ===== FUNÇÕES DA BARRA DE PROGRESSO =====
+        function mostrarProgresso(titulo, subtitulo = 'Aguarde enquanto processamos os dados') {
+            const container = document.getElementById('progressContainer');
+            const titleElement = document.getElementById('progressTitle');
+            const subtitleElement = document.getElementById('progressSubtitle');
+            
+            titleElement.textContent = titulo;
+            subtitleElement.textContent = subtitulo;
+            
+            // Reset dos valores
+            atualizarProgresso(0, 0, 0);
+            
+            container.classList.add('active');
+            
+            // Scroll suave para a barra de progresso
+            container.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+
+        function ocultarProgresso() {
+            const container = document.getElementById('progressContainer');
+            container.classList.remove('active');
+            
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        function atualizarProgresso(atual, total, percentual = null) {
+            if (percentual === null && total > 0) {
+                percentual = Math.round((atual / total) * 100);
+            }
+            
+            document.getElementById('progressCurrent').textContent = atual;
+            document.getElementById('progressTotal').textContent = total;
+            document.getElementById('progressPercentage').textContent = `${percentual || 0}%`;
+            document.getElementById('progressBar').style.width = `${percentual || 0}%`;
+        }
+
+        function simularProgressoImportacao(totalLinhas, tipoImportacao = 'clientes') {
+            let currentProgress = 0;
+            const incremento = Math.max(1, Math.ceil(totalLinhas / 50)); // Incrementa de forma suave
+            
+            progressInterval = setInterval(() => {
+                currentProgress += incremento;
+                
+                if (currentProgress >= totalLinhas) {
+                    currentProgress = totalLinhas;
+                    clearInterval(progressInterval);
+                    progressInterval = null;
+                }
+                
+                atualizarProgresso(currentProgress, totalLinhas);
+                
+                // Atualizar subtítulo com base no progresso e tipo
+                const subtitle = document.getElementById('progressSubtitle');
+                const progPercent = currentProgress / totalLinhas;
+                
+                if (tipoImportacao === 'servicos') {
+                    if (progPercent < 0.3) {
+                        subtitle.textContent = `Validando dados dos serviços...`;
+                    } else if (progPercent < 0.6) {
+                        subtitle.textContent = `Buscando clientes existentes...`;
+                    } else if (progPercent < 0.9) {
+                        subtitle.textContent = `Adicionando serviços ao histórico...`;
+                    } else {
+                        subtitle.textContent = `Finalizando importação de serviços...`;
+                    }
+                } else {
+                    if (progPercent < 0.3) {
+                        subtitle.textContent = `Lendo e validando dados...`;
+                    } else if (progPercent < 0.7) {
+                        subtitle.textContent = `Verificando duplicatas...`;
+                    } else if (progPercent < 1.0) {
+                        subtitle.textContent = `Salvando no banco de dados...`;
+                    } else {
+                        subtitle.textContent = `Processamento concluído!`;
+                    }
+                }
+                
+            }, 100); // Atualiza a cada 100ms
+        }
+
+        // Verificar autenticação ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            
+            // DETECTOR DE REMOÇÃO DE ALERTAS
+            const alertsContainer = document.getElementById('alerts');
+            if (alertsContainer) {
+                // Observer para detectar quando elementos são removidos
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList') {
+                            mutation.removedNodes.forEach(function(node) {
+                                if (node.nodeType === Node.ELEMENT_NODE && 
+                                    node.getAttribute && 
+                                    node.getAttribute('data-permanente') === 'true') {
+                                    console.log('🚨 ALERTA PERMANENTE FOI REMOVIDO FORÇADAMENTE!');
+                                    console.log('📄 Elemento removido:', node);
+                                }
+                            });
+                        }
+                    });
+                });
+                
+                observer.observe(alertsContainer, {
+                    childList: true,
+                    subtree: true
+                });
+                
+                console.log('👁️ Observer de remoção ativado');
+            }
+            
+            // Event listener para formulário
+            document.getElementById('clienteForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                adicionarCliente();
+            });
+            
+            // ✅ NOVO: Event listener para formatação automática do telefone
+            const telefoneInput = document.getElementById('telefone');
+            if (telefoneInput) {
+                // Formatar enquanto digita
+                telefoneInput.addEventListener('input', function() {
+                    aplicarMascaraTelefone(this);
+                });
+                
+                // Formatar quando sai do campo
+                telefoneInput.addEventListener('blur', function() {
+                    aplicarMascaraTelefone(this);
+                });
+            }
+        });
+
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Função para mostrar alertas
+        function mostrarAlert(mensagem, tipo = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.textContent = mensagem;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Adicionar novo cliente
+        async function adicionarCliente() {
+            const nome = document.getElementById('nome').value.trim();
+            let ddi = document.getElementById('ddi').value.trim();
+            let telefone = document.getElementById('telefone').value.trim();
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            
+            // 🔧 CORREÇÃO: Limpar DDI removendo + se houver
+            ddi = ddi.replace(/^\+/, ''); // Remove + do início se existir
+            if (!ddi || ddi === '') {
+                ddi = '55'; // Padrão Brasil se vazio
+            }
+            
+            // ✅ NOVO: Garantir que o telefone está formatado antes de enviar
+            telefone = formatarTelefone(telefone);
+            
+            if (!nome || !ddi || !telefone || !dataNascimento) {
+                mostrarAlert('Por favor, preencha todos os campos.', 'error', false); // Temporário
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/clientes', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nome, ddi, telefone, dataNascimento })
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.ok) {
+                    mostrarAlert(`✅ Cliente "${nome}" adicionado com sucesso!`, 'success', true); // FIXO
+                    limparFormulario();
+                } else {
+                    const erro = await response.json();
+                    mostrarAlert(erro.erro || 'Erro ao adicionar cliente', 'error', true); // FIXO
+                }
+            } catch (error) {
+                mostrarAlert('Erro de conexão', 'error', false); // Temporário
+                console.error('Erro:', error);
+            }
+        }
+
+        // Upload de Excel - VERSÃO MELHORADA COM PROGRESSO
+        async function uploadExcel() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                mostrarAlert('Por favor, selecione um arquivo Excel.', 'error');
+                return;
+            }
+            
+            // Verificar se é arquivo Excel
+            const tipoArquivo = file.name.toLowerCase();
+            if (!tipoArquivo.endsWith('.xlsx') && !tipoArquivo.endsWith('.xls')) {
+                mostrarAlert('Por favor, selecione apenas arquivos Excel (.xlsx ou .xls)', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('excel', file);
+            
+            try {
+                // Mostrar barra de progresso
+                mostrarProgresso('📤 Importando Cadastro de Clientes', 'Enviando arquivo para o servidor...');
+                
+                // Simular progresso inicial (leitura do arquivo)
+                setTimeout(() => {
+                    atualizarProgresso(1, 100, 5);
+                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo Excel...';
+                }, 200);
+                
+                const response = await fetch('/api/upload-excel', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.status === 401) {
+                    ocultarProgresso();
+                    window.location.href = '/';
+                    return;
+                }
+                
+                const resultado = await response.json();
+                
+                if (response.ok) {
+                    // Simular progresso do processamento baseado no total de linhas
+                    if (resultado.totalLinhas > 0) {
+                        atualizarProgresso(5, 100, 10);
+                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros...`;
+                        
+                        // Simular o processamento linha por linha
+                        simularProgressoImportacao(resultado.totalLinhas, 'clientes');
+                        
+                        // Aguardar conclusão da simulação
+                        await new Promise(resolve => {
+                            const checkComplete = setInterval(() => {
+                                if (!progressInterval) {
+                                    clearInterval(checkComplete);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
+                    
+                    // Finalizar progresso
+                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
+                    document.getElementById('progressSubtitle').textContent = '✅ Importação concluída com sucesso!';
+                    
+                    // Aguardar um pouco antes de ocultar
+                    setTimeout(() => {
+                        ocultarProgresso();
+                    }, 2000);
+                    
+                    // Mostrar resultado detalhado FIXO
+                    let mensagemCompleta = `🎉 ${resultado.mensagem}`;
+                    
+                    if (resultado.sucessos && resultado.sucessos.length > 0) {
+                        console.log('✅ Clientes adicionados com sucesso:', resultado.sucessos);
+                    }
+                    
+                    if (resultado.erros && resultado.erros.length > 0) {
+                        console.log('⚠️ Detalhes dos erros/avisos:', resultado.erros);
+                        
+                        if (resultado.clientesJaExistem > 0) {
+                            mensagemCompleta += `\n\n📋 ${resultado.clientesJaExistem} clientes já existiam na base (não foram duplicados).`;
+                        }
+                        
+                        if (resultado.totalErros > 0) {
+                            mensagemCompleta += `\n\n⚠️ ${resultado.totalErros} erros encontrados. Verifique o console (F12) para detalhes.`;
+                        }
+                        
+                        // Mostrar alguns erros na tela para facilitar
+                        if (resultado.erros.length > 0) {
+                            const primeirosErros = resultado.erros.slice(0, 5); // Mostrar 5 ao invés de 3
+                            mensagemCompleta += `\n\n🔍 Principais problemas encontrados:\n${primeirosErros.join('\n')}`;
+                            
+                            if (resultado.erros.length > 5) {
+                                mensagemCompleta += `\n... e mais ${resultado.erros.length - 5} erros (veja console F12)`;
+                            }
+                        }
+                    }
+                    
+                    // 🎯 MENSAGEM FIXA - COM LOG DE DEBUG
+                    console.log('🚀 CRIANDO MENSAGEM FIXA PRINCIPAL...');
+                    mostrarAlert(mensagemCompleta, 'success', true);
+                    fileInput.value = '';
+                    
+                    // Mostrar estatísticas detalhadas TAMBÉM FIXA
+                    if (resultado.totalLinhas > 0) {
+                        setTimeout(() => {
+                            console.log('🚀 CRIANDO MENSAGEM FIXA DE ESTATÍSTICAS...');
+                            const estatisticas = `📊 RESUMO DETALHADO DA IMPORTAÇÃO:
+• Total de linhas processadas: ${resultado.totalLinhas}
+• Clientes novos adicionados: ${resultado.clientesInseridos}
+• Clientes que já existiam: ${resultado.clientesJaExistem || 0}
+• Linhas com erro: ${resultado.totalErros || 0}
+
+${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.primeiraLinhaExemplo.join(', ') : ''}
+
+✅ IMPORTAÇÃO CONCLUÍDA COM SUCESSO!`;
+                            
+                            mostrarAlert(estatisticas, 'info', true);
+                        }, 1000);
+                    }
+                } else {
+                    ocultarProgresso();
+                    mostrarAlert(resultado.erro || 'Erro ao processar arquivo Excel', 'error', true); // FIXO
+                    if (resultado.detalhes) {
+                        console.error('Detalhes do erro:', resultado.detalhes);
+                    }
+                }
+            } catch (error) {
+                ocultarProgresso();
+                mostrarAlert('Erro ao fazer upload do arquivo', 'error', true); // FIXO
+                console.error('Erro:', error);
+            }
+        }
+
+        // Baixar modelo de Excel (REAL XLSX)
+        function baixarModelo() {
+            // Criar modelo de Excel real
+            const dados = [
+                ['Nome', 'DDI', 'Telefone', 'Data de Nascimento'],
+                ['João Silva', '55', '(11) 99999-9999', '15/05/1990'],
+                ['Maria Santos', '55', '(11) 88888-8888', '22/08/1985'],
+                ['Pedro Oliveira', '55', '(11) 77777-7777', '10/12/1992'],
+                ['Ana Costa', '55', '(11) 66666-6666', '03/03/1988'],
+                ['Carlos Mendes', '1', '(555) 123-4567', '18/11/1995']
+            ];
+            
+            // Criar planilha Excel manualmente (formato TSV para Excel)
+            const excelContent = dados.map(row => row.join('\t')).join('\n');
+            const blob = new Blob([excelContent], { 
+                type: 'application/vnd.ms-excel;charset=utf-8;' 
+            });
+            
+            // Download
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'modelo_clientes.xls');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            mostrarAlert('📥 Modelo Excel baixado com sucesso! DDI apenas com números (ex: 55)', 'success', false); // Temporário
+        }
+
+        // ✅ NOVA FUNÇÃO: Baixar modelo de serviços
+        function baixarModeloServicos() {
+            // Criar modelo de histórico de serviços
+            const dados = [
+                ['Serviço', 'Cliente', 'Telefone', 'Profissional', 'Data'],
+                ['Corte', 'João Silva', '(11) 99999-9999', 'Carlos', '15/01/2025'],
+                ['Barba', 'Maria Santos', '(11) 88888-8888', 'Pedro', '16/01/2025'],
+                ['Escova', 'Pedro Oliveira', '(11) 77777-7777', 'Ana', '17/01/2025'],
+                ['Corte + Barba', 'José Costa', '(11) 66666-6666', 'Carlos', '18/01/2025'],
+                ['Sobrancelha', 'Roberto Lima', '(11) 55555-5555', 'Maria', '19/01/2025']
+            ];
+            
+            // Criar planilha Excel (formato TSV)
+            const excelContent = dados.map(row => row.join('\t')).join('\n');
+            const blob = new Blob([excelContent], { 
+                type: 'application/vnd.ms-excel;charset=utf-8;' 
+            });
+            
+            // Download
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'modelo_historico_servicos.xls');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            mostrarAlert('📥 Modelo de histórico de serviços baixado com sucesso!', 'success', false);
+        }
+
+        // Limpar formulário
+        function limparFormulario() {
+            document.getElementById('clienteForm').reset();
+            document.getElementById('ddi').value = '55'; // Recolocar valor padrão SEM +
+        }
+
+        // Upload de histórico de serviços - COM PROGRESSO
+        async function uploadServicos() {
+            const fileInput = document.getElementById('servicosFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                mostrarAlert('Por favor, selecione um arquivo de serviços.', 'error');
+                return;
+            }
+            const tipoArquivo = file.name.toLowerCase();
+            if (!tipoArquivo.endsWith('.xlsx') && !tipoArquivo.endsWith('.xls')) {
+                mostrarAlert('Por favor, selecione apenas arquivos Excel (.xlsx ou .xls)', 'error');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('excel', file); // Corrigido para 'excel' igual ao backend
+            
+            try {
+                // Mostrar barra de progresso para serviços
+                mostrarProgresso('🏆 Importando Histórico de Serviços', 'Enviando arquivo para o servidor...');
+                
+                // Simular progresso inicial
+                setTimeout(() => {
+                    atualizarProgresso(1, 100, 5);
+                    document.getElementById('progressSubtitle').textContent = 'Lendo arquivo de serviços...';
+                }, 200);
+                
+                const response = await fetch('/api/upload-servicos', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.status === 401) {
+                    ocultarProgresso();
+                    window.location.href = '/';
+                    return;
+                }
+                const resultado = await response.json();
+                if (response.ok) {
+                    // Simular progresso do processamento
+                    if (resultado.totalLinhas > 0) {
+                        atualizarProgresso(5, 100, 10);
+                        document.getElementById('progressSubtitle').textContent = `Processando ${resultado.totalLinhas} registros de serviços...`;
+                        
+                        // Simular o processamento específico para serviços
+                        simularProgressoImportacao(resultado.totalLinhas, 'servicos');
+                        
+                        // Aguardar conclusão da simulação
+                        await new Promise(resolve => {
+                            const checkComplete = setInterval(() => {
+                                if (!progressInterval) {
+                                    clearInterval(checkComplete);
+                                    resolve();
+                                }
+                            }, 100);
+                        });
+                    }
+                    
+                    // Finalizar progresso
+                    atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
+                    document.getElementById('progressSubtitle').textContent = '✅ Importação de serviços concluída!';
+                    
+                    // Aguardar um pouco antes de ocultar
+                    setTimeout(() => {
+                        ocultarProgresso();
+                    }, 2000);
+                    
+                    let mensagemCompleta = `🎉 ${resultado.mensagem || 'Histórico importado com sucesso!'}`;
+                    if (resultado.sucessos && resultado.sucessos.length > 0) {
+                        console.log('✅ Serviços adicionados com sucesso:', resultado.sucessos);
+                    }
+                    if (resultado.erros && resultado.erros.length > 0) {
+                        console.log('⚠️ Detalhes dos erros/avisos:', resultado.erros);
+                        if (resultado.totalErros > 0) {
+                            mensagemCompleta += `\n\n⚠️ ${resultado.totalErros} erros encontrados. Verifique o console (F12) para detalhes.`;
+                        }
+                        if (resultado.erros.length > 0) {
+                            const primeirosErros = resultado.erros.slice(0, 5);
+                            mensagemCompleta += `\n\n🔍 Principais problemas encontrados:\n${primeirosErros.join('\n')}`;
+                            if (resultado.erros.length > 5) {
+                                mensagemCompleta += `\n... e mais ${resultado.erros.length - 5} erros (veja console F12)`;
+                            }
+                        }
+                    }
+                    mostrarAlert(mensagemCompleta, 'success', true);
+                    fileInput.value = '';
+                    if (resultado.totalLinhas > 0) {
+                        setTimeout(() => {
+                            const estatisticas = `📊 RESUMO DA IMPORTAÇÃO DE SERVIÇOS:
+• Total de linhas: ${resultado.totalLinhas}
+• Serviços adicionados: ${resultado.servicosAdicionados || 0}
+• Clientes atualizados: ${resultado.clientesAtualizados || 0}
+• Clientes novos criados: ${resultado.clientesNovos || 0}
+• Linhas com erro: ${resultado.totalErros || 0}
+
+✅ IMPORTAÇÃO DE SERVIÇOS CONCLUÍDA!`;
+                            mostrarAlert(estatisticas, 'info', true);
+                        }, 1000);
+                    }
+                } else {
+                    ocultarProgresso();
+                    mostrarAlert(resultado.erro || 'Erro ao processar arquivo de serviços', 'error', true);
+                    if (resultado.detalhes) {
+                        console.error('Detalhes do erro:', resultado.detalhes);
+                    }
+                }
+            } catch (error) {
+                ocultarProgresso();
+                mostrarAlert('Erro ao fazer upload do arquivo de serviços', 'error', true);
+                console.error('Erro:', error);
+            }
+        }
+    </script>
+</body>
+</html>

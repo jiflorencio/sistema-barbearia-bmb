@@ -1,0 +1,28 @@
+{
+  "name": "sistema-barbearia-bmb",
+  "version": "1.0.0",
+  "description": "Sistema de gestão para Barbearia BMB Jardim São Paulo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["barbearia", "gestao", "clientes", "nodejs", "mongodb"],
+  "author": "BMB Jardim São Paulo",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.1",
+    "xlsx": "^0.18.5",
+    "bcryptjs": "^2.4.3",
+    "express-session": "^1.17.3",
+    "connect-mongo": "^5.0.0",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

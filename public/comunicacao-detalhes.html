@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes da Comunicação - Sistema Barbearia</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, 
+                rgba(0, 0, 0, 0.9) 0%, 
+                rgba(20, 20, 20, 0.9) 50%, 
+                rgba(0, 0, 0, 0.9) 100%);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(212, 175, 55, 0.1) 0%, 
+                rgba(255, 215, 0, 0.05) 50%, 
+                rgba(212, 175, 55, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+        }
+
+        .header-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-info h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #d4af37, #ffd700, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .header-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-back:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .main-content {
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .communication-info {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 32px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .communication-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+        }
+
+        .communication-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .communication-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .meta-value {
+            font-weight: 600;
+            color: white;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 32px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
+        }
+
+        .stat-card.success-card::before {
+            background: linear-gradient(90deg, #22c55e, #16a34a, #22c55e);
+        }
+
+        .stat-card.info-card::before {
+            background: linear-gradient(90deg, #3b82f6, #2563eb, #3b82f6);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-number.success-number {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-number.info-number {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 32px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #22c55e, #16a34a, #22c55e);
+        }
+
+        .search-section h2 {
+            color: white;
+            margin-bottom: 24px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .search-controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 280px;
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .filter-status {
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            color: white;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+        .filter-status:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .filter-status option {
+            background: #1a1a1a;
+            color: white;
+            padding: 10px;
+        }
+
+        .clients-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .clients-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #7c3aed, #8b5cf6);
+        }
+
+        .clients-section h2 {
+            color: white;
+            margin-bottom: 32px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .clients-section-header {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .mass-selection-controls {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .selection-info {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .mass-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-mass-action {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-mark-realized:hover {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+
+        .btn-unmark-realized:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .select-column {
+            width: 50px;
+            text-align: center;
+        }
+
+        .realized-column {
+            width: 100px;
+            text-align: center;
+        }
+
+        .clients-table th input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #d4af37;
+            cursor: pointer;
+        }
+
+        .clients-table td input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #d4af37;
+            cursor: pointer;
+        }
+
+        .realized-status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .realized-status.not-realized {
+            color: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .realized-status.not-realized:hover {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+
+        .realized-status.realized {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+
+        .realized-status.realized:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .clients-table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .clients-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+            table-layout: fixed; /* Forçar larguras fixas */
+        }
+
+        .clients-table th {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #000;
+            padding: 20px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: none;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap; /* Não quebrar cabeçalhos */
+        }
+
+        .clients-table th:nth-child(1) { /* Checkbox */
+            width: 50px;
+            text-align: center;
+        }
+
+        .clients-table th:nth-child(2) { /* Status */
+            width: 110px;
+        }
+
+        .clients-table th:nth-child(3) { /* Nome */
+            width: 200px;
+        }
+
+        .clients-table th:nth-child(4) { /* DDI */
+            width: 80px;
+            text-align: center;
+        }
+
+        .clients-table th:nth-child(5) { /* Telefone */
+            width: 140px;
+        }
+
+        .clients-table th:nth-child(6) { /* Unidade */
+            width: 100px;
+        }
+
+        .clients-table th:nth-child(7) { /* Número Original */
+            width: 140px;
+        }
+
+        .clients-table th:nth-child(8) { /* Realizado */
+            width: 80px;
+            text-align: center;
+        }
+
+        .clients-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            vertical-align: middle;
+            color: white;
+            white-space: nowrap; /* Não quebrar conteúdo das células */
+            overflow: hidden; /* Ocultar overflow */
+            text-overflow: ellipsis; /* Adicionar reticências se necessário */
+        }
+
+        .clients-table td:nth-child(1) { /* Checkbox column */
+            text-align: center;
+        }
+
+        .clients-table td:nth-child(4) { /* DDI column */
+            text-align: center;
+        }
+
+        .clients-table td:nth-child(8) { /* Realizado column */
+            text-align: center;
+        }
+
+        .clients-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .clients-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .client-name {
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            display: block;
+        }
+
+        .client-name:hover {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .client-name.not-found {
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+        }
+
+        .client-phone {
+            color: rgba(255, 255, 255, 0.8);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .client-ddi {
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .client-ddi .country-flag {
+            display: inline-block;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 15px;
+            border-radius: 3px;
+            vertical-align: middle;
+            margin-right: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-block;
+        }
+
+        .client-unidade {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .client-unidade.vazio {
+            color: rgba(255, 255, 255, 0.4);
+            font-style: italic;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-found {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-not-found {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+        }
+
+        .loading::before {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: #d4af37;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            text-align: center;
+            padding: 80px 20px;
+            color: #ef4444;
+            font-size: 1.1rem;
+        }
+
+        .no-clients {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .no-clients-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .no-clients h3 {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .no-clients p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+        }
+
+        .alert {
+            padding: 18px 24px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .container {
+                margin: 15px;
+                border-radius: 20px;
+            }
+            
+            .main-content {
+                padding: 30px;
+            }
+            
+            .stats-section {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 20px;
+            }
+
+            .mass-selection-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .mass-actions {
+                justify-content: center;
+            }
+
+            .communication-meta {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 16px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+                padding: 24px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .main-content {
+                padding: 24px;
+            }
+
+            .communication-info,
+            .search-section,
+            .clients-section {
+                padding: 24px;
+            }
+
+            .stats-section {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .mass-selection-controls {
+                padding: 16px;
+            }
+
+            .search-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .search-box,
+            .filter-status {
+                min-width: unset;
+                width: 100%;
+            }
+
+            .clients-table th,
+            .clients-table td {
+                padding: 12px 8px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+
+            .clients-table th:nth-child(3), /* Nome */
+            .clients-table td:nth-child(3) {
+                max-width: 150px;
+            }
+
+            .clients-table th:nth-child(5), /* Telefone */
+            .clients-table td:nth-child(5) {
+                max-width: 120px;
+            }
+
+            .clients-table th:nth-child(7), /* Número Original */
+            .clients-table td:nth-child(7) {
+                max-width: 120px;
+            }
+
+            .select-column,
+            .realized-column {
+                width: 40px;
+            }
+
+            .realized-status {
+                width: 28px;
+                height: 28px;
+            }
+
+            .btn-mass-action {
+                font-size: 0.8rem;
+                padding: 8px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 5px;
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .communication-info,
+            .search-section,
+            .clients-section {
+                padding: 20px;
+            }
+
+            .header-info h1 {
+                font-size: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            .clients-table-container {
+                border-radius: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <img src="https://barbeariabmb.com.br/wp-content/uploads/2023/11/logomarca-colorido-fundo-preto-1.webp" 
+                     alt="BMB Barbearia" 
+                     class="logo">
+                <div class="header-info">
+                    <h1>Detalhes da Comunicação</h1>
+                    <p>BMB Jd São Paulo</p>
+                </div>
+            </div>
+            <a href="/comunicacao-clientes" class="btn-back">
+                ← Voltar às Comunicações
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div id="alerts"></div>
+
+            <!-- Informações da Comunicação -->
+            <div class="communication-info" id="communicationInfo">
+                <div class="loading">
+                    Carregando informações da comunicação...
+                </div>
+            </div>
+
+            <!-- Estatísticas -->
+            <div class="stats-section" id="statsSection" style="display: none;">
+                <div class="stat-card success-card">
+                    <div class="stat-number success-number" id="clientesEncontrados">-</div>
+                    <div class="stat-label">Clientes Encontrados</div>
+                </div>
+                <div class="stat-card warning-card">
+                    <div class="stat-number warning-number" id="clientesNaoEncontrados">-</div>
+                    <div class="stat-label">Não Encontrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalNumeros">-</div>
+                    <div class="stat-label">Total de Números</div>
+                </div>
+                <div class="stat-card info-card">
+                    <div class="stat-number info-number" id="clientesRealizados">-</div>
+                    <div class="stat-label">Realizados</div>
+                </div>
+            </div>
+
+            <!-- Busca -->
+            <div class="search-section" id="searchSection" style="display: none;">
+                <h2>Filtrar Clientes</h2>
+                <div class="search-controls">
+                    <input type="text" class="search-box" id="searchBox" 
+                           placeholder="Digite o nome ou telefone do cliente...">
+                    
+                    <select class="filter-status" id="statusFilter">
+                        <option value="">Todos os Status</option>
+                        <option value="encontrado">Encontrados</option>
+                        <option value="nao-encontrado">Não Encontrados</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Lista de Clientes -->
+            <div class="clients-section" id="clientsSection" style="display: none;">
+                <div class="clients-section-header">
+                    <h2>Clientes da Comunicação</h2>
+                    
+                    <!-- Controles de Seleção em Massa -->
+                    <div class="mass-selection-controls" id="massSelectionControls" style="display: none;">
+                        <div class="selection-info">
+                            <span id="selectedCount">0</span> clientes selecionados
+                        </div>
+                        <div class="mass-actions">
+                            <button class="btn-mass-action btn-mark-realized" onclick="marcarSelecionadosComoRealizados()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 6L9 17l-5-5"/>
+                                </svg>
+                                Marcar como Realizados
+                            </button>
+                            <button class="btn-mass-action btn-unmark-realized" onclick="desmarcarSelecionadosComoRealizados()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 6L6 18M6 6l12 12"/>
+                                </svg>
+                                Desmarcar Realizados
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="clients-table-container">
+                    <table class="clients-table" id="clientsTable">
+                        <thead>
+                            <tr>
+                                <th class="select-column">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                </th>
+                                <th>Status</th>
+                                <th>Nome</th>
+                                <th>DDI</th>
+                                <th>Telefone</th>
+                                <th>Unidade</th>
+                                <th>Número Original</th>
+                                <th class="realized-column">Realizado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody">
+                            <tr>
+                                <td colspan="8" class="loading">
+                                    Carregando clientes...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let comunicacao = null;
+        let clientesFiltrados = [];
+        let clientesRealizados = new Set(); // Para rastrear clientes marcados como realizados
+        let clientesSelecionados = new Set(); // Para rastrear seleção em massa
+
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarAutenticacao();
+            carregarComunicacao();
+            configurarEventListeners();
+        });
+
+        // Configurar event listeners
+        function configurarEventListeners() {
+            // Busca
+            document.getElementById('searchBox').addEventListener('input', function() {
+                aplicarFiltros();
+            });
+
+            // Filtro de status
+            document.getElementById('statusFilter').addEventListener('change', function() {
+                aplicarFiltros();
+            });
+        }
+
+        // Verificar autenticação
+        async function verificarAutenticacao() {
+            try {
+                const response = await fetch('/api/auth-status');
+                const data = await response.json();
+                
+                if (!data.logado) {
+                    window.location.href = '/';
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Função para mostrar alertas
+        function mostrarAlert(mensagem, tipo = 'success') {
+            const alertsContainer = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${tipo}`;
+            alert.textContent = mensagem;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // ===== FUNÇÃO PARA BANDEIRA DO PAÍS =====
+        function obterBandeiraPais(ddi) {
+            const bandeiras = {
+                '55': 'br', // Brasil
+                '1': 'us',   // Estados Unidos
+                '44': 'gb',  // Reino Unido
+                '33': 'fr',  // França
+                '49': 'de',  // Alemanha
+                '39': 'it',  // Itália
+                '34': 'es',  // Espanha
+                '351': 'pt', // Portugal
+                '52': 'mx',  // México
+                '54': 'ar',  // Argentina
+                '56': 'cl',  // Chile
+                '57': 'co',  // Colômbia
+                '58': 've',  // Venezuela
+                '51': 'pe',  // Peru
+                '593': 'ec', // Equador
+                '598': 'uy', // Uruguai
+                '595': 'py', // Paraguai
+                '591': 'bo', // Bolívia
+                '81': 'jp',  // Japão
+                '82': 'kr',  // Coreia do Sul
+                '86': 'cn',  // China
+                '91': 'in',  // Índia
+                '61': 'au',  // Austrália
+                '7': 'ru',   // Rússia
+                '41': 'ch',  // Suíça
+                '31': 'nl',  // Holanda
+                '32': 'be',  // Bélgica
+                '43': 'at',  // Áustria
+                '45': 'dk',  // Dinamarca
+                '46': 'se',  // Suécia
+                '47': 'no',  // Noruega
+                '358': 'fi', // Finlândia
+                '48': 'pl',  // Polônia
+                '420': 'cz', // República Tcheca
+                '421': 'sk', // Eslováquia
+                '36': 'hu',  // Hungria
+                '40': 'ro',  // Romênia
+                '359': 'bg', // Bulgária
+                '385': 'hr', // Croácia
+                '381': 'rs', // Sérvia
+                '30': 'gr',  // Grécia
+                '90': 'tr',  // Turquia
+                '972': 'il', // Israel
+                '20': 'eg',  // Egito
+                '27': 'za',  // África do Sul
+                '234': 'ng', // Nigéria
+                '254': 'ke', // Quênia
+                '65': 'sg',  // Singapura
+                '60': 'my',  // Malásia
+                '66': 'th',  // Tailândia
+                '84': 'vn',  // Vietnã
+                '62': 'id',  // Indonésia
+                '63': 'ph',  // Filipinas
+                '64': 'nz',  // Nova Zelândia
+            };
+            
+            // Remove o + se houver e converte para string
+            const ddiLimpo = ddi.toString().replace(/^\+/, '');
+            const codigoPais = bandeiras[ddiLimpo] || 'un'; // UN (genérico) se não encontrar
+            
+            // Retorna HTML da imagem da bandeira
+            return `<img src="https://flagcdn.com/w20/${codigoPais}.png" alt="Bandeira" class="flag-icon" onerror="this.style.display='none'">`;
+        }
+
+        // ===== FUNÇÕES DE FORMATAÇÃO DE TELEFONE =====
+        function formatarTelefone(telefone) {
+            if (!telefone) return '';
+            
+            // Remove tudo que não é número
+            const apenasNumeros = telefone.toString().replace(/\D/g, '');
+            
+            // Se tem 11 dígitos (celular com DDD)
+            if (apenasNumeros.length === 11) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 7)}-${apenasNumeros.slice(7)}`;
+            }
+            // Se tem 10 dígitos (fixo com DDD)  
+            else if (apenasNumeros.length === 10) {
+                return `(${apenasNumeros.slice(0, 2)}) ${apenasNumeros.slice(2, 6)}-${apenasNumeros.slice(6)}`;
+            }
+            // Se tem 9 dígitos (celular sem DDD)
+            else if (apenasNumeros.length === 9) {
+                return `${apenasNumeros.slice(0, 5)}-${apenasNumeros.slice(5)}`;
+            }
+            // Se tem 8 dígitos (fixo sem DDD)
+            else if (apenasNumeros.length === 8) {
+                return `${apenasNumeros.slice(0, 4)}-${apenasNumeros.slice(4)}`;
+            }
+            // Para outros tamanhos, retorna apenas os números
+            else {
+                return apenasNumeros;
+            }
+        }
+
+        // Pegar ID da comunicação da URL
+        function getCommunicationId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // Carregar comunicação específica
+        async function carregarComunicacao() {
+            const communicationId = getCommunicationId();
+            
+            if (!communicationId) {
+                mostrarAlert('ID da comunicação não encontrado', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/comunicacoes/${communicationId}`);
+                
+                if (response.status === 401) {
+                    window.location.href = '/';
+                    return;
+                }
+                
+                if (response.status === 404) {
+                    mostrarAlert('Comunicação não encontrada', 'error');
+                    return;
+                }
+                
+                comunicacao = await response.json();
+                clientesFiltrados = [...comunicacao.clientes];
+                
+                // Carregar status realizados
+                await carregarStatusRealizados();
+                
+                renderizarInformacoesComunicacao();
+                renderizarEstatisticas();
+                renderizarClientes(clientesFiltrados);
+                
+                // Mostrar seções
+                document.getElementById('statsSection').style.display = 'grid';
+                document.getElementById('searchSection').style.display = 'block';
+                document.getElementById('clientsSection').style.display = 'block';
+                
+            } catch (error) {
+                mostrarAlert('Erro ao carregar comunicação', 'error');
+                console.error('Erro:', error);
+            }
+        }
+
+        // Renderizar informações da comunicação
+        function renderizarInformacoesComunicacao() {
+            const container = document.getElementById('communicationInfo');
+            
+            container.innerHTML = `
+                <div class="communication-title">${comunicacao.titulo}</div>
+                <div class="communication-meta">
+                    <div class="meta-item">
+                        <span>Data de Envio:</span>
+                        <span class="meta-value">${new Date(comunicacao.criadoEm).toLocaleDateString('pt-BR')} às ${new Date(comunicacao.criadoEm).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>Total de Números:</span>
+                        <span class="meta-value">${comunicacao.totalClientes}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>Taxa de Sucesso:</span>
+                        <span class="meta-value">${Math.round((comunicacao.clientesEncontrados / comunicacao.totalClientes) * 100)}%</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Renderizar estatísticas
+        function renderizarEstatisticas() {
+            document.getElementById('clientesEncontrados').textContent = comunicacao.clientesEncontrados;
+            document.getElementById('clientesNaoEncontrados').textContent = comunicacao.clientesNaoEncontrados;
+            document.getElementById('totalNumeros').textContent = comunicacao.totalClientes;
+            document.getElementById('clientesRealizados').textContent = clientesRealizados.size;
+        }
+
+        // Aplicar filtros
+        function aplicarFiltros() {
+            const termo = document.getElementById('searchBox').value.toLowerCase();
+            const statusFiltro = document.getElementById('statusFilter').value;
+            
+            clientesFiltrados = comunicacao.clientes.filter(item => {
+                // Filtro de busca
+                const matchBusca = termo === '' || 
+                    (item.cliente && item.cliente.nome && item.cliente.nome.toLowerCase().includes(termo)) ||
+                    (item.cliente && item.cliente.telefone && item.cliente.telefone.includes(termo)) ||
+                    (item.cliente && item.cliente.telefone && formatarTelefone(item.cliente.telefone).includes(termo)) ||
+                    item.numeroOriginal.includes(termo);
+                
+                // Filtro de status
+                let matchStatus = true;
+                if (statusFiltro !== '') {
+                    if (statusFiltro === 'encontrado') {
+                        matchStatus = item.encontrado;
+                    } else if (statusFiltro === 'nao-encontrado') {
+                        matchStatus = !item.encontrado;
+                    }
+                }
+                
+                return matchBusca && matchStatus;
+            });
+            
+            renderizarClientes(clientesFiltrados);
+        }
+
+        // Renderizar clientes na tabela
+        function renderizarClientes(clientes) {
+            const tbody = document.getElementById('clientsTableBody');
+            
+            if (clientes.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="no-clients">
+                            <div class="no-clients-icon">—</div>
+                            <h3>Nenhum cliente encontrado</h3>
+                            <p>Tente ajustar os filtros de busca</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = clientes.map(item => {
+                if (item.encontrado) {
+                    const cliente = item.cliente;
+                    const clienteId = cliente._id;
+                    const isRealizado = clientesRealizados.has(clienteId);
+                    const isSelecionado = clientesSelecionados.has(clienteId);
+                    
+                    return `
+                        <tr>
+                            <td class="select-column">
+                                <input type="checkbox" ${isSelecionado ? 'checked' : ''} 
+                                       onchange="toggleClientSelection('${clienteId}')">
+                            </td>
+                            <td>
+                                <span class="status-badge status-found">Encontrado</span>
+                            </td>
+                            <td>
+                                <div class="client-name" onclick="verDetalhes('${clienteId}')">
+                                    ${cliente.nome}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="client-ddi">
+                                    ${obterBandeiraPais(cliente.ddi || '55')}+${cliente.ddi || '55'}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="client-phone">
+                                    ${formatarTelefone(cliente.telefone)}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="client-unidade ${!cliente.unidade ? 'vazio' : ''}">
+                                    ${cliente.unidade || '-'}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="client-phone">
+                                    ${item.numeroOriginal}
+                                </div>
+                            </td>
+                            <td class="realized-column">
+                                <div class="realized-status ${isRealizado ? 'realized' : 'not-realized'}" 
+                                     onclick="toggleRealizedStatus('${clienteId}')" 
+                                     title="${isRealizado ? 'Clique para desmarcar' : 'Clique para marcar como realizado'}">
+                                    ${isRealizado ? 
+                                        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>' : 
+                                        '−'}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    return `
+                        <tr>
+                            <td class="select-column">
+                                <input type="checkbox" disabled>
+                            </td>
+                            <td>
+                                <span class="status-badge status-not-found">Não Encontrado</span>
+                            </td>
+                            <td>
+                                <div class="client-name not-found">
+                                    Cliente não identificado
+                                </div>
+                            </td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>
+                                <div class="client-phone">
+                                    ${item.numeroOriginal}
+                                </div>
+                            </td>
+                            <td class="realized-column">
+                                <div class="realized-status not-realized" style="cursor: not-allowed;">
+                                    −
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }).join('');
+
+            // Atualizar controles de seleção em massa
+            atualizarControlesSelecionados();
+        }
+
+        // Ver detalhes do cliente
+        function verDetalhes(clienteId) {
+            window.location.href = `/cliente-detalhes?id=${clienteId}`;
+        }
+
+        // ===== FUNÇÕES DE CONTROLE DE REALIZADOS =====
+        
+        // Alternar status realizado individual
+        async function toggleRealizedStatus(clienteId) {
+            const isCurrentlyRealized = clientesRealizados.has(clienteId);
+            const novoStatus = !isCurrentlyRealized;
+            
+            try {
+                const response = await fetch(`/api/comunicacoes/${comunicacao._id}/realizados/${clienteId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        realizado: novoStatus
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao atualizar status');
+                }
+                
+                // Atualizar estado local
+                if (novoStatus) {
+                    clientesRealizados.add(clienteId);
+                } else {
+                    clientesRealizados.delete(clienteId);
+                }
+                
+                // Re-renderizar para atualizar a interface
+                renderizarClientes(clientesFiltrados);
+                renderizarEstatisticas();
+                
+                mostrarAlert(
+                    `Cliente ${novoStatus ? 'marcado como realizado' : 'desmarcado'} com sucesso!`, 
+                    'success'
+                );
+                
+            } catch (error) {
+                console.error('Erro ao atualizar status realizado:', error);
+                mostrarAlert('Erro ao atualizar status do cliente', 'error');
+            }
+        }
+
+        // ===== FUNÇÕES DE SELEÇÃO EM MASSA =====
+        
+        // Alternar seleção individual
+        function toggleClientSelection(clienteId) {
+            if (clientesSelecionados.has(clienteId)) {
+                clientesSelecionados.delete(clienteId);
+            } else {
+                clientesSelecionados.add(clienteId);
+            }
+            
+            atualizarControlesSelecionados();
+        }
+
+        // Selecionar/deselecionar todos
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const clientesEncontrados = clientesFiltrados.filter(item => item.encontrado);
+            
+            if (selectAllCheckbox.checked) {
+                // Selecionar todos os clientes encontrados
+                clientesEncontrados.forEach(item => {
+                    clientesSelecionados.add(item.cliente._id);
+                });
+            } else {
+                // Deselecionar todos
+                clientesSelecionados.clear();
+            }
+            
+            renderizarClientes(clientesFiltrados);
+        }
+
+        // Atualizar controles de seleção em massa
+        function atualizarControlesSelecionados() {
+            const selectedCount = clientesSelecionados.size;
+            const massControls = document.getElementById('massSelectionControls');
+            const selectedCountElement = document.getElementById('selectedCount');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            
+            if (selectedCount > 0) {
+                massControls.style.display = 'flex';
+                selectedCountElement.textContent = selectedCount;
+            } else {
+                massControls.style.display = 'none';
+            }
+            
+            // Atualizar checkbox "selecionar todos"
+            const clientesEncontrados = clientesFiltrados.filter(item => item.encontrado);
+            const todosSelecionados = clientesEncontrados.length > 0 && 
+                clientesEncontrados.every(item => clientesSelecionados.has(item.cliente._id));
+            
+            selectAllCheckbox.checked = todosSelecionados;
+            selectAllCheckbox.indeterminate = selectedCount > 0 && !todosSelecionados;
+        }
+
+        // Marcar selecionados como realizados
+        async function marcarSelecionadosComoRealizados() {
+            if (clientesSelecionados.size === 0) return;
+            
+            const clienteIds = Array.from(clientesSelecionados);
+            
+            try {
+                const response = await fetch(`/api/comunicacoes/${comunicacao._id}/realizados`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        clienteIds: clienteIds,
+                        realizado: true
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao marcar clientes como realizados');
+                }
+                
+                const result = await response.json();
+                
+                // Atualizar estado local
+                clienteIds.forEach(clienteId => {
+                    clientesRealizados.add(clienteId);
+                });
+                
+                // Limpar seleção
+                clientesSelecionados.clear();
+                
+                // Re-renderizar
+                renderizarClientes(clientesFiltrados);
+                renderizarEstatisticas();
+                
+                mostrarAlert(result.mensagem, 'success');
+                
+            } catch (error) {
+                console.error('Erro ao marcar realizados:', error);
+                mostrarAlert('Erro ao marcar clientes como realizados', 'error');
+            }
+        }
+
+        // Desmarcar selecionados como realizados
+        async function desmarcarSelecionadosComoRealizados() {
+            if (clientesSelecionados.size === 0) return;
+            
+            const clienteIds = Array.from(clientesSelecionados);
+            
+            try {
+                const response = await fetch(`/api/comunicacoes/${comunicacao._id}/realizados`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        clienteIds: clienteIds,
+                        realizado: false
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao desmarcar clientes como realizados');
+                }
+                
+                const result = await response.json();
+                
+                // Atualizar estado local
+                clienteIds.forEach(clienteId => {
+                    clientesRealizados.delete(clienteId);
+                });
+                
+                // Limpar seleção
+                clientesSelecionados.clear();
+                
+                // Re-renderizar
+                renderizarClientes(clientesFiltrados);
+                renderizarEstatisticas();
+                
+                mostrarAlert(result.mensagem, 'success');
+                
+            } catch (error) {
+                console.error('Erro ao desmarcar realizados:', error);
+                mostrarAlert('Erro ao desmarcar clientes como realizados', 'error');
+            }
+        }
+
+        // Carregar status realizados do servidor
+        async function carregarStatusRealizados() {
+            try {
+                const response = await fetch(`/api/comunicacoes/${comunicacao._id}/realizados`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Converter array recebido em Set de IDs realizados
+                    clientesRealizados = new Set(data.clientesRealizados || []);
+                    
+                    console.log(`✅ Carregados ${clientesRealizados.size} clientes realizados`);
+                } else {
+                    console.log('Nenhum status de realizados encontrado');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar status realizados:', error);
+                // Não mostrar erro para o usuário, apenas log
+            }
+        }
+    </script>
+</body>
+</html>
