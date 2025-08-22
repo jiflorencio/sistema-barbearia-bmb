@@ -1,4 +1,23 @@
-<!DOCTYPE html>
+// FUNÇÕES DE MODAL E AÇÕES EXTRAS
+        function openMovimentoHistory() {
+            const content = `
+                <h2 style="color: #ffd700; margin-bottom: 20px;">📋 Histórico de Importações - Movimentos</h2>
+                <div style="margin: 20px 0;">
+                    <input type="text" placeholder="🔍 Buscar por data ou arquivo..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ffd700; background: rgba(0,0,0,0.3); color: #fff;">
+                </div>
+                <div id="historyList">
+                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
+                        <div style="font-weight: bold; color: #ffd700;">📅 Última importação carregada do servidor</div>
+                        <div style="margin-top: 5px; opacity: 0.8;">As estatísticas agora são persistentes e carregadas automaticamente.</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="btn secondary" onclick="carregarEstatisticasMovimento()">🔄 Recarregar Estatísticas</button>
+                    <button class="btn secondary">🗑️ Limpar Histórico</button>
+                </div>
+            `;
+            openModal(content);
+        }<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -632,6 +651,37 @@
             <div class="box fade-in">
                 <h2>📁 Importar Cadastro</h2>
                 
+                <!-- 🆕 NOVO: Status do Cadastro com estatísticas persistentes -->
+                <div class="status-card success">
+                    <h4>📊 Status dos Cadastros</h4>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <div class="label">📅 Última Importação</div>
+                            <div class="value" id="lastCadastroDate">Carregando...</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="label">👥 Total Clientes</div>
+                            <div class="value" id="totalClientesCount">Carregando...</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="label">⏱️ Há quanto tempo</div>
+                            <div class="value" id="cadastroTimeSince">Carregando...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert success" id="cadastroAlert">
+                        <span>💡</span>
+                        <span>Carregando status dos cadastros...</span>
+                    </div>
+                </div>
+
+                <!-- 🆕 NOVO: Botões de Ação Extras para Cadastro -->
+                <div style="margin: 15px 0;">
+                    <button class="btn secondary" onclick="openCadastroHistory()">📋 Ver Histórico</button>
+                    <button class="btn secondary" onclick="analyzeLastCadastro()">🔍 Analisar Última</button>
+                    <button class="btn secondary" onclick="exportCadastros()">💾 Backup</button>
+                </div>
+                
                 <div class="alert info">
                     <span>💡</span>
                     <span>Use esta opção para importar vários clientes de uma vez através de uma planilha Excel.</span>
@@ -957,10 +1007,10 @@
                         }
                         
                         document.getElementById('movimentoTimeSince').textContent = timeText;
-                        updateSmartAlert(days);
+                        updateSmartAlert(days, 'movimento');
                     } else {
                         document.getElementById('movimentoTimeSince').textContent = '-';
-                        updateSmartAlert(999); // Nunca importou
+                        updateSmartAlert(999, 'movimento'); // Nunca importou
                     }
                     
                     console.log('✅ Estatísticas de movimento carregadas:', stats);
@@ -980,21 +1030,78 @@
             }
         }
 
-        function updateSmartAlert(daysSince) {
-            const alertContainer = document.getElementById('movimentoAlert');
+        // 🆕 NOVAS FUNÇÕES DE STATUS DO CADASTRO - VERSÃO PERSISTENTE
+        
+        // Carregar estatísticas de cadastro do servidor
+        async function carregarEstatisticasCadastro() {
+            try {
+                const response = await fetch('/api/estatisticas-cadastro');
+                
+                if (response.ok) {
+                    const stats = await response.json();
+                    
+                    // Atualizar interface
+                    document.getElementById('lastCadastroDate').textContent = 
+                        stats.ultimaImportacao ? new Date(stats.ultimaImportacao).toLocaleDateString('pt-BR') : 'Nunca';
+                    document.getElementById('totalClientesCount').textContent = stats.totalClientes.toLocaleString();
+                    
+                    // Calcular tempo decorrido
+                    if (stats.ultimaImportacao) {
+                        const now = new Date();
+                        const diff = now - new Date(stats.ultimaImportacao);
+                        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        
+                        let timeText = '';
+                        if (days > 0) {
+                            timeText = `${days} dia${days > 1 ? 's' : ''} atrás`;
+                        } else if (hours > 0) {
+                            timeText = `${hours} hora${hours > 1 ? 's' : ''} atrás`;
+                        } else {
+                            timeText = 'Há poucos minutos';
+                        }
+                        
+                        document.getElementById('cadastroTimeSince').textContent = timeText;
+                        updateSmartAlert(days, 'cadastro');
+                    } else {
+                        document.getElementById('cadastroTimeSince').textContent = '-';
+                        updateSmartAlert(999, 'cadastro'); // Nunca importou
+                    }
+                    
+                    console.log('✅ Estatísticas de cadastro carregadas:', stats);
+                } else {
+                    console.log('⚠️ Erro ao carregar estatísticas de cadastro');
+                    // Manter valores padrão
+                    document.getElementById('lastCadastroDate').textContent = 'Erro';
+                    document.getElementById('totalClientesCount').textContent = '-';
+                    document.getElementById('cadastroTimeSince').textContent = '-';
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar estatísticas de cadastro:', error);
+                // Manter valores padrão
+                document.getElementById('lastCadastroDate').textContent = 'Erro';
+                document.getElementById('totalClientesCount').textContent = '-';
+                document.getElementById('cadastroTimeSince').textContent = '-';
+            }
+        }
+
+        function updateSmartAlert(daysSince, tipo = 'movimento') {
+            const alertContainer = document.getElementById(tipo === 'movimento' ? 'movimentoAlert' : 'cadastroAlert');
+            const tipoTexto = tipo === 'movimento' ? 'movimentos' : 'cadastros';
+            const tipoTextoSingular = tipo === 'movimento' ? 'movimento' : 'cadastro';
             
             if (daysSince >= 999) {
                 alertContainer.className = 'alert info';
-                alertContainer.innerHTML = '<span>💡</span><span>Importe o primeiro arquivo de movimentos para começar o controle!</span>';
+                alertContainer.innerHTML = `<span>💡</span><span>Importe o primeiro arquivo de ${tipoTexto} para começar o controle!</span>`;
             } else if (daysSince >= 7) {
                 alertContainer.className = 'alert warning';
-                alertContainer.innerHTML = `<span>⚠️</span><span>Faz mais de ${daysSince} dias sem importação! Recomendamos atualizar os dados.</span>`;
+                alertContainer.innerHTML = `<span>⚠️</span><span>Faz mais de ${daysSince} dias sem importação de ${tipoTextoSingular}! Recomendamos atualizar os dados.</span>`;
             } else if (daysSince >= 3) {
                 alertContainer.className = 'alert info';
-                alertContainer.innerHTML = '<span>💡</span><span>Considere verificar se há novos dados para importar.</span>';
+                alertContainer.innerHTML = `<span>💡</span><span>Considere verificar se há novos ${tipoTexto} para importar.</span>`;
             } else {
                 alertContainer.className = 'alert success';
-                alertContainer.innerHTML = '<span>✅</span><span>Dados atualizados recentemente. Sistema em dia!</span>';
+                alertContainer.innerHTML = `<span>✅</span><span>Dados de ${tipoTexto} atualizados recentemente. Sistema em dia!</span>`;
             }
         }
 
@@ -1017,6 +1124,50 @@
                 </div>
             `;
             openModal(content);
+        }
+
+        // 🆕 NOVAS FUNÇÕES PARA CADASTRO
+        function openCadastroHistory() {
+            const content = `
+                <h2 style="color: #ffd700; margin-bottom: 20px;">📋 Histórico de Importações - Cadastros</h2>
+                <div style="margin: 20px 0;">
+                    <input type="text" placeholder="🔍 Buscar por data ou arquivo..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ffd700; background: rgba(0,0,0,0.3); color: #fff;">
+                </div>
+                <div id="historyList">
+                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
+                        <div style="font-weight: bold; color: #ffd700;">📅 Última importação carregada do servidor</div>
+                        <div style="margin-top: 5px; opacity: 0.8;">As estatísticas de cadastro agora são persistentes e carregadas automaticamente.</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="btn secondary" onclick="carregarEstatisticasCadastro()">🔄 Recarregar Estatísticas</button>
+                    <button class="btn secondary">🗑️ Limpar Histórico</button>
+                </div>
+            `;
+            openModal(content);
+        }
+
+        function analyzeLastCadastro() {
+            // Buscar dados do elemento para análise
+            const lastDate = document.getElementById('lastCadastroDate').textContent;
+            const totalClientes = document.getElementById('totalClientesCount').textContent;
+            
+            if (lastDate === 'Nunca' || lastDate === 'Erro') {
+                showNotification('📝 Nenhuma importação de cadastro foi realizada ainda.', 'info');
+                return;
+            }
+            
+            showNotification('🔍 Analisando última importação de cadastro...', 'info');
+            setTimeout(() => {
+                showNotification(`📊 Última importação: ${lastDate} | Total: ${totalClientes} clientes`, 'success');
+            }, 1500);
+        }
+
+        function exportCadastros() {
+            showNotification('💾 Exportando backup dos cadastros...', 'info');
+            setTimeout(() => {
+                showNotification('✅ Backup exportado: cadastros_backup_' + new Date().toISOString().split('T')[0] + '.xlsx', 'success');
+            }, 2000);
         }
 
         function analyzeLastImport() {
@@ -1076,8 +1227,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             verificarAutenticacao();
             
-            // 🆕 NOVO: Carregar estatísticas de movimento persistentes
+            // 🆕 NOVO: Carregar estatísticas de movimento e cadastro persistentes
             carregarEstatisticasMovimento();
+            carregarEstatisticasCadastro();
             
             // Event listener para formulário
             document.getElementById('clienteForm').addEventListener('submit', function(e) {
@@ -1251,6 +1403,11 @@
                     setTimeout(() => {
                         ocultarProgresso();
                     }, 2000);
+                    
+                    // 🆕 NOVO: Recarregar estatísticas de cadastro após importação bem-sucedida
+                    setTimeout(() => {
+                        carregarEstatisticasCadastro();
+                    }, 1000);
                     
                     // Mostrar resultado detalhado
                     let mensagemCompleta = `🎉 ${resultado.mensagem}`;

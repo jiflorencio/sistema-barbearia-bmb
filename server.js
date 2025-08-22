@@ -264,11 +264,45 @@ const estatisticasMovimentoSchema = new mongoose.Schema({
   }
 });
 
+// ===================================
+// 🆕 NOVO MODELO: ESTATÍSTICAS DE CADASTRO
+// ===================================
+const estatisticasCadastroSchema = new mongoose.Schema({
+  ultimaImportacao: {
+    type: Date,
+    default: null
+  },
+  totalClientes: {
+    type: Number,
+    default: 0
+  },
+  clientesEsteMes: {
+    type: Number,
+    default: 0
+  },
+  mesReferencia: {
+    type: String, // YYYY-MM formato
+    default: () => {
+      const now = new Date();
+      return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+    }
+  },
+  ultimoArquivoImportado: {
+    type: String,
+    default: null
+  },
+  atualizadoEm: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 // Criar os modelos
 const Cliente = mongoose.model('Cliente', clienteSchema);
 const Admin = mongoose.model('Admin', adminSchema);
 const Comunicacao = mongoose.model('Comunicacao', comunicacaoSchema);
 const EstatisticasMovimento = mongoose.model('EstatisticasMovimento', estatisticasMovimentoSchema);
+const EstatisticasCadastro = mongoose.model('EstatisticasCadastro', estatisticasCadastroSchema);
 
 // ===================================
 // MIDDLEWARE DE AUTENTICAÇÃO
@@ -550,6 +584,46 @@ app.get('/api/estatisticas-movimento', verificarLogin, async (req, res) => {
   } catch (error) {
     console.error('Erro ao buscar estatísticas:', error);
     res.status(500).json({ erro: 'Erro ao buscar estatísticas de movimento.' });
+  }
+});
+
+// ===================================
+// 🆕 ROTAS DA API - ESTATÍSTICAS DE CADASTRO (PROTEGIDAS)
+// ===================================
+
+// Buscar estatísticas de cadastro
+app.get('/api/estatisticas-cadastro', verificarLogin, async (req, res) => {
+  try {
+    let stats = await EstatisticasCadastro.findOne();
+    
+    if (!stats) {
+      // Criar estatísticas iniciais se não existir
+      const totalClientesAtual = await Cliente.countDocuments();
+      stats = new EstatisticasCadastro({
+        totalClientes: totalClientesAtual
+      });
+      await stats.save();
+    }
+    
+    // Verificar se mudou o mês (resetar contador mensal)
+    const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
+    if (stats.mesReferencia !== mesAtual) {
+      stats.mesReferencia = mesAtual;
+      stats.clientesEsteMes = 0;
+      await stats.save();
+    }
+    
+    // Sempre atualizar o total com a contagem real
+    const totalClientesAtual = await Cliente.countDocuments();
+    if (stats.totalClientes !== totalClientesAtual) {
+      stats.totalClientes = totalClientesAtual;
+      await stats.save();
+    }
+    
+    res.json(stats);
+  } catch (error) {
+    console.error('Erro ao buscar estatísticas de cadastro:', error);
+    res.status(500).json({ erro: 'Erro ao buscar estatísticas de cadastro.' });
   }
 });
 
@@ -1024,6 +1098,38 @@ app.post('/api/upload-excel', verificarLogin, upload.single('excel'), async (req
       } catch (error) {
         erros.push(`Linha ${numeroLinha}: Erro ao salvar - ${error.message}`);
         console.error(`❌ Erro na linha ${numeroLinha}:`, error);
+      }
+    }
+    
+    // 🆕 NOVO: ATUALIZAR ESTATÍSTICAS DE CADASTRO APÓS SUCESSO
+    if (clientesInseridos > 0) {
+      try {
+        let stats = await EstatisticasCadastro.findOne();
+        
+        if (!stats) {
+          stats = new EstatisticasCadastro();
+        }
+        
+        // Verificar se mudou o mês
+        const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
+        if (stats.mesReferencia !== mesAtual) {
+          stats.mesReferencia = mesAtual;
+          stats.clientesEsteMes = 0;
+        }
+        
+        // Atualizar estatísticas
+        stats.ultimaImportacao = new Date();
+        stats.totalClientes += clientesInseridos; // Somar novos clientes
+        stats.clientesEsteMes += clientesInseridos;
+        stats.ultimoArquivoImportado = req.file.originalname || 'Arquivo Excel';
+        stats.atualizadoEm = new Date();
+        
+        await stats.save();
+        
+        console.log(`✅ Estatísticas de cadastro atualizadas: +${clientesInseridos} clientes`);
+        
+      } catch (error) {
+        console.log('⚠️ Erro ao atualizar estatísticas de cadastro (não crítico):', error);
       }
     }
     
