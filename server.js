@@ -297,12 +297,86 @@ const estatisticasCadastroSchema = new mongoose.Schema({
   }
 });
 
+// ===================================
+// 🆕 NOVO MODELO: HISTÓRICO DE IMPORTAÇÕES DE MOVIMENTO
+// ===================================
+const historicoMovimentoSchema = new mongoose.Schema({
+  dataImportacao: {
+    type: Date,
+    default: Date.now
+  },
+  nomeArquivo: {
+    type: String,
+    required: true
+  },
+  servicosAdicionados: {
+    type: Number,
+    default: 0
+  },
+  clientesAtualizados: {
+    type: Number,
+    default: 0
+  },
+  clientesNovos: {
+    type: Number,
+    default: 0
+  },
+  totalLinhasProcessadas: {
+    type: Number,
+    default: 0
+  },
+  totalErros: {
+    type: Number,
+    default: 0
+  },
+  usuarioImportacao: {
+    type: String,
+    required: true
+  }
+});
+
+// ===================================
+// 🆕 NOVO MODELO: HISTÓRICO DE IMPORTAÇÕES DE CADASTRO
+// ===================================
+const historicoCadastroSchema = new mongoose.Schema({
+  dataImportacao: {
+    type: Date,
+    default: Date.now
+  },
+  nomeArquivo: {
+    type: String,
+    required: true
+  },
+  clientesAdicionados: {
+    type: Number,
+    default: 0
+  },
+  clientesJaExistiam: {
+    type: Number,
+    default: 0
+  },
+  totalLinhasProcessadas: {
+    type: Number,
+    default: 0
+  },
+  totalErros: {
+    type: Number,
+    default: 0
+  },
+  usuarioImportacao: {
+    type: String,
+    required: true
+  }
+});
+
 // Criar os modelos
 const Cliente = mongoose.model('Cliente', clienteSchema);
 const Admin = mongoose.model('Admin', adminSchema);
 const Comunicacao = mongoose.model('Comunicacao', comunicacaoSchema);
 const EstatisticasMovimento = mongoose.model('EstatisticasMovimento', estatisticasMovimentoSchema);
 const EstatisticasCadastro = mongoose.model('EstatisticasCadastro', estatisticasCadastroSchema);
+const HistoricoMovimento = mongoose.model('HistoricoMovimento', historicoMovimentoSchema);
+const HistoricoCadastro = mongoose.model('HistoricoCadastro', historicoCadastroSchema);
 
 // ===================================
 // MIDDLEWARE DE AUTENTICAÇÃO
@@ -584,6 +658,62 @@ app.get('/api/estatisticas-movimento', verificarLogin, async (req, res) => {
   } catch (error) {
     console.error('Erro ao buscar estatísticas:', error);
     res.status(500).json({ erro: 'Erro ao buscar estatísticas de movimento.' });
+  }
+});
+
+// 🆕 NOVA ROTA: Buscar histórico completo de movimento
+app.get('/api/historico-movimento', verificarLogin, async (req, res) => {
+  try {
+    const historico = await HistoricoMovimento.find()
+      .sort({ dataImportacao: -1 })
+      .limit(50); // Últimas 50 importações
+    
+    // Calcular estatísticas do histórico
+    const totalMovimentos = await HistoricoMovimento.aggregate([
+      { $group: { _id: null, total: { $sum: "$servicosAdicionados" } } }
+    ]);
+    
+    const ultimaImportacao = historico.length > 0 ? historico[0] : null;
+    
+    res.json({
+      historico,
+      estatisticas: {
+        ultimaImportacao: ultimaImportacao ? ultimaImportacao.dataImportacao : null,
+        totalMovimentos: totalMovimentos.length > 0 ? totalMovimentos[0].total : 0,
+        totalImportacoes: historico.length
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao buscar histórico de movimento:', error);
+    res.status(500).json({ erro: 'Erro ao buscar histórico de movimento.' });
+  }
+});
+
+// 🆕 NOVA ROTA: Buscar histórico completo de cadastro
+app.get('/api/historico-cadastro', verificarLogin, async (req, res) => {
+  try {
+    const historico = await HistoricoCadastro.find()
+      .sort({ dataImportacao: -1 })
+      .limit(50); // Últimas 50 importações
+    
+    // Calcular estatísticas do histórico
+    const totalClientes = await HistoricoCadastro.aggregate([
+      { $group: { _id: null, total: { $sum: "$clientesAdicionados" } } }
+    ]);
+    
+    const ultimaImportacao = historico.length > 0 ? historico[0] : null;
+    
+    res.json({
+      historico,
+      estatisticas: {
+        ultimaImportacao: ultimaImportacao ? ultimaImportacao.dataImportacao : null,
+        totalClientes: totalClientes.length > 0 ? totalClientes[0].total : 0,
+        totalImportacoes: historico.length
+      }
+    });
+  } catch (error) {
+    console.error('Erro ao buscar histórico de cadastro:', error);
+    res.status(500).json({ erro: 'Erro ao buscar histórico de cadastro.' });
   }
 });
 
@@ -1101,35 +1231,46 @@ app.post('/api/upload-excel', verificarLogin, upload.single('excel'), async (req
       }
     }
     
-    // 🆕 NOVO: ATUALIZAR ESTATÍSTICAS DE CADASTRO APÓS SUCESSO
-    if (clientesInseridos > 0) {
+        // 🆕 NOVO: SALVAR NO HISTÓRICO DE CADASTRO
+    if (clientesInseridos > 0 || erros.length > 0) {
       try {
-        let stats = await EstatisticasCadastro.findOne();
+        // Criar registro no histórico
+        const novoHistorico = new HistoricoCadastro({
+          dataImportacao: new Date(),
+          nomeArquivo: req.file.originalname || 'Arquivo Excel',
+          clientesAdicionados: clientesInseridos,
+          clientesJaExistiam: clientesJaExistem,
+          totalLinhasProcessadas: dados.length,
+          totalErros: erros.length,
+          usuarioImportacao: req.admin.nome || 'Admin'
+        });
         
+        await novoHistorico.save();
+        
+        // Atualizar estatísticas existentes (compatibilidade)
+        let stats = await EstatisticasCadastro.findOne();
         if (!stats) {
           stats = new EstatisticasCadastro();
         }
         
-        // Verificar se mudou o mês
-        const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
+        const mesAtual = new Date().toISOString().slice(0, 7);
         if (stats.mesReferencia !== mesAtual) {
           stats.mesReferencia = mesAtual;
           stats.clientesEsteMes = 0;
         }
         
-        // Atualizar estatísticas
         stats.ultimaImportacao = new Date();
-        stats.totalClientes += clientesInseridos; // Somar novos clientes
+        stats.totalClientes += clientesInseridos;
         stats.clientesEsteMes += clientesInseridos;
         stats.ultimoArquivoImportado = req.file.originalname || 'Arquivo Excel';
         stats.atualizadoEm = new Date();
         
         await stats.save();
         
-        console.log(`✅ Estatísticas de cadastro atualizadas: +${clientesInseridos} clientes`);
+        console.log(`✅ Histórico e estatísticas de cadastro atualizados: +${clientesInseridos} clientes`);
         
       } catch (error) {
-        console.log('⚠️ Erro ao atualizar estatísticas de cadastro (não crítico):', error);
+        console.log('⚠️ Erro ao atualizar histórico de cadastro (não crítico):', error);
       }
     }
     
@@ -1361,23 +1502,35 @@ app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (
       }
     }
 
-    // 🆕 NOVO: ATUALIZAR ESTATÍSTICAS DE MOVIMENTO APÓS SUCESSO
-    if (servicosAdicionados > 0) {
+   // 🆕 NOVO: SALVAR NO HISTÓRICO DE MOVIMENTO
+    if (servicosAdicionados > 0 || erros.length > 0) {
       try {
-        let stats = await EstatisticasMovimento.findOne();
+        // Criar registro no histórico
+        const novoHistorico = new HistoricoMovimento({
+          dataImportacao: new Date(),
+          nomeArquivo: req.file.originalname || 'Arquivo Excel',
+          servicosAdicionados: servicosAdicionados,
+          clientesAtualizados: clientesAtualizados,
+          clientesNovos: clientesNovos,
+          totalLinhasProcessadas: dados.length,
+          totalErros: erros.length,
+          usuarioImportacao: req.admin.nome || 'Admin'
+        });
         
+        await novoHistorico.save();
+        
+        // Atualizar estatísticas existentes (compatibilidade)
+        let stats = await EstatisticasMovimento.findOne();
         if (!stats) {
           stats = new EstatisticasMovimento();
         }
         
-        // Verificar se mudou o mês
-        const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
+        const mesAtual = new Date().toISOString().slice(0, 7);
         if (stats.mesReferencia !== mesAtual) {
           stats.mesReferencia = mesAtual;
           stats.movimentosEsteMes = 0;
         }
         
-        // Atualizar estatísticas
         stats.ultimaImportacao = new Date();
         stats.totalMovimentos += servicosAdicionados;
         stats.movimentosEsteMes += servicosAdicionados;
@@ -1386,10 +1539,10 @@ app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (
         
         await stats.save();
         
-        console.log(`✅ Estatísticas atualizadas: +${servicosAdicionados} movimentos`);
+        console.log(`✅ Histórico e estatísticas de movimento atualizados: +${servicosAdicionados} movimentos`);
         
       } catch (error) {
-        console.log('⚠️ Erro ao atualizar estatísticas (não crítico):', error);
+        console.log('⚠️ Erro ao atualizar histórico de movimento (não crítico):', error);
       }
     }
     
