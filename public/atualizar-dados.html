@@ -1093,45 +1093,113 @@
 
         // FUNÇÕES DE MODAL E AÇÕES EXTRAS
         function openMovimentoHistory() {
+    // Buscar histórico real do servidor
+    fetch('/api/historico-movimento')
+        .then(response => response.json())
+        .then(data => {
+            let historyItems = '';
+            
+            if (data.historico && data.historico.length > 0) {
+                data.historico.forEach(item => {
+                    const dataFormatada = new Date(item.dataImportacao).toLocaleString('pt-BR');
+                    historyItems += `
+                        <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
+                            <div style="font-weight: bold; color: #ffd700;">📅 ${dataFormatada}</div>
+                            <div style="margin-top: 5px;">📁 ${item.nomeArquivo}</div>
+                            <div style="margin-top: 5px; opacity: 0.8;">
+                                🏆 ${item.servicosAdicionados} serviços • 
+                                👥 ${item.clientesAtualizados} atualizados • 
+                                ➕ ${item.clientesNovos} novos • 
+                                ❌ ${item.totalErros} erros
+                            </div>
+                            <div style="margin-top: 5px; font-size: 0.8em; opacity: 0.6;">👤 Por: ${item.usuarioImportacao}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                historyItems = `
+                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
+                        <div style="color: #ffd700;">📝 Nenhuma importação realizada ainda</div>
+                        <div style="margin-top: 5px; opacity: 0.8;">Faça a primeira importação para ver o histórico aqui!</div>
+                    </div>
+                `;
+            }
+            
             const content = `
                 <h2 style="color: #ffd700; margin-bottom: 20px;">📋 Histórico de Importações - Movimentos</h2>
                 <div style="margin: 20px 0;">
                     <input type="text" placeholder="🔍 Buscar por data ou arquivo..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ffd700; background: rgba(0,0,0,0.3); color: #fff;">
                 </div>
-                <div id="historyList">
-                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
-                        <div style="font-weight: bold; color: #ffd700;">📅 Última importação carregada do servidor</div>
-                        <div style="margin-top: 5px; opacity: 0.8;">As estatísticas agora são persistentes e carregadas automaticamente.</div>
-                    </div>
+                <div id="historyList" style="max-height: 400px; overflow-y: auto;">
+                    ${historyItems}
                 </div>
                 <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn secondary" onclick="carregarEstatisticasMovimento()">🔄 Recarregar Estatísticas</button>
-                    <button class="btn secondary">🗑️ Limpar Histórico</button>
+                    <button class="btn secondary" onclick="carregarEstatisticasMovimento()">🔄 Recarregar</button>
+                    <button class="btn secondary" onclick="closeModal()">✖️ Fechar</button>
                 </div>
             `;
             openModal(content);
-        }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar histórico:', error);
+            showNotification('❌ Erro ao carregar histórico de movimentos', 'error');
+        });
+}
 
         // 🆕 NOVAS FUNÇÕES PARA CADASTRO
         function openCadastroHistory() {
+    // Buscar histórico real do servidor
+    fetch('/api/historico-cadastro')
+        .then(response => response.json())
+        .then(data => {
+            let historyItems = '';
+            
+            if (data.historico && data.historico.length > 0) {
+                data.historico.forEach(item => {
+                    const dataFormatada = new Date(item.dataImportacao).toLocaleString('pt-BR');
+                    historyItems += `
+                        <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
+                            <div style="font-weight: bold; color: #ffd700;">📅 ${dataFormatada}</div>
+                            <div style="margin-top: 5px;">📁 ${item.nomeArquivo}</div>
+                            <div style="margin-top: 5px; opacity: 0.8;">
+                                ➕ ${item.clientesAdicionados} novos • 
+                                🔄 ${item.clientesJaExistiam} já existiam • 
+                                📊 ${item.totalLinhasProcessadas} processadas • 
+                                ❌ ${item.totalErros} erros
+                            </div>
+                            <div style="margin-top: 5px; font-size: 0.8em; opacity: 0.6;">👤 Por: ${item.usuarioImportacao}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                historyItems = `
+                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
+                        <div style="color: #ffd700;">📝 Nenhuma importação realizada ainda</div>
+                        <div style="margin-top: 5px; opacity: 0.8;">Faça a primeira importação para ver o histórico aqui!</div>
+                    </div>
+                `;
+            }
+            
             const content = `
                 <h2 style="color: #ffd700; margin-bottom: 20px;">📋 Histórico de Importações - Cadastros</h2>
                 <div style="margin: 20px 0;">
                     <input type="text" placeholder="🔍 Buscar por data ou arquivo..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ffd700; background: rgba(0,0,0,0.3); color: #fff;">
                 </div>
-                <div id="historyList">
-                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
-                        <div style="font-weight: bold; color: #ffd700;">📅 Última importação carregada do servidor</div>
-                        <div style="margin-top: 5px; opacity: 0.8;">As estatísticas de cadastro agora são persistentes e carregadas automaticamente.</div>
-                    </div>
+                <div id="historyList" style="max-height: 400px; overflow-y: auto;">
+                    ${historyItems}
                 </div>
                 <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn secondary" onclick="carregarEstatisticasCadastro()">🔄 Recarregar Estatísticas</button>
-                    <button class="btn secondary">🗑️ Limpar Histórico</button>
+                    <button class="btn secondary" onclick="carregarEstatisticasCadastro()">🔄 Recarregar</button>
+                    <button class="btn secondary" onclick="closeModal()">✖️ Fechar</button>
                 </div>
             `;
             openModal(content);
-        }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar histórico:', error);
+            showNotification('❌ Erro ao carregar histórico de cadastros', 'error');
+        });
+}
 
         function analyzeLastCadastro() {
             // Buscar dados do elemento para análise
