@@ -678,21 +678,21 @@
                     <div class="status-grid">
                         <div class="status-item">
                             <div class="label">📅 Última Importação</div>
-                            <div class="value" id="lastMovimentoDate">Nunca</div>
+                            <div class="value" id="lastMovimentoDate">Carregando...</div>
                         </div>
                         <div class="status-item">
                             <div class="label">📊 Movimentos</div>
-                            <div class="value" id="totalMovimentosCount">0</div>
+                            <div class="value" id="totalMovimentosCount">Carregando...</div>
                         </div>
                         <div class="status-item">
                             <div class="label">⏱️ Há quanto tempo</div>
-                            <div class="value" id="movimentoTimeSince">-</div>
+                            <div class="value" id="movimentoTimeSince">Carregando...</div>
                         </div>
                     </div>
                     
                     <div class="alert success" id="movimentoAlert">
                         <span>💡</span>
-                        <span>Importe o primeiro arquivo de movimentos para começar o controle!</span>
+                        <span>Carregando status dos movimentos...</span>
                     </div>
                 </div>
 
@@ -802,12 +802,8 @@
         let clienteEditando = null;
         let progressInterval = null;
 
-        // Dados simulados para status (atualizados pelos uploads reais)
-        let movementStats = {
-            lastImport: null,
-            totalMovements: 0,
-            thisMonth: 0
-        };
+        // 🆕 NOVO: Dados das estatísticas agora vêm do servidor
+        // (Removemos a variável movementStats local)
 
         // FUNÇÕES DE FORMATAÇÃO DE TELEFONE DO SISTEMA ORIGINAL
         function formatarTelefone(telefone) {
@@ -929,34 +925,58 @@
             }, 100); // Atualiza a cada 100ms
         }
 
-        // FUNÇÕES DE STATUS DOS MOVIMENTOS
-        function updateMovementStatus() {
-            // Atualizar status na interface
-            document.getElementById('lastMovimentoDate').textContent = 
-                movementStats.lastImport ? movementStats.lastImport.toLocaleDateString('pt-BR') : 'Nunca';
-            document.getElementById('totalMovimentosCount').textContent = movementStats.totalMovements.toLocaleString();
-            
-            // Calcular tempo decorrido
-            if (movementStats.lastImport) {
-                const now = new Date();
-                const diff = now - movementStats.lastImport;
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        // 🆕 NOVAS FUNÇÕES DE STATUS DOS MOVIMENTOS - VERSÃO PERSISTENTE
+        
+        // Carregar estatísticas do servidor
+        async function carregarEstatisticasMovimento() {
+            try {
+                const response = await fetch('/api/estatisticas-movimento');
                 
-                let timeText = '';
-                if (days > 0) {
-                    timeText = `${days} dia${days > 1 ? 's' : ''} atrás`;
-                } else if (hours > 0) {
-                    timeText = `${hours} hora${hours > 1 ? 's' : ''} atrás`;
+                if (response.ok) {
+                    const stats = await response.json();
+                    
+                    // Atualizar interface
+                    document.getElementById('lastMovimentoDate').textContent = 
+                        stats.ultimaImportacao ? new Date(stats.ultimaImportacao).toLocaleDateString('pt-BR') : 'Nunca';
+                    document.getElementById('totalMovimentosCount').textContent = stats.totalMovimentos.toLocaleString();
+                    
+                    // Calcular tempo decorrido
+                    if (stats.ultimaImportacao) {
+                        const now = new Date();
+                        const diff = now - new Date(stats.ultimaImportacao);
+                        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        
+                        let timeText = '';
+                        if (days > 0) {
+                            timeText = `${days} dia${days > 1 ? 's' : ''} atrás`;
+                        } else if (hours > 0) {
+                            timeText = `${hours} hora${hours > 1 ? 's' : ''} atrás`;
+                        } else {
+                            timeText = 'Há poucos minutos';
+                        }
+                        
+                        document.getElementById('movimentoTimeSince').textContent = timeText;
+                        updateSmartAlert(days);
+                    } else {
+                        document.getElementById('movimentoTimeSince').textContent = '-';
+                        updateSmartAlert(999); // Nunca importou
+                    }
+                    
+                    console.log('✅ Estatísticas de movimento carregadas:', stats);
                 } else {
-                    timeText = 'Há poucos minutos';
+                    console.log('⚠️ Erro ao carregar estatísticas');
+                    // Manter valores padrão
+                    document.getElementById('lastMovimentoDate').textContent = 'Erro';
+                    document.getElementById('totalMovimentosCount').textContent = '-';
+                    document.getElementById('movimentoTimeSince').textContent = '-';
                 }
-                
-                document.getElementById('movimentoTimeSince').textContent = timeText;
-                updateSmartAlert(days);
-            } else {
+            } catch (error) {
+                console.error('❌ Erro ao carregar estatísticas:', error);
+                // Manter valores padrão
+                document.getElementById('lastMovimentoDate').textContent = 'Erro';
+                document.getElementById('totalMovimentosCount').textContent = '-';
                 document.getElementById('movimentoTimeSince').textContent = '-';
-                updateSmartAlert(999); // Nunca importou
             }
         }
 
@@ -987,12 +1007,12 @@
                 </div>
                 <div id="historyList">
                     <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
-                        <div style="font-weight: bold; color: #ffd700;">📅 Nenhuma importação ainda</div>
-                        <div style="margin-top: 5px; opacity: 0.8;">Importe o primeiro arquivo de movimentos para ver o histórico aqui.</div>
+                        <div style="font-weight: bold; color: #ffd700;">📅 Última importação carregada do servidor</div>
+                        <div style="margin-top: 5px; opacity: 0.8;">As estatísticas agora são persistentes e carregadas automaticamente.</div>
                     </div>
                 </div>
                 <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn secondary">📊 Exportar Relatório</button>
+                    <button class="btn secondary" onclick="carregarEstatisticasMovimento()">🔄 Recarregar Estatísticas</button>
                     <button class="btn secondary">🗑️ Limpar Histórico</button>
                 </div>
             `;
@@ -1000,14 +1020,18 @@
         }
 
         function analyzeLastImport() {
-            if (!movementStats.lastImport) {
+            // Buscar dados do elemento para análise
+            const lastDate = document.getElementById('lastMovimentoDate').textContent;
+            const totalMovimentos = document.getElementById('totalMovimentosCount').textContent;
+            
+            if (lastDate === 'Nunca' || lastDate === 'Erro') {
                 showNotification('📝 Nenhuma importação foi realizada ainda.', 'info');
                 return;
             }
             
             showNotification('🔍 Analisando última importação...', 'info');
             setTimeout(() => {
-                showNotification(`📊 Última importação: ${movementStats.lastImport.toLocaleDateString('pt-BR')} | Total: ${movementStats.totalMovements} movimentos`, 'success');
+                showNotification(`📊 Última importação: ${lastDate} | Total: ${totalMovimentos} movimentos`, 'success');
             }, 1500);
         }
 
@@ -1052,8 +1076,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             verificarAutenticacao();
             
-            // Inicializar status dos movimentos
-            updateMovementStatus();
+            // 🆕 NOVO: Carregar estatísticas de movimento persistentes
+            carregarEstatisticasMovimento();
             
             // Event listener para formulário
             document.getElementById('clienteForm').addEventListener('submit', function(e) {
@@ -1350,11 +1374,10 @@ ${resultado.primeiraLinhaExemplo ? '🔧 Colunas detectadas: ' + resultado.prime
                     atualizarProgresso(resultado.totalLinhas || 100, resultado.totalLinhas || 100, 100);
                     document.getElementById('progressSubtitle').textContent = '✅ Importação de serviços concluída!';
                     
-                    // ATUALIZAR STATUS DOS MOVIMENTOS
-                    movementStats.lastImport = new Date();
-                    movementStats.totalMovements += resultado.servicosAdicionados || 0;
-                    movementStats.thisMonth += resultado.servicosAdicionados || 0;
-                    updateMovementStatus();
+                    // 🆕 NOVO: Recarregar estatísticas após importação bem-sucedida
+                    setTimeout(() => {
+                        carregarEstatisticasMovimento();
+                    }, 1000);
                     
                     // Aguardar um pouco antes de ocultar
                     setTimeout(() => {

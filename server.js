@@ -231,10 +231,44 @@ const comunicacaoSchema = new mongoose.Schema({
   }
 });
 
+// ===================================
+// 🆕 NOVO MODELO: ESTATÍSTICAS DE MOVIMENTOS
+// ===================================
+const estatisticasMovimentoSchema = new mongoose.Schema({
+  ultimaImportacao: {
+    type: Date,
+    default: null
+  },
+  totalMovimentos: {
+    type: Number,
+    default: 0
+  },
+  movimentosEsteMes: {
+    type: Number,
+    default: 0
+  },
+  mesReferencia: {
+    type: String, // YYYY-MM formato
+    default: () => {
+      const now = new Date();
+      return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+    }
+  },
+  ultimoArquivoImportado: {
+    type: String,
+    default: null
+  },
+  atualizadoEm: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 // Criar os modelos
 const Cliente = mongoose.model('Cliente', clienteSchema);
 const Admin = mongoose.model('Admin', adminSchema);
 const Comunicacao = mongoose.model('Comunicacao', comunicacaoSchema);
+const EstatisticasMovimento = mongoose.model('EstatisticasMovimento', estatisticasMovimentoSchema);
 
 // ===================================
 // MIDDLEWARE DE AUTENTICAÇÃO
@@ -486,6 +520,36 @@ app.put('/api/admins/:id', verificarLogin, async (req, res) => {
     res.json(adminAtualizado);
   } catch (error) {
     res.status(500).json({ erro: 'Erro ao atualizar admin.' });
+  }
+});
+
+// ===================================
+// 🆕 ROTAS DA API - ESTATÍSTICAS DE MOVIMENTO (PROTEGIDAS)
+// ===================================
+
+// Buscar estatísticas de movimento
+app.get('/api/estatisticas-movimento', verificarLogin, async (req, res) => {
+  try {
+    let stats = await EstatisticasMovimento.findOne();
+    
+    if (!stats) {
+      // Criar estatísticas iniciais se não existir
+      stats = new EstatisticasMovimento();
+      await stats.save();
+    }
+    
+    // Verificar se mudou o mês (resetar contador mensal)
+    const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
+    if (stats.mesReferencia !== mesAtual) {
+      stats.mesReferencia = mesAtual;
+      stats.movimentosEsteMes = 0;
+      await stats.save();
+    }
+    
+    res.json(stats);
+  } catch (error) {
+    console.error('Erro ao buscar estatísticas:', error);
+    res.status(500).json({ erro: 'Erro ao buscar estatísticas de movimento.' });
   }
 });
 
@@ -995,7 +1059,7 @@ ${erros.length} erros encontrados.`;
 });
 
 // ===================================
-// NOVA ROTA: UPLOAD DE HISTÓRICO DE SERVIÇOS
+// NOVA ROTA: UPLOAD DE HISTÓRICO DE SERVIÇOS - COM ESTATÍSTICAS PERSISTENTES
 // ===================================
 app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (req, res) => {
   try {
@@ -1188,6 +1252,38 @@ app.post('/api/upload-servicos', verificarLogin, upload.single('excel'), async (
       } catch (error) {
         erros.push(`Linha ${numeroLinha}: Erro ao processar - ${error.message}`);
         console.error(`❌ Erro na linha ${numeroLinha}:`, error);
+      }
+    }
+
+    // 🆕 NOVO: ATUALIZAR ESTATÍSTICAS DE MOVIMENTO APÓS SUCESSO
+    if (servicosAdicionados > 0) {
+      try {
+        let stats = await EstatisticasMovimento.findOne();
+        
+        if (!stats) {
+          stats = new EstatisticasMovimento();
+        }
+        
+        // Verificar se mudou o mês
+        const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
+        if (stats.mesReferencia !== mesAtual) {
+          stats.mesReferencia = mesAtual;
+          stats.movimentosEsteMes = 0;
+        }
+        
+        // Atualizar estatísticas
+        stats.ultimaImportacao = new Date();
+        stats.totalMovimentos += servicosAdicionados;
+        stats.movimentosEsteMes += servicosAdicionados;
+        stats.ultimoArquivoImportado = req.file.originalname || 'Arquivo Excel';
+        stats.atualizadoEm = new Date();
+        
+        await stats.save();
+        
+        console.log(`✅ Estatísticas atualizadas: +${servicosAdicionados} movimentos`);
+        
+      } catch (error) {
+        console.log('⚠️ Erro ao atualizar estatísticas (não crítico):', error);
       }
     }
     
