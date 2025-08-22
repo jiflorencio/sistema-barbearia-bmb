@@ -1,23 +1,5 @@
-// FUNÇÕES DE MODAL E AÇÕES EXTRAS
-        function openMovimentoHistory() {
-            const content = `
-                <h2 style="color: #ffd700; margin-bottom: 20px;">📋 Histórico de Importações - Movimentos</h2>
-                <div style="margin: 20px 0;">
-                    <input type="text" placeholder="🔍 Buscar por data ou arquivo..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ffd700; background: rgba(0,0,0,0.3); color: #fff;">
-                </div>
-                <div id="historyList">
-                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffd700;">
-                        <div style="font-weight: bold; color: #ffd700;">📅 Última importação carregada do servidor</div>
-                        <div style="margin-top: 5px; opacity: 0.8;">As estatísticas agora são persistentes e carregadas automaticamente.</div>
-                    </div>
-                </div>
-                <div style="margin-top: 20px; text-align: center;">
-                    <button class="btn secondary" onclick="carregarEstatisticasMovimento()">🔄 Recarregar Estatísticas</button>
-                    <button class="btn secondary">🗑️ Limpar Histórico</button>
-                </div>
-            `;
-            openModal(content);
-        }<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -129,6 +111,10 @@
         
         .status-card.info {
             background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+
+        .status-card.success {
+            background: linear-gradient(45deg, #28a745, #20c997);
         }
         
         .status-grid {
