@@ -2007,6 +2007,79 @@ function formatarTelefone(telefone) {
 }
 
 // ===================================
+// 🆕 ROTAS DE EXPORTAÇÃO (PROTEGIDAS)
+// ===================================
+
+// Exportar cadastros atuais
+app.get('/api/export-cadastros-atual', verificarLogin, async (req, res) => {
+  try {
+    const clientes = await Cliente.find({}, 'nome ddi telefone dataNascimento criadoEm').sort({ nome: 1 });
+    
+    const dados = clientes.map(cliente => ({
+      'Nome': cliente.nome,
+      'DDI': cliente.ddi,
+      'Telefone': cliente.telefone,
+      'Data de Nascimento': cliente.dataNascimento ? 
+        new Date(cliente.dataNascimento).toLocaleDateString('pt-BR') : 'Não informado',
+      'Cadastrado em': new Date(cliente.criadoEm).toLocaleDateString('pt-BR')
+    }));
+    
+    const worksheet = XLSX.utils.json_to_sheet(dados);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Cadastros');
+    
+    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="cadastros_atual_${new Date().toISOString().split('T')[0]}.xlsx"`);
+    res.send(buffer);
+    
+  } catch (error) {
+    console.error('Erro ao exportar cadastros:', error);
+    res.status(500).json({ erro: 'Erro ao exportar cadastros.' });
+  }
+});
+
+// Exportar movimentos atuais
+app.get('/api/export-movimentos-atual', verificarLogin, async (req, res) => {
+  try {
+    const clientes = await Cliente.find({ 
+      historicoServicos: { $exists: true, $ne: [] } 
+    }, 'nome telefone historicoServicos').sort({ nome: 1 });
+    
+    const dados = [];
+    clientes.forEach(cliente => {
+      if (cliente.historicoServicos && cliente.historicoServicos.length > 0) {
+        cliente.historicoServicos.forEach(servico => {
+          dados.push({
+            'Serviço': servico.servico,
+            'Cliente': cliente.nome,
+            'Telefone': cliente.telefone,
+            'Profissional': servico.profissional,
+            'Data': new Date(servico.dataServico).toLocaleDateString('pt-BR')
+          });
+        });
+      }
+    });
+    
+    const worksheet = XLSX.utils.json_to_sheet(dados);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Movimentos');
+    
+    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="movimentos_atual_${new Date().toISOString().split('T')[0]}.xlsx"`);
+    res.send(buffer);
+    
+  } catch (error) {
+    console.error('Erro ao exportar movimentos:', error);
+    res.status(500).json({ erro: 'Erro ao exportar movimentos.' });
+  }
+});
+
+
+// ===================================
 // INICIAR SERVIDOR
 // ===================================
 app.listen(PORT, () => {

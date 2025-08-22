@@ -664,8 +664,7 @@
                 <!-- 🆕 NOVO: Botões de Ação Extras para Cadastro -->
                 <div style="margin: 15px 0;">
                     <button class="btn secondary" onclick="openCadastroHistory()">📋 Ver Histórico</button>
-                    <button class="btn secondary" onclick="analyzeLastCadastro()">🔍 Analisar Última</button>
-                    <button class="btn secondary" onclick="exportCadastros()">💾 Backup</button>
+                    <button class="btn secondary" onclick="exportarCadastrosAtual()">📤 Exportar Atual</button>
                 </div>
                 
                 <div class="alert info">
@@ -690,18 +689,6 @@
                 <button class="btn" onclick="uploadExcel()">
                     📤 Importar Cadastro
                 </button>
-
-                <div style="margin-top: 15px;">
-                    <h5>📈 Evolução de Cadastros</h5>
-                    <div class="mini-chart">
-                        <div class="chart-bar" style="height: 40%;"></div>
-                        <div class="chart-bar" style="height: 60%;"></div>
-                        <div class="chart-bar" style="height: 80%;"></div>
-                        <div class="chart-bar" style="height: 90%;"></div>
-                        <div class="chart-bar" style="height: 100%;"></div>
-                        <div class="chart-bar" style="height: 75%;"></div>
-                    </div>
-                </div>
             </div>
 
             <!-- 2. IMPORTAR/ATUALIZAR MOVIMENTO -->
@@ -735,8 +722,7 @@
                 <!-- Botões de Ação Extras -->
                 <div style="margin: 15px 0;">
                     <button class="btn secondary" onclick="openMovimentoHistory()">📋 Ver Histórico</button>
-                    <button class="btn secondary" onclick="analyzeLastImport()">🔍 Analisar Última</button>
-                    <button class="btn secondary" onclick="exportMovimentos()">💾 Backup</button>
+                    <button class="btn secondary" onclick="exportarMovimentosAtual()">📤 Exportar Atual</button>
                 </div>
 
                 <!-- Upload de Movimento - SISTEMA ORIGINAL -->
@@ -765,19 +751,6 @@
                 <button class="btn" onclick="uploadServicos()">
                     🏆 Importar Serviços
                 </button>
-
-                <div style="margin-top: 15px;">
-                    <h5>📈 Movimento Semanal</h5>
-                    <div class="mini-chart">
-                        <div class="chart-bar" style="height: 70%;"></div>
-                        <div class="chart-bar" style="height: 85%;"></div>
-                        <div class="chart-bar" style="height: 95%;"></div>
-                        <div class="chart-bar" style="height: 100%;"></div>
-                        <div class="chart-bar" style="height: 80%;"></div>
-                        <div class="chart-bar" style="height: 60%;"></div>
-                        <div class="chart-bar" style="height: 90%;"></div>
-                    </div>
-                </div>
             </div>
 
             <!-- 3. ADICIONAR CLIENTE MANUALMENTE -->
@@ -1201,51 +1174,59 @@
         });
 }
 
-        function analyzeLastCadastro() {
-            // Buscar dados do elemento para análise
-            const lastDate = document.getElementById('lastCadastroDate').textContent;
-            const totalClientes = document.getElementById('totalClientesCount').textContent;
-            
-            if (lastDate === 'Nunca' || lastDate === 'Erro') {
-                showNotification('📝 Nenhuma importação de cadastro foi realizada ainda.', 'info');
-                return;
+function exportarCadastrosAtual() {
+    showNotification('📤 Gerando planilha de cadastros...', 'info');
+    
+    fetch('/api/export-cadastros-atual')
+        .then(response => {
+            if (response.ok) {
+                return response.blob();
             }
-            
-            showNotification('🔍 Analisando última importação de cadastro...', 'info');
-            setTimeout(() => {
-                showNotification(`📊 Última importação: ${lastDate} | Total: ${totalClientes} clientes`, 'success');
-            }, 1500);
-        }
+            throw new Error('Erro ao gerar planilha');
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cadastros_atual_${new Date().toISOString().split('T')[0]}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            showNotification('✅ Planilha de cadastros baixada com sucesso!', 'success');
+        })
+        .catch(error => {
+            console.error('Erro ao exportar cadastros:', error);
+            showNotification('❌ Erro ao exportar cadastros', 'error');
+        });
+}
 
-        function exportCadastros() {
-            showNotification('💾 Exportando backup dos cadastros...', 'info');
-            setTimeout(() => {
-                showNotification('✅ Backup exportado: cadastros_backup_' + new Date().toISOString().split('T')[0] + '.xlsx', 'success');
-            }, 2000);
-        }
-
-        function analyzeLastImport() {
-            // Buscar dados do elemento para análise
-            const lastDate = document.getElementById('lastMovimentoDate').textContent;
-            const totalMovimentos = document.getElementById('totalMovimentosCount').textContent;
-            
-            if (lastDate === 'Nunca' || lastDate === 'Erro') {
-                showNotification('📝 Nenhuma importação foi realizada ainda.', 'info');
-                return;
+function exportarMovimentosAtual() {
+    showNotification('📤 Gerando planilha de movimentos...', 'info');
+    
+    fetch('/api/export-movimentos-atual')
+        .then(response => {
+            if (response.ok) {
+                return response.blob();
             }
-            
-            showNotification('🔍 Analisando última importação...', 'info');
-            setTimeout(() => {
-                showNotification(`📊 Última importação: ${lastDate} | Total: ${totalMovimentos} movimentos`, 'success');
-            }, 1500);
-        }
-
-        function exportMovimentos() {
-            showNotification('💾 Exportando backup dos movimentos...', 'info');
-            setTimeout(() => {
-                showNotification('✅ Backup exportado: movimentos_backup_' + new Date().toISOString().split('T')[0] + '.xlsx', 'success');
-            }, 2000);
-        }
+            throw new Error('Erro ao gerar planilha');
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `movimentos_atual_${new Date().toISOString().split('T')[0]}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            showNotification('✅ Planilha de movimentos baixada com sucesso!', 'success');
+        })
+        .catch(error => {
+            console.error('Erro ao exportar movimentos:', error);
+            showNotification('❌ Erro ao exportar movimentos', 'error');
+        });
+}
 
         function openModal(content) {
             document.getElementById('modalContent').innerHTML = content;
